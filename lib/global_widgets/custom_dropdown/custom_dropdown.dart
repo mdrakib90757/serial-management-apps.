@@ -135,7 +135,13 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                             horizontal: 0,
                             vertical: -4,
                           ),
-                          title: Text(widget.itemAsString(item)),
+                          title: Text(
+                            widget.itemAsString(item),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
                           onTap: () {
                             _formFieldKey.currentState!.didChange(item);
                             widget.onChanged(item);
@@ -190,7 +196,8 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                   fillColor: Colors.white,
                   hintText: state.value == null ? widget.hinText : null,
                   hintStyle: TextStyle(
-                    color: Colors.grey.shade500,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
                   contentPadding: EdgeInsets.symmetric(
@@ -219,7 +226,11 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                 isFocused: _focusNode.hasFocus || _isPopupOpen,
                 child: Text(
                   state.value == null ? '' : widget.itemAsString(state.value!),
-                  style: TextStyle(fontSize: 14.0),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),

@@ -121,6 +121,7 @@ class _profile_screenState extends State<profile_screen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.9),
                                     fontSize: 18,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Icon(Icons.arrow_forward_ios, size: 20),
@@ -166,6 +167,7 @@ class _profile_screenState extends State<profile_screen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.9),
                                     fontSize: 18,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Icon(Icons.arrow_forward_ios, size: 20),

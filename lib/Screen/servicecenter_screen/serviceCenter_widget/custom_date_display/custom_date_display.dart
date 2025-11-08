@@ -1,13 +1,13 @@
+import 'package:SerialMan/providers/serviceTaker_provider/bookSerialButtonProvider/getBookSerial_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart';
 import 'package:SerialMan/utils/color.dart';
 
-import '../../../../providers/profile_provider/getprofile_provider.dart';
-
 class CustomDateDisplay extends StatefulWidget {
   final DateTime selectedDate;
+
   const CustomDateDisplay({Key? key, required this.selectedDate})
     : super(key: key);
 
@@ -21,15 +21,8 @@ class _CustomDateDisplayState extends State<CustomDateDisplay> {
   @override
   Widget build(BuildContext context) {
     final serialProvider = context.watch<GetNewSerialButtonProvider>();
-    final getProfile = context.watch<Getprofileprovider>();
-    final profile = getProfile.profileData;
-
-    final bool shouldShowAddButton =
-        profile?.currentCompany.businessTypeId == 1;
-
     final ServingStatus = serialProvider.currentlyServingSerial?.status;
     final bool Status = ServingStatus == "Serving";
-
     final String todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
     final String selectedDateString = DateFormat(
       'yyyy-MM-dd',
@@ -43,11 +36,22 @@ class _CustomDateDisplayState extends State<CustomDateDisplay> {
       displayDayText = DateFormat('EEEE').format(widget.selectedDate);
     }
 
-    return Consumer<GetNewSerialButtonProvider>(
-      builder: (context, serialProvider, child) {
-        final servingSerial = serialProvider.currentlyServingSerial;
+    return Consumer<GetBookSerialProvider>(
+      builder: (context, bookSerialProvider, child) {
+        final allSerials = [
+          ...serialProvider.queueSerials,
+          ...serialProvider.servedSerials,
+        ];
 
-        final String disPlayText = servingSerial?.serialNo?.toString() ?? "0";
+        final servingSerials = allSerials
+            .where((booking) => booking.status?.toLowerCase() == "serving")
+            .toList();
+        final servingSerialNumbers = servingSerials
+            .map((booking) => booking.serialNo)
+            .toList();
+        final String disPlayText = servingSerialNumbers.join(', ');
+        final bool shouldShowCircle = servingSerials.isNotEmpty && isToday;
+
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -90,24 +94,31 @@ class _CustomDateDisplayState extends State<CustomDateDisplay> {
                 ],
               ),
             ),
-            if (Status && isToday) ...[
+            if (shouldShowCircle) ...[
               Positioned(
                 right: -8,
                 top: -20,
                 child: Container(
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white)
+                    border: Border.all(color: Colors.white),
                   ),
                   child: CircleAvatar(
-                    radius: 30,
+                    radius: 35,
                     backgroundColor: AppColor().primariColor,
-                    child: Text(
-                      "${disPlayText}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(
+                          disPlayText,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -202,16 +202,15 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
     final bool isToday = todayString == selectedDateString;
 
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade300,
       insetPadding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
-        // side: BorderSide(color: AppColor().primariColor),
+        //side: BorderSide(color: AppColor().primariColor),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
         child: Container(
-          //height: 415,
           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -221,159 +220,165 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
             key: _dialogFormKey,
             autovalidateMode: _autovalidateMode,
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "New Serial",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "New Serial",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      CircleAvatar(
-                        backgroundColor: Colors.grey.shade100,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
+                        CircleAvatar(
+                          backgroundColor: Colors.grey.shade100,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(Icons.close_sharp, color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    CustomLabeltext("Service Center"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      enabled: false,
+                      fillColor: Colors.red.shade50,
+                      filled: true,
+                      controller: _serviceCenterController,
+                      isPassword: false,
+                    ),
+
+                    const SizedBox(height: 10),
+                    CustomLabeltext("Service Type"),
+                    const SizedBox(height: 8),
+                    Consumer<GetAddButtonServiceType_Provider>(
+                      builder: (context, serviceTypeProvider, child) {
+                        return CustomDropdown<serviceTypeModel>(
+                          hinText: "Select ServiceType",
+                          items:
+                              getAddButton_serviceType_Provider.serviceTypeList,
+                          value: _selectedServiceType,
+                          selectedItem: _selectedServiceType,
+                          onChanged: (serviceTypeModel? newvalue) {
+                            debugPrint(
+                              "DROPDOWN CHANGED: User selected Service Center ID: ${newvalue?.id}",
+                            );
+                            setState(() {
+                              _selectedServiceType = newvalue;
+                            });
                           },
-                          icon: Icon(Icons.close_sharp, color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  ),
+                          itemAsString: (serviceTypeModel item) =>
+                              item.name ?? "No Name",
+                          validator: (value) {
+                            if (value == null)
+                              return "Please select a Service Type";
+                            return null;
+                          },
+                        );
+                      },
+                    ),
 
-                  CustomLabeltext("Service Center"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    enabled: false,
-                    fillColor: Colors.red.shade50,
-                    filled: true,
-                    controller: _serviceCenterController,
-                    isPassword: false,
-                  ),
-
-                  const SizedBox(height: 10),
-                  CustomLabeltext("Service Type"),
-                  const SizedBox(height: 8),
-                  Consumer<GetAddButtonServiceType_Provider>(
-                    builder: (context, serviceTypeProvider, child) {
-                      return CustomDropdown<serviceTypeModel>(
-                        hinText: "Select ServiceType",
-                        items:
-                            getAddButton_serviceType_Provider.serviceTypeList,
-                        value: _selectedServiceType,
-                        selectedItem: _selectedServiceType,
-                        onChanged: (serviceTypeModel? newvalue) {
-                          debugPrint(
-                            "DROPDOWN CHANGED: User selected Service Center ID: ${newvalue?.id}",
-                          );
-                          setState(() {
-                            _selectedServiceType = newvalue;
-                          });
-                        },
-                        itemAsString: (serviceTypeModel item) =>
-                            item.name ?? "No Name",
-                        validator: (value) {
-                          if (value == null)
-                            return "Please select a Service Type";
-                          return null;
-                        },
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 10),
-                  CustomLabeltext("Date"),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () {
-                      _selectDate(context);
-                    },
-                    child: AbsorbPointer(
-                      child: CustomTextField(
-                        //  hintText: todayString,
-                        textStyle: TextStyle(color: Colors.black),
-                        isPassword: false,
-                        readOnly: true,
-                        controller: _serviceDateDisplayController,
-                        suffixIcon: Icon(
-                          Icons.calendar_month_outlined,
-                          color: AppColor().primariColor,
-                          // color: Colors.grey.shade600,
+                    const SizedBox(height: 10),
+                    CustomLabeltext("Date"),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                      child: AbsorbPointer(
+                        child: CustomTextField(
+                          //  hintText: todayString,
+                          textStyle: TextStyle(color: Colors.black),
+                          isPassword: false,
+                          readOnly: true,
+                          controller: _serviceDateDisplayController,
+                          suffixIcon: Icon(
+                            Icons.calendar_month_outlined,
+                            color: AppColor().primariColor,
+                            // color: Colors.grey.shade600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 10),
-                  const CustomLabeltext("Name"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: _nameController,
-                    hintText: "Name",
-                    isPassword: false,
-                  ),
+                    const SizedBox(height: 10),
+                    const CustomLabeltext("Name"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      controller: _nameController,
+                      hintText: "Name",
+                      isPassword: false,
+                    ),
 
-                  const SizedBox(height: 10),
-                  const CustomLabeltext("Contact No"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    keyboardType: TextInputType.number,
-                    controller: _contactController,
-                    hintText: "Contact",
-                    isPassword: false,
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
+                    const CustomLabeltext("Contact No"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      keyboardType: TextInputType.number,
+                      controller: _contactController,
+                      hintText: "Contact",
+                      isPassword: false,
+                    ),
+                    const SizedBox(height: 10),
 
-                  //Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor().primariColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: _saveNewSerial,
-                        child: serialProvider.isLoading
-                            ? Text(
-                                "Please wait",
-                                style: TextStyle(color: Colors.white),
-                              )
-                            : Text(
-                                "save",
-                                style: TextStyle(color: Colors.white),
+                    //Button
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColor().primariColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
                               ),
-                      ),
-                      SizedBox(width: 10),
-                      //cancel Button
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                            ),
+                            onPressed: _saveNewSerial,
+                            child: serialProvider.isLoading
+                                ? Text(
+                                    "Please wait",
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                : Text(
+                                    "save",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                           ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: AppColor().primariColor),
-                        ),
+                          const SizedBox(width: 10),
+                          //cancel Button
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(color: AppColor().primariColor),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                ],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
             ),
           ),

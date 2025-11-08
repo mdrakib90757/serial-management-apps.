@@ -1,11 +1,6 @@
 import 'dart:async';
-
-//
+import 'package:SerialMan/Screen/servicetaker_screen/serviceTakerWidget/service_taker_queue_served_dialog/service_taker_queue_served_dialog.dart';
 import 'package:SerialMan/global_widgets/custom_clip_path.dart';
-//
-//
-import 'package:SerialMan/global_widgets/custom_refresh_indicator.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -14,13 +9,10 @@ import 'package:SerialMan/Screen/servicetaker_screen/serviceTakerWidget/serviceT
 import 'package:SerialMan/Screen/servicetaker_screen/serviceTakerWidget/update_bookSerialDialog/update_bookSerialDlalog.dart';
 import 'package:SerialMan/api/auth_api/auth_api.dart';
 import 'package:SerialMan/global_widgets/custom_shimmer_list/CustomShimmerList%20.dart';
-import 'package:SerialMan/model/mybooked_model.dart';
-import '../../global_widgets/custom_circle_progress_indicator/custom_circle_progress_indicator.dart';
 import '../../model/user_model.dart';
 import '../../providers/auth_provider/auth_providers.dart';
 import '../../providers/serviceTaker_provider/bookSerialButtonProvider/getBookSerial_provider.dart';
 import '../../providers/serviceTaker_provider/organaizationProvider/organization_provider.dart';
-
 import '../../utils/color.dart';
 import '../../utils/date_formatter/date_formatter.dart';
 
@@ -42,14 +34,13 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
   Businesstype? _selectedBusinessType;
   bool _isLoadingBusinessTypes = false;
   String? _businessTypeError;
-
   DateTime date = DateTime(2022, 12, 24);
   bool _isInit = true;
   bool _controllersInitialized = false;
-
   String _FormatedDateTime = "";
   Timer? _timer;
   DateTime _selectedDate = DateTime.now();
+  Timer? _refreshTimer;
 
   void _updateTime() {
     if (mounted) {
@@ -104,7 +95,21 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
       _loadBusinessTypes();
       _updateTime();
       _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _updateTime());
+
+      _refreshTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+        print("Auto-refreshing serial list...");
+        if (mounted) {
+          _handleRefresh();
+        }
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -133,7 +138,6 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
     final Timedate = _FormatedDateTime;
     final String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
     final authProvider = Provider.of<AuthProvider>(context);
-
     final bookSerialButton = Provider.of<GetBookSerialProvider>(
       context,
       listen: false,
@@ -287,6 +291,7 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                             }
 
                             return Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: bookSerialProvider.bookSerialList.map((
                                 bookSerial,
                               ) {
@@ -300,7 +305,7 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                     );
 
                                 return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 2),
+                                  margin: EdgeInsets.symmetric(vertical: 1),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(5),
@@ -317,6 +322,7 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                           CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
+                                        // company name and status
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -326,7 +332,7 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                                   "No Company Name",
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 15,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -357,63 +363,126 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                           ],
                                         ),
                                         const SizedBox(height: 5),
+
+                                        // serviceCenter and Status time
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              bookSerial.serviceCenter?.name ??
-                                                  "No serviceCenter Name",
-                                              style: TextStyle(
-                                                color: AppColor().primariColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
+                                            GestureDetector(
+                                              onTap: () {
+                                                final String? centerId =
+                                                    bookSerial
+                                                        .serviceCenter
+                                                        ?.id;
+                                                final String centerName =
+                                                    bookSerial
+                                                        .serviceCenter
+                                                        ?.name ??
+                                                    "Queue Details";
+                                                if (centerId != null) {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      // Pass the ID and name to the dialog
+                                                      return ServiceTakerQueueServedDialog(
+                                                        serviceCenterId:
+                                                            centerId,
+                                                        serviceCenterName:
+                                                            centerName,
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                              child: Text(
+                                                bookSerial
+                                                        .serviceCenter
+                                                        ?.name ??
+                                                    "No serviceCenter Name",
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColor().primariColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
                                               ),
                                             ),
                                             Text(
                                               statusTime,
-                                              style: TextStyle(fontSize: 10),
+                                              style: TextStyle(fontSize: 12),
                                             ),
                                           ],
                                         ),
+
+                                        // for other text  for condition make
                                         Visibility(
                                           visible: bookSerial.forSelf == false,
                                           child: Text(
                                             "For ${bookSerial.name ?? "Other"}",
                                           ),
                                         ),
-                                        SizedBox(height: 5),
+                                        const SizedBox(height: 5),
+
+                                        // serviceType and serialNo and servingSerialNo
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Row(
                                               children: [
-                                                Text(
-                                                  bookSerial
-                                                          .serviceType
-                                                          ?.name ??
-                                                      "No ServiceType Name",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      bookSerial
+                                                              .serviceType
+                                                              ?.name ??
+                                                          "No ServiceType Name",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Text(
+                                                      "(${bookSerial.serialNo})",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                SizedBox(width: 5),
-                                                Text(
-                                                  "(${bookSerial.serialNo})",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
+                                                Visibility(
+                                                  visible:
+                                                      bookSerial
+                                                          .serviceCenter
+                                                          ?.servingSerialNos
+                                                          ?.isNotEmpty ??
+                                                      false,
+                                                  child: Text(
+                                                    "Running: ${bookSerial.serviceCenter?.servingSerialNos?.join(', ') ?? ''}",
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
                                             ),
+
+                                            // for cancel button edit button only for serving and waiting status
                                             Visibility(
                                               visible:
                                                   bookSerial.status !=
                                                       "Cancelled" &&
                                                   bookSerial.status !=
-                                                      "Serving",
+                                                      "Serving" &&
+                                                  bookSerial.status !=
+                                                      "Waiting" &&
+                                                  bookSerial.status !=
+                                                      "Served" &&
+                                                  bookSerial.status !=
+                                                      "Present",
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
                                                   right: 17,
@@ -480,8 +549,16 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 5),
-                                        Text("Approx Time : ${ApproxTime}"),
+                                        const SizedBox(height: 5),
+
+                                        // approx time
+                                        Text(
+                                          "Approx Time : ${ApproxTime}",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),

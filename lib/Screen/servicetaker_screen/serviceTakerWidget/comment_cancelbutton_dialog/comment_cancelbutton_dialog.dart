@@ -125,14 +125,14 @@ class _CommentCancelButtonDialogState extends State<CommentCancelButtonDialog> {
     final commentProvider = Provider.of<CommentCancelButtonProvider>(context);
 
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade300,
       insetPadding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
-        // side: BorderSide(color: AppColor().primariColor),
+        //side: BorderSide(color: AppColor().primariColor),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -140,114 +140,117 @@ class _CommentCancelButtonDialogState extends State<CommentCancelButtonDialog> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.arrow_back),
-                    ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Cancel Serial",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      CircleAvatar(
+                        backgroundColor: Colors.grey.shade100,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.close_sharp,
+                            weight: 5,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
 
-                    Text(
-                      "Cancel Serial",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
+                  //
+                  Text(
+                    "Please enter the reason or comment",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _commentController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 5,
+                    minLines: 3,
+                    cursorColor: Colors.grey.shade300,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: AppColor().primariColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      contentPadding: EdgeInsets.all(12),
+                      hintText: "Reason or comment",
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade300,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.close_sharp),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                //
-                Text(
-                  "Please enter the reason or comment",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
                   ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _commentController,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 5,
-                  minLines: 3,
-                  cursorColor: Colors.grey.shade300,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: AppColor().primariColor),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    contentPadding: EdgeInsets.all(12),
-                    hintText: "Reason or comment",
-                    hintStyle: TextStyle(
-                      color: Colors.grey.shade300,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
+                  const SizedBox(height: 15),
 
-                // save and Cancel button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
+                  // save and Cancel button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                          backgroundColor: AppColor().primariColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(5),
+                          ),
                         ),
-                        backgroundColor: AppColor().primariColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(5),
-                        ),
+                        onPressed: () async {
+                          await _CancelComment();
+                        },
+                        child: commentProvider.isLoading
+                            ? Text(
+                                "Please wait...",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : Text(
+                                "Cancel Serial",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
-                      onPressed: () async {
-                        await _CancelComment();
-                      },
-                      child: commentProvider.isLoading
-                          ? Text(
-                              "Please wait...",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : Text(
-                              "Cancel Serial",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

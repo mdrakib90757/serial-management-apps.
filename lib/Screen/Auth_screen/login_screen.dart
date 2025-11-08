@@ -121,14 +121,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: "Login name",
                     isPassword: false,
                     controller: loginName,
-                    prefixIcon: Icons.person,
+                    prefixIcon: Icon(Icons.person, color: Colors.grey.shade400),
                   ),
                   SizedBox(height: 10),
                   CustomTextField(
                     hintText: "Password",
                     isPassword: true,
                     controller: password,
-                    prefixIcon: Icons.lock,
+                    prefixIcon: Icon(Icons.lock, color: Colors.grey.shade400),
                   ),
 
                   SizedBox(height: 8),

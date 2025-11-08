@@ -3,6 +3,7 @@ import 'package:SerialMan/global_widgets/custom_clip_path.dart';
 import 'package:SerialMan/global_widgets/custom_refresh_indicator.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/business_type_provider/business_type_provider.dart';
@@ -29,6 +30,7 @@ import '../../../../providers/serviceTaker_provider/bookSerialButtonProvider/get
 import '../../../../providers/serviceTaker_provider/organaizationProvider/organization_provider.dart';
 import '../../../../providers/serviceTaker_provider/serviceCenter_serialBookProvider/serviceCenter_serialBookProvider.dart';
 import '../../../../providers/serviceTaker_provider/serviceType_serialbook_provider.dart';
+import '../../../../providers/serviceTaker_provider/service_center_search_provider/service_center_search_provider.dart';
 import '../../../../utils/color.dart';
 import '../../../../utils/date_formatter/date_formatter.dart';
 import '../../servicetaker_homescreen.dart';
@@ -55,6 +57,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
   final TextEditingController _contactNoController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _serviceCenterController =
+      TextEditingController();
   UserName? _SelectUserName = UserName.Self;
   List<Businesstype> _businessTypes = [];
 
@@ -69,6 +73,9 @@ class _BookSerialButtonState extends State<BookSerialButton> {
   serviceTypeModel? _selectedServiceType;
   bool _isInit = true;
   DateTime _selectedDate = DateTime.now();
+  final FocusNode _serviceCenterFocusNode = FocusNode();
+  bool _isSuggestionSelected = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -93,6 +100,16 @@ class _BookSerialButtonState extends State<BookSerialButton> {
     });
 
     _dateController.text = DateFormat("yyyy-MM-dd").format(_selectedDate);
+    _serviceCenterFocusNode.addListener(_onFocusChange);
+    _scrollController.addListener(() {});
+  }
+
+  void _onFocusChange() {
+    if (!_serviceCenterFocusNode.hasFocus && !_isSuggestionSelected) {
+      if (mounted) {
+        context.read<ServiceCenterSearchProvider>().clearResults();
+      }
+    }
   }
 
   // load business types
@@ -142,6 +159,10 @@ class _BookSerialButtonState extends State<BookSerialButton> {
     _contactNoController.dispose();
     _nameController.dispose();
     _dateController.dispose();
+    _serviceCenterController.dispose();
+    _serviceCenterFocusNode.removeListener(_onFocusChange);
+    _serviceCenterFocusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -163,9 +184,6 @@ class _BookSerialButtonState extends State<BookSerialButton> {
         businessTypeId == null ||
         serviceCenterId == null ||
         serviceTypeId == null;
-    if (_selectedBusinessType?.id == 1 && organizationId == null) {
-      isIdMissing = true;
-    }
 
     if (isIdMissing) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -294,7 +312,6 @@ class _BookSerialButtonState extends State<BookSerialButton> {
   Widget build(BuildContext context) {
     final bookProvider = Provider.of<bookSerialButton_provider>(context);
     final orgProvider = Provider.of<OrganizationProvider>(context);
-    DateTime selectedDialogDate = DateTime.now();
 
     return MainLayout(
       currentIndex: 0,
@@ -425,127 +442,265 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                         ),
                         const SizedBox(height: 10),
 
-                        // organization field
-                        if (_selectedBusinessType?.id == 1) ...[
-                          const CustomLabeltext(
-                            "Organization",
-                            color: Colors.white,
-                          ),
-                          const SizedBox(height: 8),
-                          Consumer<OrganizationProvider>(
-                            builder: (context, OrgProvider, child) {
-                              return CustomDropdown<OrganizationModel>(
-                                hinText: "Select Organization",
-                                selectedItem: _selectedOrganization,
-                                items: OrgProvider.organizations,
-                                onChanged: (OrganizationModel? Newvalue) {
-                                  setState(() {
-                                    _selectedOrganization = Newvalue;
-                                    _selectedServiceCenter = null;
-                                    _selectedServiceType = null;
-                                    context
-                                        .read<ServiceCenterByTypeProvider>()
-                                        .clearData();
-                                  });
-                                  if (Newvalue != null && Newvalue.id != null) {
-                                    print(
-                                      " Organization Selected. Fetching Service Centers for Company ID: ${Newvalue.id}",
-                                    );
-
-                                    Provider.of<
-                                          serviceCenter_serialBookProvider
-                                        >(context, listen: false)
-                                        .fetchserviceCnter_serialbook(
-                                          Newvalue.id!,
-                                        );
-                                  } else {
-                                    Provider.of<
-                                          serviceCenter_serialBookProvider
-                                        >(context, listen: false)
-                                        .clearData();
-                                  }
-                                },
-                                itemAsString: (OrganizationModel type) =>
-                                    type.name ?? "",
-                                validator: (value) {
-                                  if (value == null)
-                                    return "Please select aOrganization";
-                                  return null;
-                                },
-                              );
-                            },
-                          ),
-                          SizedBox(height: 10),
-                        ],
-                        const SizedBox(height: 10),
-
                         // service center field
                         const CustomLabeltext(
                           "Service Center",
                           color: Colors.white,
                         ),
                         const SizedBox(height: 8),
-                        Consumer<serviceCenter_serialBookProvider>(
-                          builder: (context, orgServiceCenterProvider, child) {
-                            return Consumer<ServiceCenterByTypeProvider>(
-                              builder: (context, typeServiceCenterProvider, child) {
-                                final List<ServiceCenterModel>
-                                allServiceCenters = [
-                                  ...orgServiceCenterProvider.serviceCenterList,
-                                  ...typeServiceCenterProvider.serviceCenters,
-                                ];
-                                final bool isLoading =
-                                    orgServiceCenterProvider.isLoading ||
-                                    typeServiceCenterProvider.isLoading;
 
-                                return CustomDropdown<ServiceCenterModel>(
-                                  hinText: "select serviceCenter",
-                                  selectedItem: _selectedServiceCenter,
-                                  items: allServiceCenters,
-                                  onChanged: (ServiceCenterModel? newValue) {
+                        // This entire Consumer2 block needs to be replaced
+                        Consumer2<
+                          ServiceCenterSearchProvider,
+                          OrganizationProvider
+                        >(
+                          builder: (context, searchProvider, orgProvider, child) {
+                            String getOrgNameById(String? companyId) {
+                              if (companyId == null)
+                                return 'Organization not found';
+                              try {
+                                return orgProvider.organizations
+                                        .firstWhere(
+                                          (org) => org.id == companyId,
+                                        )
+                                        .name ??
+                                    'Unknown Org';
+                              } catch (e) {
+                                return 'Organization not found';
+                              }
+                            }
+
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                return RawAutocomplete<ServiceCenterModel>(
+                                  textEditingController:
+                                      _serviceCenterController,
+                                  focusNode: _serviceCenterFocusNode,
+                                  displayStringForOption: (option) =>
+                                      option.name ?? '',
+                                  optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
+                                        return searchProvider.results;
+                                      },
+                                  fieldViewBuilder:
+                                      (
+                                        context,
+                                        controller,
+                                        focusNode,
+                                        onFieldSubmitted,
+                                      ) {
+                                        return TextFormField(
+                                          cursorColor: Colors.grey.shade500,
+                                          controller: controller,
+                                          focusNode: focusNode,
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                          ),
+                                          onChanged: (value) {
+                                            _isSuggestionSelected = false;
+                                            context
+                                                .read<
+                                                  ServiceCenterSearchProvider
+                                                >()
+                                                .search(value);
+                                          },
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText:
+                                                "Search Service Center...",
+                                            hintStyle: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 14,
+                                                ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.grey.shade400,
+                                              ),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: AppColor().primariColor,
+                                                width: 2,
+                                              ),
+                                            ),
+                                            suffixIcon: searchProvider.isLoading
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          12.0,
+                                                        ),
+                                                    child: CustomLoading(
+                                                      size: 2.5,
+                                                      strokeWidth: 2.5,
+                                                    ),
+                                                  )
+                                                : null,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              borderSide: BorderSide.none,
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (_selectedServiceCenter ==
+                                                    null ||
+                                                value!.isEmpty) {
+                                              return "Please select a Service Center";
+                                            }
+                                            return null;
+                                          },
+                                        );
+                                      },
+                                  optionsViewBuilder: (context, onSelected, options) {
+                                    return Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Material(
+                                        elevation: 4.0,
+                                        child: Container(
+                                          width: constraints.maxWidth,
+                                          margin: const EdgeInsets.only(
+                                            top: 8.0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(
+                                                  0.1,
+                                                ),
+                                                blurRadius: 8,
+                                                offset: Offset(0, 4),
+                                              ),
+                                            ],
+                                          ),
+                                          child: ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxHeight: 280,
+                                            ),
+                                            child: Scrollbar(
+                                              thumbVisibility: true,
+                                              thickness: 6.0,
+                                              radius: Radius.circular(10),
+                                              controller: _scrollController,
+                                              interactive: true,
+                                              child: ListView.separated(
+                                                controller: _scrollController,
+                                                padding: EdgeInsets.zero,
+                                                itemCount: options.length,
+                                                separatorBuilder:
+                                                    (context, index) => Divider(
+                                                      height: 1,
+                                                      thickness: 1,
+                                                      indent: 16,
+                                                      endIndent: 16,
+                                                    ),
+                                                itemBuilder: (context, index) {
+                                                  final option = options
+                                                      .elementAt(index);
+                                                  final orgName =
+                                                      getOrgNameById(
+                                                        option.companyId,
+                                                      );
+
+                                                  return InkWell(
+                                                    onTap: () =>
+                                                        onSelected(option),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 16.0,
+                                                            vertical: 12.0,
+                                                          ),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            orgName,
+                                                            style: TextStyle(
+                                                              fontSize: 13,
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                    0.9,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 4),
+                                                          Text(
+                                                            option.name ??
+                                                                'No Name',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 15,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 4),
+                                                          Text(
+                                                            option.hotlineNo ??
+                                                                'No contact',
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .grey
+                                                                  .shade700,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  onSelected: (selection) {
+                                    _isSuggestionSelected = true;
                                     setState(() {
-                                      _selectedServiceCenter = newValue;
+                                      _selectedServiceCenter = selection;
+                                      _serviceCenterController.text =
+                                          selection.name ?? '';
                                       _selectedServiceType = null;
                                     });
 
-                                    if (newValue != null &&
-                                        newValue.companyId != null &&
-                                        newValue.companyId!.isNotEmpty) {
-                                      final String companyId =
-                                          newValue.companyId!;
-                                      print(
-                                        "Service Center Selected. Fetching Service Types for Company ID: $companyId",
-                                      );
+                                    if (selection.companyId != null &&
+                                        selection.companyId!.isNotEmpty) {
                                       Provider.of<
                                             serviceTypeSerialbook_Provider
                                           >(context, listen: false)
-                                          .serviceType_serialbook(companyId);
-                                    } else {
-                                      print(
-                                        "Company ID not found in the selected Service Center. Clearing service types.",
-                                      );
-                                      Provider.of<
-                                            serviceTypeSerialbook_Provider
-                                          >(context, listen: false)
-                                          .clearData();
+                                          .serviceType_serialbook(
+                                            selection.companyId!,
+                                          );
                                     }
 
-                                    print(newValue?.name);
-                                  },
-                                  itemAsString: (ServiceCenterModel item) =>
-                                      item.name ?? "",
-                                  validator: (value) {
-                                    if (value == null)
-                                      return "Please select a Service Center";
-                                    return null;
+                                    _serviceCenterFocusNode.unfocus();
                                   },
                                 );
                               },
                             );
                           },
                         ),
-                        const SizedBox(height: 10),
 
+                        const SizedBox(height: 10),
                         // service type field
                         const CustomLabeltext("Service Type"),
                         const SizedBox(height: 8),

@@ -147,137 +147,158 @@ class _MyAppbarState extends State<MyAppbar> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
           child: Dialog(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.grey.shade300,
+            insetPadding: EdgeInsets.all(50),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-              side: BorderSide(color: Colors.grey.shade300),
+              //side: BorderSide(color: AppColor().primariColor),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 10,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.grey.shade200,
-                    child: Text(
-                      'H',
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: AppColor().primariColor,
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.grey.shade200,
+                        child: Text(
+                          'H',
+                          style: TextStyle(
+                            fontSize: 30,
+                            color: AppColor().primariColor,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    userName,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Text(userEmail, style: TextStyle(color: Colors.grey[600])),
-                  Divider(
-                    height: 30,
-                    thickness: 2,
-                    color: Colors.grey.shade200,
-                  ),
+                      SizedBox(height: 10),
+                      Text(
+                        userName,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        userEmail,
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      Divider(
+                        height: 30,
+                        thickness: 2,
+                        color: Colors.grey.shade200,
+                      ),
 
-                  // navigate to company profile
-                  if (userType == "company") ...[
-                    _buildDialogOption(
-                      icon: Icons.person_outline,
-                      text: 'View Profile',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => profile_screen(
-                              currentIndex: 0,
-                              onTap: (int) {},
+                      // navigate to company profile
+                      if (userType == "company") ...[
+                        _buildDialogOption(
+                          icon: Icons.person_outline,
+                          text: 'View Profile',
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => profile_screen(
+                                  currentIndex: 0,
+                                  onTap: (int) {},
+                                ),
+                                transitionsBuilder: (_, anim, __, child) {
+                                  return FadeTransition(
+                                    opacity: anim,
+                                    child: child,
+                                  );
+                                },
+                                fullscreenDialog: true,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+
+                      // navigate to customer profile
+                      if (userType == "customer") ...[
+                        _buildDialogOption(
+                          icon: Icons.person_outline,
+                          text: 'View Profile',
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        MainLayout(
+                                          userType: UserType.customer,
+                                          color: Colors.white,
+                                          isExtraScreen: true,
+                                          currentIndex: null,
+                                          onTap: (_) {},
+                                          child: profile_screen(
+                                            onTap: (int) {},
+                                            currentIndex: 0,
+                                          ),
+                                        ),
+
+                                transitionsBuilder: (_, anim, __, child) {
+                                  return FadeTransition(
+                                    opacity: anim,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+
+                      // app settings option
+                      _buildDialogOption(
+                        icon: Icons.settings_outlined,
+                        text: 'App Settings',
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          // Navigate to settings screen
+                        },
+                      ),
+
+                      // logout option
+                      _buildDialogOption(
+                        icon: Icons.logout,
+                        text: 'Logout',
+                        textColor: AppColor().primariColor,
+                        onTap: () async {
+                          final navigator = Navigator.of(context);
+
+                          print("Clearing all provider states");
+                          context
+                              .read<GetNewSerialButtonProvider>()
+                              .clearData();
+
+                          final authProvider = Provider.of<AuthProvider>(
+                            context,
+                            listen: false,
+                          );
+                          await authProvider.logout();
+
+                          navigator.pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
                             ),
-                            transitionsBuilder: (_, anim, __, child) {
-                              return FadeTransition(
-                                opacity: anim,
-                                child: child,
-                              );
-                            },
-                            fullscreenDialog: true,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-
-                  // navigate to customer profile
-                  if (userType == "customer") ...[
-                    _buildDialogOption(
-                      icon: Icons.person_outline,
-                      text: 'View Profile',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    MainLayout(
-                                      userType: UserType.customer,
-                                      color: Colors.white,
-                                      isExtraScreen: true,
-                                      currentIndex: null,
-                                      onTap: (_) {},
-                                      child: profile_screen(
-                                        onTap: (int) {},
-                                        currentIndex: 0,
-                                      ),
-                                    ),
-
-                            transitionsBuilder: (_, anim, __, child) {
-                              return FadeTransition(
-                                opacity: anim,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-
-                  // app settings option
-                  _buildDialogOption(
-                    icon: Icons.settings_outlined,
-                    text: 'App Settings',
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      // Navigate to settings screen
-                    },
+                            (Route<dynamic> route) => false,
+                          );
+                        },
+                      ),
+                    ],
                   ),
-
-                  // logout option
-                  _buildDialogOption(
-                    icon: Icons.logout,
-                    text: 'Logout',
-                    textColor: AppColor().primariColor,
-                    onTap: () async {
-                      final navigator = Navigator.of(context);
-
-                      print("Clearing all provider states");
-                      context.read<GetNewSerialButtonProvider>().clearData();
-
-                      final authProvider = Provider.of<AuthProvider>(
-                        context,
-                        listen: false,
-                      );
-                      await authProvider.logout();
-
-                      navigator.pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (Route<dynamic> route) => false,
-                      );
-                    },
-                  ),
-                ],
+                ),
               ),
             ),
           ),

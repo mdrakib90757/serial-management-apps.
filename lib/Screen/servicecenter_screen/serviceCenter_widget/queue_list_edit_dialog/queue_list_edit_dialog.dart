@@ -215,16 +215,15 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
     final serialProvider = Provider.of<NewSerialButtonProvider>(context);
     final queueEditListProvider = Provider.of<QueueListEditProvider>(context);
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade300,
       insetPadding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColor().primariColor),
+        //side: BorderSide(color: AppColor().primariColor),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
         child: Container(
-          //height: 415,
           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -233,212 +232,222 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
           child: Form(
             key: _dialogFormKey,
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "New Serial",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "New Serial",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(Icons.close_sharp),
-                      ),
-                    ],
-                  ),
+                        CircleAvatar(
+                          backgroundColor: Colors.grey.shade100,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.close_sharp,
+                              weight: 5,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
 
-                  const CustomLabeltext("Service Center"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    enabled: false,
-                    fillColor: Colors.red.shade50,
-                    filled: true,
-                    controller: _serviceCenterController,
-                    isPassword: false,
-                  ),
+                    const CustomLabeltext("Service Center"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      enabled: false,
+                      fillColor: Colors.red.shade50,
+                      filled: true,
+                      controller: _serviceCenterController,
+                      isPassword: false,
+                    ),
 
-                  const SizedBox(height: 10),
-                  const CustomLabeltext("Service Type"),
-                  const SizedBox(height: 8),
-                  Consumer<GetAddButtonServiceType_Provider>(
-                    builder: (context, serviceTypeProvider, child) {
-                      if (_selectedServiceType == null &&
-                          widget.serialToEdit.serviceType != null) {
-                        try {
-                          _selectedServiceType = serviceTypeProvider
-                              .serviceTypeList
-                              .firstWhere(
-                                (item) =>
-                                    item.id ==
-                                    widget.serialToEdit.serviceType!.id,
-                              );
-                        } catch (e) {
-                          print(
-                            "Default service type not found in the list: $e",
-                          );
-                          _selectedServiceType = null;
-                        }
-                      }
-                      return CustomDropdown<serviceTypeModel>(
-                        hinText: "Select ServiceType",
-                        items:
-                            getAddButton_serviceType_Provider.serviceTypeList,
-                        value: _selectedServiceType,
-                        selectedItem: _selectedServiceType,
-                        onChanged: (serviceTypeModel? newValue) {
-                          setState(() {
-                            _selectedServiceType = newValue;
-                            // if (newValue != null) {
-                            //   _serviceTypeHasError = false;
-                            // }
-                          });
-                          print(newValue?.name);
-                        },
-                        itemAsString: (serviceTypeModel item) =>
-                            item.name ?? "No Name",
-                        validator: (value) {
-                          if (value == null)
-                            return "Please select a Service Type";
-                          return null;
-                        },
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  const CustomLabeltext("Date"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    readOnly: false,
-                    onTap: _selectDate,
-                    hintText: DateFormatter.formatForApi(_selectedDate),
-                    textStyle: TextStyle(color: Colors.grey.shade400),
-                    isPassword: false,
-                    controller: _serviceDateDisplayController,
-                    // readOnly: true,
-                    suffixIcon: IconButton(
-                      onPressed: () async {
-                        DateTime? newDate = await showDatePicker(
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: ColorScheme.light(
-                                  primary: AppColor().primariColor,
-                                  // Header color
-                                  onPrimary: Colors.white,
-                                  // Header text color
-                                  onSurface: Colors.black, // Body text color
-                                ),
-                                dialogTheme: DialogThemeData(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
-                                ),
-                                textButtonTheme: TextButtonThemeData(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: AppColor()
-                                        .primariColor, // Button text color
-                                  ),
-                                ),
-                              ),
-                              child: child!,
+                    const SizedBox(height: 10),
+                    const CustomLabeltext("Service Type"),
+                    const SizedBox(height: 8),
+                    Consumer<GetAddButtonServiceType_Provider>(
+                      builder: (context, serviceTypeProvider, child) {
+                        if (_selectedServiceType == null &&
+                            widget.serialToEdit.serviceType != null) {
+                          try {
+                            _selectedServiceType = serviceTypeProvider
+                                .serviceTypeList
+                                .firstWhere(
+                                  (item) =>
+                                      item.id ==
+                                      widget.serialToEdit.serviceType!.id,
+                                );
+                          } catch (e) {
+                            print(
+                              "Default service type not found in the list: $e",
                             );
-                          },
-                          context: context,
-                          initialDate: _selectedDate,
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime(2100),
-                        );
-
-                        if (newDate != null) {
-                          setState(() {
-                            _selectedDate = newDate;
-                            _serviceDateDisplayController.text = DateFormat(
-                              "yyyy-MM-dd",
-                            ).format(_selectedDate);
-                          });
+                            _selectedServiceType = null;
+                          }
                         }
+                        return CustomDropdown<serviceTypeModel>(
+                          hinText: "Select ServiceType",
+                          items:
+                              getAddButton_serviceType_Provider.serviceTypeList,
+                          value: _selectedServiceType,
+                          selectedItem: _selectedServiceType,
+                          onChanged: (serviceTypeModel? newValue) {
+                            setState(() {
+                              _selectedServiceType = newValue;
+                              // if (newValue != null) {
+                              //   _serviceTypeHasError = false;
+                              // }
+                            });
+                            print(newValue?.name);
+                          },
+                          itemAsString: (serviceTypeModel item) =>
+                              item.name ?? "No Name",
+                          validator: (value) {
+                            if (value == null)
+                              return "Please select a Service Type";
+                            return null;
+                          },
+                        );
                       },
-                      icon: Icon(
-                        Icons.date_range_outlined,
-                        color: Colors.grey.shade400,
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    const CustomLabeltext("Date"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      readOnly: false,
+                      onTap: _selectDate,
+                      hintText: DateFormatter.formatForApi(_selectedDate),
+                      textStyle: TextStyle(color: Colors.grey.shade400),
+                      isPassword: false,
+                      controller: _serviceDateDisplayController,
+                      // readOnly: true,
+                      suffixIcon: IconButton(
+                        onPressed: () async {
+                          DateTime? newDate = await showDatePicker(
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: ColorScheme.light(
+                                    primary: AppColor().primariColor,
+                                    // Header color
+                                    onPrimary: Colors.white,
+                                    // Header text color
+                                    onSurface: Colors.black, // Body text color
+                                  ),
+                                  dialogTheme: DialogThemeData(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                  ),
+                                  textButtonTheme: TextButtonThemeData(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: AppColor()
+                                          .primariColor, // Button text color
+                                    ),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                            context: context,
+                            initialDate: _selectedDate,
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime(2100),
+                          );
+
+                          if (newDate != null) {
+                            setState(() {
+                              _selectedDate = newDate;
+                              _serviceDateDisplayController.text = DateFormat(
+                                "yyyy-MM-dd",
+                              ).format(_selectedDate);
+                            });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.date_range_outlined,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 10),
-                  const CustomLabeltext("Name"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: _nameController,
-                    hintText: "Name",
-                    isPassword: false,
-                  ),
+                    const SizedBox(height: 10),
+                    const CustomLabeltext("Name"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      controller: _nameController,
+                      hintText: "Name",
+                      isPassword: false,
+                    ),
 
-                  const SizedBox(height: 10),
-                  const CustomLabeltext("Contact No"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: _contactController,
-                    hintText: "Contact",
-                    isPassword: false,
-                    keyboardType: TextInputType.number,
-                  ),
-                  SizedBox(height: 10),
+                    const SizedBox(height: 10),
+                    const CustomLabeltext("Contact No"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      controller: _contactController,
+                      hintText: "Contact",
+                      isPassword: false,
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: 10),
 
-                  //Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor().primariColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                    //Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor().primariColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: _updateQueueSerial,
+                          child: queueEditListProvider.isLoading
+                              ? Text(
+                                  "Please wait",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : Text(
+                                  "save",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                        SizedBox(width: 10),
+                        //cancel Button
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: AppColor().primariColor),
                           ),
                         ),
-                        onPressed: _updateQueueSerial,
-                        child: queueEditListProvider.isLoading
-                            ? Text(
-                                "Please wait",
-                                style: TextStyle(color: Colors.white),
-                              )
-                            : Text(
-                                "save",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                      ),
-                      SizedBox(width: 10),
-                      //cancel Button
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: AppColor().primariColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

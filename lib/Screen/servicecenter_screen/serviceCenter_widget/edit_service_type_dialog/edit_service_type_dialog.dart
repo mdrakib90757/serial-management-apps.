@@ -123,14 +123,14 @@ class _EditServiceTypeDialogState extends State<EditServiceTypeDialog> {
   Widget build(BuildContext context) {
     final editButton = Provider.of<EditButtonServiceTypeProvider>(context);
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade300,
       insetPadding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
         //side: BorderSide(color: AppColor().primariColor),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -140,116 +140,122 @@ class _EditServiceTypeDialogState extends State<EditServiceTypeDialog> {
           child: SingleChildScrollView(
             child: Form(
               key: _dialogFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Edit Service Types",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Edit Service Types",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          CircleAvatar(
+                            backgroundColor: Colors.grey.shade100,
+                            child: IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: Icon(
+                                Icons.close_sharp,
+                                weight: 5,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      CircleAvatar(
-                        backgroundColor: Colors.grey.shade100,
-                        child: IconButton(
+                    ),
+                    const SizedBox(height: 20),
+
+                    // custom name text field
+                    const CustomLabeltext("Name"),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      controller: nameController,
+                      hintText: "Name",
+                      isPassword: false,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // custom price text field
+                    const CustomLabeltext("Service Price", showStar: false),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      hintText: "Price in BDT",
+                      controller: priceController,
+                      isPassword: false,
+                      enableValidation: false,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // custom time text field
+                    const CustomLabeltext(
+                      "Default Allocated Time",
+                      showStar: false,
+                    ),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      hintText: "Time in minutes",
+                      controller: timeController,
+                      isPassword: false,
+                      enableValidation: false,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // save and cancel button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor().primariColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: _saveEditServiceType,
+                          child: editButton.isLoading
+                              ? Text(
+                                  "Please wait...",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : Text(
+                                  "Save",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: Icon(
-                            Icons.close_sharp,
-                            weight: 5,
-                            color: Colors.grey.shade600,
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: AppColor().primariColor),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // custom name text field
-                  const CustomLabeltext("Name"),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: nameController,
-                    hintText: "Name",
-                    isPassword: false,
-                  ),
-                  const SizedBox(height: 10),
-
-                  // custom price text field
-                  const CustomLabeltext("Service Price", showStar: false),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    hintText: "Price in BDT",
-                    controller: priceController,
-                    isPassword: false,
-                    enableValidation: false,
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 10),
-
-                  // custom time text field
-                  const CustomLabeltext(
-                    "Default Allocated Time",
-                    showStar: false,
-                  ),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    hintText: "Time in minutes",
-                    controller: timeController,
-                    isPassword: false,
-                    enableValidation: false,
-                  ),
-                  const SizedBox(height: 10),
-
-                  // save and cancel button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor().primariColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: _saveEditServiceType,
-                        child: editButton.isLoading
-                            ? Text(
-                                "Please wait...",
-                                style: TextStyle(color: Colors.white),
-                              )
-                            : Text(
-                                "Save",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                      ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: AppColor().primariColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
             ),
           ),

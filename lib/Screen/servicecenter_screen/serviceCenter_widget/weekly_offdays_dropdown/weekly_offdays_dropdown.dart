@@ -114,7 +114,14 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(day, style: const TextStyle(fontSize: 14)),
+                        child: Text(
+                          day,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ],
                   ),

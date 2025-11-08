@@ -174,6 +174,7 @@ class _service_center_service_type_widgetState
                                 style: TextStyle(
                                   color: AppColor().primariColor,
                                   fontSize: 18,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               Row(
@@ -183,6 +184,7 @@ class _service_center_service_type_widgetState
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                   Spacer(),
@@ -221,6 +223,7 @@ class _service_center_service_type_widgetState
                                                 color:
                                                     AppColor().scoenddaryColor,
                                                 fontSize: 15,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                           );
@@ -235,6 +238,7 @@ class _service_center_service_type_widgetState
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 15,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],

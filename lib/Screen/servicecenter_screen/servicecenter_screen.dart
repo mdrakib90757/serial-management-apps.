@@ -1,7 +1,4 @@
-//
 import 'package:SerialMan/global_widgets/custom_clip_path.dart';
-//
-//
 import 'package:SerialMan/global_widgets/custom_refresh_indicator.dart';
 import 'package:SerialMan/global_widgets/custom_sanckbar.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +85,6 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
             physics: const AlwaysScrollableScrollPhysics(),
             child: getAddButtonProvider.isLoading
                 ? CustomShimmerList(itemCount: 10)
-                //
                 : Stack(
                     children: [
                       ClipPath(
@@ -251,6 +247,7 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
                   style: TextStyle(
                     color: AppColor().primariColor,
                     fontSize: 18,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Row(
@@ -264,6 +261,7 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 15,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
@@ -271,6 +269,7 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 15,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],

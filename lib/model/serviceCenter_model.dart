@@ -11,6 +11,7 @@ class ServiceCenterModel {
   int? noOfReservedSerials;
   String? serialNoPolicy;
   int? dailyQuota;
+  List<int>? servingSerialNos;
 
   ServiceCenterModel({
     required this.id,
@@ -25,6 +26,7 @@ class ServiceCenterModel {
     this.serialNoPolicy,
     this.weeklyOffDays,
     this.dailyQuota,
+    this.servingSerialNos,
   });
 
   factory ServiceCenterModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,9 @@ class ServiceCenterModel {
       noOfReservedSerials: json["noOfReservedSerials"],
       serialNoPolicy: json["serialNoPolicy"],
       dailyQuota: json["dailyQuota"],
+      servingSerialNos: json["servingSerialNos"] == null
+          ? []
+          : List<int>.from(json["servingSerialNos"].map((x) => x)),
     );
   }
 
@@ -64,6 +69,7 @@ class ServiceCenterModel {
       "noOfReservedSerials": noOfReservedSerials,
       "serialNoPolicy": serialNoPolicy,
       "dailyQuota": dailyQuota,
+      "servingSerialNos": servingSerialNos ?? [],
     };
   }
 }

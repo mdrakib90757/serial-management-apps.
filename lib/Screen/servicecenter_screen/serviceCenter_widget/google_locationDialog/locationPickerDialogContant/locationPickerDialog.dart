@@ -184,7 +184,7 @@ class _LocationPickerDialogState extends State<LocationPickerDialog> {
                                             return null;
                                           },
                                         ),
-                                        SizedBox(height: 10),
+                                        const SizedBox(height: 10),
                                         Expanded(
                                           child: LocationPickerDialogContent(
                                             newLocationToDisplay:
@@ -209,9 +209,9 @@ class _LocationPickerDialogState extends State<LocationPickerDialog> {
                                         ),
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.end,
+                                              CrossAxisAlignment.center,
                                           children: [
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
@@ -247,7 +247,7 @@ class _LocationPickerDialogState extends State<LocationPickerDialog> {
                                                 }
                                               },
                                             ),
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: Colors.white,
@@ -281,7 +281,7 @@ class _LocationPickerDialogState extends State<LocationPickerDialog> {
                           },
                           child: Icon(Icons.fullscreen, size: 30),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(context);
@@ -292,7 +292,7 @@ class _LocationPickerDialogState extends State<LocationPickerDialog> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 DropdownSearch<Suggestion>(
                   asyncItems: (String filter) async {
                     final data = await _mapsService.fetchSuggestions(filter);
@@ -356,7 +356,7 @@ class _LocationPickerDialogState extends State<LocationPickerDialog> {
                     return null;
                   },
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 SizedBox(
                   height: 500,
                   child: LocationPickerDialogContent(
@@ -371,10 +371,10 @@ class _LocationPickerDialogState extends State<LocationPickerDialog> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

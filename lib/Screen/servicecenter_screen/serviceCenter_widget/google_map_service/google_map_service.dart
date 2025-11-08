@@ -16,7 +16,8 @@ class Suggestion {
 }
 
 class GoogleMapsService {
-  final String _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+  //final String _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+  final String _apiKey = "AIzaSyBWSvcdDI8ecmzSEb-QM924_E3FD1McM3I";
   Future<List<Suggestion>> fetchSuggestions(String input) async {
     if (input.isEmpty) {
       return [];

@@ -108,7 +108,11 @@ class _CustomFieldWithTabsState extends State<CustomFieldWithTabs> {
         children: [
           const Text(
             "Weekly Hour",
-            style: TextStyle(color: Colors.black, fontSize: 15),
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 8),
           Container(

@@ -10,19 +10,10 @@ import '../../../../providers/serviceCenter_provider/statusButtonProvider/get_st
 import '../../../../providers/serviceCenter_provider/statusButtonProvider/status_UpdateButton_provider.dart';
 
 class ManageSerialDialog extends StatefulWidget {
-  // final String? initialStatus;
-  // final String? serviceCenterId;
-  // final String? serviceId;
   final String? date;
   final SerialModel serialDetails;
-  const ManageSerialDialog({
-    Key? key,
-    // this.serviceId,
-    // this.serviceCenterId,
-    //this.initialStatus,
-    this.date,
-    required this.serialDetails,
-  }) : super(key: key);
+  const ManageSerialDialog({Key? key, this.date, required this.serialDetails})
+    : super(key: key);
 
   @override
   _ManageSerialDialogState createState() => _ManageSerialDialogState();
@@ -45,18 +36,14 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     final details = widget.serialDetails;
-
     final String currentStatus = details.status?.toLowerCase() ?? 'booked';
-
     if (currentStatus == 'serving') {
       _selectedStatus = 'Served';
     } else {
       _selectedStatus = details.status ?? 'Booked';
     }
-
     final defaultPrice = details.serviceType?.price?.toString() ?? '0.0';
     _amountController.text = defaultPrice;
 
@@ -83,6 +70,7 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
       insetPadding: const EdgeInsets.symmetric(horizontal: 8.0),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

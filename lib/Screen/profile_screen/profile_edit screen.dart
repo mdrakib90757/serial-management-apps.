@@ -162,6 +162,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 15,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Consumer(
@@ -172,6 +173,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 17,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     );
                                   },
@@ -205,6 +207,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 15,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Consumer(
@@ -215,6 +218,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 17,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     );
                                   },
@@ -247,6 +251,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 15,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Consumer(
@@ -257,6 +262,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 17,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     );
                                   },
@@ -289,6 +295,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 15,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Consumer(
@@ -299,6 +306,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 17,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     );
                                   },
@@ -331,6 +339,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 15,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Text(
@@ -338,6 +347,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 17,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -368,6 +378,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.6),
                                     fontSize: 15,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Text(
@@ -378,6 +389,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 17,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],

@@ -138,16 +138,15 @@ class _add_service_center_service_type_dialogState
     final secondServiceType =
         Provider.of<add_service_center_service_type_provider>(context);
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade300,
       insetPadding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
-        // side: BorderSide(color: AppColor().primariColor),
+        //side: BorderSide(color: AppColor().primariColor),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
         child: Container(
-          //height: 410,
           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -156,162 +155,165 @@ class _add_service_center_service_type_dialogState
           child: SingleChildScrollView(
             child: Form(
               key: _dialogFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.selectedServiceCenter?.name != null
-                            ? " ${widget.selectedServiceCenter!.name}"
-                            : "Add Service Types",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.selectedServiceCenter?.name != null
+                              ? " ${widget.selectedServiceCenter!.name}"
+                              : "Add Service Types",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                        CircleAvatar(
+                          backgroundColor: Colors.grey.shade100,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.close_sharp,
+                              weight: 5,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    // custom dropdown for service center
+                    const CustomLabeltext("Service Type"),
+                    const SizedBox(height: 8),
+                    Consumer<GetAddButtonServiceType_Provider>(
+                      builder: (context, serviceTypeProvider, child) {
+                        return CustomDropdown<serviceTypeModel>(
+                          hinText: "Select ServiceType",
+                          items:
+                              getAddButton_serviceType_Provider.serviceTypeList,
+                          value: _selectedServiceType,
+                          selectedItem: _selectedServiceType,
+                          onChanged: (serviceTypeModel? newvalue) {
+                            debugPrint(
+                              "DROPDOWN CHANGED: User selected Service Center ID: ${newvalue?.id}",
+                            );
+                            setState(() {
+                              _selectedServiceType = newvalue;
+                              if (newvalue != null) {
+                                ServicePriceController.text =
+                                    newvalue.price?.toString() ?? '';
+                                timeController.text =
+                                    newvalue.defaultAllocatedTime?.toString() ??
+                                    '';
+                              } else {
+                                ServicePriceController.clear();
+                                timeController.clear();
+                              }
+                            });
+                          },
+                          itemAsString: (serviceTypeModel item) =>
+                              item.name ?? "No Name",
+                          validator: (value) {
+                            if (value == null)
+                              return "Please select a Service Type";
+                            return null;
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 10),
+
+                    // custom text field for service price
+                    const CustomLabeltext("Service Price", showStar: false),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      hintText: "Price in BDT",
+                      controller: ServicePriceController,
+                      isPassword: false,
+                      enableValidation: true,
+                      keyboardType: TextInputType.number,
+                      suffixIcon: Container(
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Center(child: Text("BDT")),
                       ),
-                      CircleAvatar(
-                        backgroundColor: Colors.grey.shade100,
-                        child: IconButton(
+                    ),
+                    const SizedBox(height: 10),
+
+                    // custom text field for default allocated time
+                    const CustomLabeltext(
+                      "Default Allocated Time",
+                      showStar: false,
+                    ),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      hintText: "Time in minutes",
+                      controller: timeController,
+                      isPassword: false,
+                      enableValidation: false,
+                      suffixIcon: Container(
+                        width: 65,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Center(child: Text("Minutes")),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // save and cancel button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor().primariColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: _saveAddSecondServiceType,
+                          child: secondServiceType.isLoading
+                              ? Text(
+                                  "Please Wait",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : Text(
+                                  "Save",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: Icon(
-                            Icons.close_sharp,
-                            weight: 5,
-                            color: Colors.grey.shade600,
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: AppColor().primariColor),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
-                  // custom dropdown for service center
-                  const CustomLabeltext("Service Type"),
-                  const SizedBox(height: 8),
-                  Consumer<GetAddButtonServiceType_Provider>(
-                    builder: (context, serviceTypeProvider, child) {
-                      return CustomDropdown<serviceTypeModel>(
-                        hinText: "Select ServiceType",
-                        items:
-                            getAddButton_serviceType_Provider.serviceTypeList,
-                        value: _selectedServiceType,
-                        selectedItem: _selectedServiceType,
-                        onChanged: (serviceTypeModel? newvalue) {
-                          debugPrint(
-                            "DROPDOWN CHANGED: User selected Service Center ID: ${newvalue?.id}",
-                          );
-                          setState(() {
-                            _selectedServiceType = newvalue;
-                            if (newvalue != null) {
-                              ServicePriceController.text =
-                                  newvalue.price?.toString() ?? '';
-                              timeController.text =
-                                  newvalue.defaultAllocatedTime?.toString() ??
-                                  '';
-                            } else {
-                              ServicePriceController.clear();
-                              timeController.clear();
-                            }
-                          });
-                        },
-                        itemAsString: (serviceTypeModel item) =>
-                            item.name ?? "No Name",
-                        validator: (value) {
-                          if (value == null)
-                            return "Please select a Service Type";
-                          return null;
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-
-                  // custom text field for service price
-                  const CustomLabeltext("Service Price", showStar: false),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    hintText: "Price in BDT",
-                    controller: ServicePriceController,
-                    isPassword: false,
-                    enableValidation: true,
-                    keyboardType: TextInputType.number,
-                    suffixIcon: Container(
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Center(child: Text("BDT")),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // custom text field for default allocated time
-                  const CustomLabeltext(
-                    "Default Allocated Time",
-                    showStar: false,
-                  ),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    hintText: "Time in minutes",
-                    controller: timeController,
-                    isPassword: false,
-                    enableValidation: false,
-                    suffixIcon: Container(
-                      width: 65,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Center(child: Text("Minutes")),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // save and cancel button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor().primariColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: _saveAddSecondServiceType,
-                        child: secondServiceType.isLoading
-                            ? Text(
-                                "Please Wait",
-                                style: TextStyle(color: Colors.white),
-                              )
-                            : Text(
-                                "Save",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                      ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: AppColor().primariColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

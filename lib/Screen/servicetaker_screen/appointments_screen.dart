@@ -51,6 +51,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     }
   }
 
+  // handleRefresh function
   Future<void> _handleRefresh() async {
     _clearFilter();
     await context.read<MySerialServiceTakerProvider>().fetchMyServices(
@@ -58,6 +59,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     );
   }
 
+  // selectDate function
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? newDate = await showDatePicker(
       context: context,
@@ -169,6 +171,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     );
   }
 
+  // buildHeader function
   Widget _buildHeader(String todayHint) {
     return Column(
       children: [
@@ -203,15 +206,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           child: _isFilterVisible
               ? Row(
                   children: [
-                    const Text(
-                      "ServiceDate :",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
                     Expanded(
                       child: GestureDetector(
                         onTap: () => _selectDate(context),
@@ -223,6 +217,25 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                             controller: _dateController,
                             hintText: todayHint,
                             textStyle: const TextStyle(color: Colors.black),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 12.0,
+                                right: 8.0,
+                              ),
+                              child: Text(
+                                "Service Date :",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            // এবং এই লাইনটি যোগ করুন
+                            prefixIconConstraints: const BoxConstraints(
+                              minWidth: 0,
+                              minHeight: 0,
+                            ),
                             suffixIcon: Icon(
                               Icons.calendar_month,
                               color: AppColor().primariColor,
@@ -240,6 +253,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     );
   }
 
+  // buildServiceList function
   Widget _buildServiceList(
     List<MyService> services,
     MySerialServiceTakerProvider provider,
@@ -261,6 +275,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     );
   }
 
+  // buildEmptyMessage function
   Widget _buildEmptyMessage() {
     return Center(
       child: Padding(
@@ -280,6 +295,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     );
   }
 
+  // buildSerialListItem function
   Widget _buildSerialListItem(MyService service) {
     final serviceDate = service.statusTime != null
         ? DateFormat('dd/MM/yyyy').format(service.statusTime!)
@@ -326,6 +342,15 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    service.serviceCenter?.name ?? 'No Organization',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: AppColor().primariColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   if (service.serviceType?.name != null)
                     Text(
                       service.serviceType!.name ?? "",
@@ -341,7 +366,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                     style: TextStyle(fontSize: 15, color: Colors.grey.shade700),
                   ),
                   Text(
-                    'Booked at: $bookingTime',
+                    '${service.status ?? 'N/A'} at: $bookingTime',
                     style: TextStyle(fontSize: 15, color: Colors.grey.shade700),
                   ),
                 ],
@@ -353,6 +378,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     );
   }
 
+  // buildTheEndDivider function
   Widget _buildTheEndDivider() {
     return Row(
       children: [

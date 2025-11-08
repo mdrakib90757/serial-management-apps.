@@ -1,12 +1,5 @@
-//
 import 'package:SerialMan/global_widgets/custom_clip_path.dart';
-import 'package:SerialMan/global_widgets/custom_refresh_indicator.dart';
 import 'package:SerialMan/global_widgets/custom_sanckbar.dart';
-//
-import 'package:SerialMan/global_widgets/custom_refresh_indicator.dart';
-import 'package:SerialMan/global_widgets/custom_sanckbar.dart';
-import 'package:dropdown_search/dropdown_search.dart';
-//
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:SerialMan/Screen/servicecenter_screen/serviceCenter_widget/add_service_type_dialog/add_service_type_dialog.dart';
@@ -76,10 +69,20 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
         debugPrint(" Error in ServicetypeScreen: Could not find Company ID.");
       }
     }
+    if (mounted) {
+      setState(() {
+        _isScreenLoading = false;
+      });
+    }
   }
 
   // refresh handler
   Future<void> _handleRefresh() async {
+    if (mounted) {
+      setState(() {
+        _isScreenLoading = true;
+      });
+    }
     final profileProvider = context.read<Getprofileprovider>();
     final companyId = profileProvider.profileData?.currentCompany.id;
     if (companyId != null) {
@@ -90,6 +93,11 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
         context.read<GetAddButtonProvider>().fetchGetAddButton(companyId),
       ]);
     }
+    if (mounted) {
+      setState(() {
+        _isScreenLoading = false;
+      });
+    }
   }
 
   @override
@@ -99,249 +107,239 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
     );
 
     return Scaffold(
-      //
       backgroundColor: AppColor().backgroundColor,
       body: RefreshIndicator(
         onRefresh: _handleRefresh,
-        backgroundColor: AppColor().backgroundColor,
-
-        child: RefreshIndicator(
-          onRefresh: _handleRefresh,
-          backgroundColor: Colors.white,
-          //
-          color: AppColor().primariColor,
-          child:
-              serviceTypeProvider.isLoading &&
-                  serviceTypeProvider.serviceTypeList.isEmpty
-              ? CustomShimmerList(itemCount: 10)
-              //
-              : SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Stack(
-                    children: [
-                      // top design
-                      ClipPath(
-                        clipper: ClipPathClipper(),
-                        child: Container(
-                          color: AppColor().primariColor,
-                          height: 250,
-                          width: double.maxFinite,
-                          alignment: Alignment.topLeft,
-                          padding: const EdgeInsets.only(
-                            top: 0,
-                            left: 10,
-                            right: 10,
-                          ),
+        backgroundColor: Colors.white,
+        color: AppColor().primariColor,
+        child: _isScreenLoading
+            ? CustomShimmerList(itemCount: 10)
+            : SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Stack(
+                  children: [
+                    // top design
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 15,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // create add button
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Service Type",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 15,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // create add button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Service Type",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                              ),
 
-                                // add button widget
-                                GestureDetector(
-                                  onTap: () {
-                                    //add Button
-                                    _showDialogBox(context);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 7,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColor().primariColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(color: Colors.white),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.add,
+                              // add button widget
+                              GestureDetector(
+                                onTap: () {
+                                  //add Button
+                                  _showDialogBox(context);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 7,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColor().primariColor,
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(color: Colors.white),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                        size: 15,
+                                      ),
+                                      SizedBox(width: 5),
+                                      const Text(
+                                        "Add",
+                                        style: TextStyle(
                                           color: Colors.white,
-                                          size: 15,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                        SizedBox(width: 5),
-                                        const Text(
-                                          "Add",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
 
-                            // service center dropdown
-                            serviceTypeProvider.serviceTypeList.isEmpty
-                                ? Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.inbox_outlined,
-                                          size: 60,
-                                          color: Colors.grey.shade300,
+                          // service center dropdown
+                          serviceTypeProvider.serviceTypeList.isEmpty
+                              ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.inbox_outlined,
+                                        size: 60,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'No Service Type Found',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey[300],
                                         ),
-                                        const SizedBox(height: 12),
-                                        Text(
-                                          'No Service Type Found',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[300],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : ListView.builder(
-                                    // scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount:
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : ListView.builder(
+                                  // scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount:
+                                      serviceTypeProvider
+                                          .serviceTypeList
+                                          .length +
+                                      1,
+                                  itemBuilder: (context, index) {
+                                    if (index >=
                                         serviceTypeProvider
                                             .serviceTypeList
-                                            .length +
-                                        1,
-                                    itemBuilder: (context, index) {
-                                      if (index >=
-                                          serviceTypeProvider
-                                              .serviceTypeList
-                                              .length) {
-                                        return service_center_service_type_widget();
-                                      }
-                                      final type = serviceTypeProvider
-                                          .serviceTypeList[index];
-                                      return Container(
-                                        margin: EdgeInsets.symmetric(
-                                          vertical: 2,
+                                            .length) {
+                                      return service_center_service_type_widget();
+                                    }
+                                    final type = serviceTypeProvider
+                                        .serviceTypeList[index];
+                                    return Container(
+                                      margin: EdgeInsets.symmetric(vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                          border: Border.all(
-                                            color: Colors.grey.shade300,
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                type.name ?? "N/A",
-                                                style: TextStyle(
-                                                  color:
-                                                      AppColor().primariColor,
-                                                  fontSize: 18,
-                                                ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              type.name ?? "N/A",
+                                              style: TextStyle(
+                                                color: AppColor().primariColor,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    "${type.price.toString()} BDT",
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 15,
-                                                    ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "${type.price.toString()} BDT",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500,
                                                   ),
-                                                  Spacer(),
-                                                  Row(
-                                                    children: [
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          _showDialogBoxEDIT(
-                                                            context,
-                                                            type,
-                                                          );
-                                                        },
+                                                ),
+                                                Spacer(),
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        _showDialogBoxEDIT(
+                                                          context,
+                                                          type,
+                                                        );
+                                                      },
 
-                                                        child: Text(
-                                                          "Edit",
-                                                          style: TextStyle(
-                                                            color: AppColor()
-                                                                .scoenddaryColor,
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
+                                                      child: Text(
+                                                        "Edit",
+                                                        style: TextStyle(
+                                                          color: AppColor()
+                                                              .scoenddaryColor,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 10),
-                                                      Builder(
-                                                        builder: (BuildContext context) {
-                                                          return GestureDetector(
-                                                            onTap: () {
-                                                              _showDeleteConfirmationMenu(
-                                                                context,
-                                                                type,
-                                                              );
-                                                            },
-                                                            child: Text(
-                                                              "Delete",
-                                                              style: TextStyle(
-                                                                color: AppColor()
-                                                                    .scoenddaryColor,
-                                                                fontSize: 15,
-                                                              ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Builder(
+                                                      builder: (BuildContext context) {
+                                                        return GestureDetector(
+                                                          onTap: () {
+                                                            _showDeleteConfirmationMenu(
+                                                              context,
+                                                              type,
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            "Delete",
+                                                            style: TextStyle(
+                                                              color: AppColor()
+                                                                  .scoenddaryColor,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
                                                             ),
-                                                          );
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              Text(
-                                                "${type.defaultAllocatedTime.toString()} Minutes",
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
                                                 ),
+                                              ],
+                                            ),
+                                            Text(
+                                              "${type.defaultAllocatedTime.toString()} Minutes",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      );
-                                    },
-                                  ),
-                          ],
-                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-        ),
+              ),
       ),
     );
   }

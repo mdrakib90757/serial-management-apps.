@@ -30,7 +30,7 @@ class _CustomLabeltextState extends State<CustomLabeltext> {
         style: TextStyle(
           color: widget.color ?? Colors.black,
           fontSize: widget.fonsize ?? 13,
-          fontWeight: widget.fontWeight ?? FontWeight.normal,
+          fontWeight: widget.fontWeight ?? FontWeight.w500,
         ),
         children: widget.showStar
             ? [

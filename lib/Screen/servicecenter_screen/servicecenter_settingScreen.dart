@@ -34,6 +34,8 @@ class _Servicecenter_SettingscreenState
   List<Data> rolesList = [];
   bool _isDataFetched = false;
   String? _lastFetchedCompanyId;
+  bool _isScreenLoading = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -41,6 +43,12 @@ class _Servicecenter_SettingscreenState
   }
 
   Future<void> _fetchScreenData(String companyId) async {
+    if (mounted) {
+      setState(() {
+        _isScreenLoading = true;
+      });
+    }
+
     if (_lastFetchedCompanyId == companyId) {}
 
     _lastFetchedCompanyId = companyId;
@@ -64,6 +72,11 @@ class _Servicecenter_SettingscreenState
       addUserServiceCenterProvider.fetchUsers(companyId),
       rolesProvider.fetchRoles(),
     ]);
+    if (mounted) {
+      setState(() {
+        _isScreenLoading = false;
+      });
+    }
   }
 
   @override
@@ -75,6 +88,12 @@ class _Servicecenter_SettingscreenState
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _fetchScreenData(companyId);
           });
+        }
+        if (_isScreenLoading) {
+          return Scaffold(
+            backgroundColor: AppColor().backgroundColor,
+            body: CustomShimmerList(itemCount: 10),
+          );
         }
 
         if (companyId == null) {
@@ -178,7 +197,7 @@ class _Servicecenter_SettingscreenState
                     clipper: ClipPathClipper(),
                     child: Container(
                       color: AppColor().primariColor,
-                      height: 250,
+                      height: 230,
                       width: double.maxFinite,
                       alignment: Alignment.topLeft,
                       padding: const EdgeInsets.only(
@@ -243,14 +262,16 @@ class _Servicecenter_SettingscreenState
                             ),
                           ],
                         ),
+
                         // name
                         Row(
                           children: [
                             Text(
-                              "Name : ",
+                              "Name :-   ",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -258,19 +279,22 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
+
+                        // address line 1
                         Row(
                           children: [
                             Text(
-                              "Address Line1 : ",
+                              "Address Line1 :-    ",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -278,20 +302,22 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
+
                         // addressLine2 info
                         Row(
                           children: [
                             Text(
-                              "AddressLine2:- ",
+                              "AddressLine2:-   ",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -299,7 +325,7 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -310,10 +336,11 @@ class _Servicecenter_SettingscreenState
                         Row(
                           children: [
                             Text(
-                              "Email: ",
+                              "Email:-    ",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -321,21 +348,22 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 5),
 
                         // phone info
                         Row(
                           children: [
                             Text(
-                              "Phone : ",
+                              "Phone :-   ",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -343,7 +371,7 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -354,18 +382,19 @@ class _Servicecenter_SettingscreenState
                         Row(
                           children: [
                             Text(
-                              "Business Type : ",
+                              "Business Type :-   ",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
                               "${companyDetails.companyDetails?.businessType?.name}",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -376,10 +405,11 @@ class _Servicecenter_SettingscreenState
                         Row(
                           children: [
                             Text(
-                              "Division : ",
+                              "Division :-    ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -387,7 +417,7 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -398,10 +428,11 @@ class _Servicecenter_SettingscreenState
                         Row(
                           children: [
                             Text(
-                              "District :",
+                              "District :-    ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -409,7 +440,7 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -420,10 +451,11 @@ class _Servicecenter_SettingscreenState
                         Row(
                           children: [
                             Text(
-                              "Thana : ",
+                              "Thana :-   ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -431,7 +463,7 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -442,10 +474,11 @@ class _Servicecenter_SettingscreenState
                         Row(
                           children: [
                             Text(
-                              "Area : ",
+                              "Area :-    ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
@@ -453,7 +486,7 @@ class _Servicecenter_SettingscreenState
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -464,10 +497,11 @@ class _Servicecenter_SettingscreenState
                         Row(
                           children: [
                             Text(
-                              "Location : ",
+                              "Location :-    ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
 
@@ -707,14 +741,37 @@ class _Servicecenter_SettingscreenState
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Expanded(child: Text(user.name)),
+                                            Expanded(
+                                              child: Text(
+                                                user.name,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
                                             const SizedBox(width: 20),
-                                            Expanded(child: Text(roleName)),
+                                            Expanded(
+                                              child: Text(
+                                                roleName,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
                                             Expanded(
                                               child: Text(
                                                 user.isActive == true
                                                     ? "Yes"
                                                     : "No",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                  color: Colors.black,
+                                                ),
                                               ),
                                             ),
                                             Row(

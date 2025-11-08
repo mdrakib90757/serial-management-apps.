@@ -1,3 +1,4 @@
+import 'package:SerialMan/providers/serviceTaker_provider/service_center_search_provider/service_center_search_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/addButtonServiceType_Provider/deleteServiceTypeProvider/deleteServiceTypeProvider.dart';
@@ -34,6 +35,7 @@ import '../serviceCenter_provider/location_provider/location_provider.dart';
 import '../serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart';
 import '../serviceCenter_provider/newSerialButton_provider/newSerialProvider.dart';
 import '../serviceCenter_provider/newSerialButton_provider/queue_edit_list_provider/queue_edit_list_provider.dart';
+import '../serviceCenter_provider/nextButton_provider/get_nextButton_provider.dart';
 import '../serviceCenter_provider/nextButton_provider/nextButton_provider.dart';
 import '../serviceCenter_provider/roles_service_center_provider/roles_service_center_provider.dart';
 
@@ -109,8 +111,8 @@ class AppProviders {
       ChangeNotifierProvider(create: (context) => QueueListEditProvider()),
       ChangeNotifierProvider(create: (context) => getStatusUpdate_Provider()),
       ChangeNotifierProvider(create: (context) => statusUpdateButton_provder()),
-
       ChangeNotifierProvider(create: (context) => nextButtonProvider()),
+      ChangeNotifierProvider(create: (context) => GetNextButtonProvider()),
 
       ChangeNotifierProvider(create: (context) => BusinessTypeProvider()),
       ChangeNotifierProvider(create: (context) => CompanyDetailsProvider()),
@@ -164,6 +166,10 @@ class AppProviders {
 
       ChangeNotifierProvider(
         create: (context) => serviceCenter_serialBookProvider(),
+      ),
+
+      ChangeNotifierProvider(
+        create: (context) => ServiceCenterSearchProvider(),
       ),
     ];
   }

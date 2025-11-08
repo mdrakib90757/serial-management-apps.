@@ -7,7 +7,7 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final FocusNode? focusNode;
-  final IconData? prefixIcon;
+  final Widget? prefixIcon;
   final Widget? prefix;
   final Widget? suffixIcon;
   final TextInputAction? textInputAction;
@@ -121,6 +121,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         border: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey.shade400),
         ),
+
         focusedBorder: widget.showFocusBorder
             ? OutlineInputBorder(
                 borderSide: BorderSide(
@@ -136,13 +137,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
         filled: true,
         fillColor: widget.fillColor ?? Colors.white,
 
-        prefixIcon: widget.prefixIcon != null
-            ? Icon(widget.prefixIcon, color: Colors.grey.shade400)
-            : null,
+        prefixIcon: widget.prefixIcon,
         hintText: widget.hintText,
         hintStyle: TextStyle(
           color: widget.textStyle != null ? Colors.black : Colors.grey.shade400,
           fontSize: 16,
+          fontWeight: FontWeight.w500,
         ),
         prefix: widget.prefix,
         suffixIcon: widget.suffixIcon != null
