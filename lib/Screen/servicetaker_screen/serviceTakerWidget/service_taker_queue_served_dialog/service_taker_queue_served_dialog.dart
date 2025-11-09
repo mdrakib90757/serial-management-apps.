@@ -1,7 +1,7 @@
 import 'package:SerialMan/Screen/servicecenter_screen/serviceCenter_widget/queue_list_edit_dialog/queue_list_edit_dialog.dart';
 import 'package:SerialMan/model/serviceCenter_model.dart';
-import 'package:SerialMan/providers/serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart'
-    show GetNewSerialButtonProvider;
+import 'package:SerialMan/providers/serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart';
+
 import 'package:SerialMan/utils/color.dart';
 import 'package:SerialMan/utils/date_formatter/date_formatter.dart';
 import 'package:flutter/material.dart';
@@ -106,15 +106,59 @@ class _ServiceTakerQueueServedDialogState
                   // queue abd served tab bar
                   TabBar(
                     controller: tabController,
-                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorSize: TabBarIndicatorSize.label,
                     unselectedLabelColor: Colors.grey.shade600,
                     labelColor: AppColor().primariColor,
                     labelStyle: TextStyle(fontWeight: FontWeight.w500),
                     indicatorColor: AppColor().primariColor,
                     dividerColor: Colors.transparent,
                     tabs: [
-                      Tab(text: "Queue(${serialProvider.totalQueueCount})"),
-                      Tab(text: "Served(${serialProvider.totalServedCount})"),
+                      Tab(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColor().primariColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Text(
+                            "Queue(${serialProvider.totalQueueCount})",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+
+                        //text: "Queue(${serialProvider.totalQueueCount})"
+                      ),
+
+                      Tab(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColor().primariColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Text(
+                            "Served(${serialProvider.totalServedCount})",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        //text: "Served(${serialProvider.totalServedCount})"
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),

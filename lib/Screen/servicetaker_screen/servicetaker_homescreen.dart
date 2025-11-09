@@ -96,7 +96,7 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
       _updateTime();
       _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _updateTime());
 
-      _refreshTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _refreshTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
         print("Auto-refreshing serial list...");
         if (mounted) {
           _handleRefresh();
@@ -431,45 +431,53 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                           children: [
                                             Row(
                                               children: [
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      bookSerial
-                                                              .serviceType
-                                                              ?.name ??
-                                                          "No ServiceType Name",
-                                                      style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 5),
-                                                    Text(
-                                                      "(${bookSerial.serialNo})",
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ],
+                                                Text(
+                                                  bookSerial
+                                                          .serviceType
+                                                          ?.name ??
+                                                      "No ServiceType Name",
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                                Visibility(
-                                                  visible:
-                                                      bookSerial
-                                                          .serviceCenter
-                                                          ?.servingSerialNos
-                                                          ?.isNotEmpty ??
-                                                      false,
-                                                  child: Text(
-                                                    "Running: ${bookSerial.serviceCenter?.servingSerialNos?.join(', ') ?? ''}",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                    ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  "(${bookSerial.serialNo})",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
                                                   ),
                                                 ),
                                               ],
                                             ),
-
+                                            Visibility(
+                                              visible:
+                                                  bookSerial
+                                                      .serviceCenter
+                                                      ?.servingSerialNos
+                                                      ?.isNotEmpty ??
+                                                  false,
+                                              child: Text(
+                                                "Running: ${bookSerial.serviceCenter?.servingSerialNos?.join(', ') ?? ''}",
+                                                style: TextStyle(fontSize: 14),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 5),
+                                        // approx time and cancel button edit button only for serving and waiting status
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Approx Time : ${ApproxTime}",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                            SizedBox(width: 50,),
                                             // for cancel button edit button only for serving and waiting status
                                             Visibility(
                                               visible:
@@ -514,16 +522,21 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                                               ),
                                                           child: GestureDetector(
                                                             onTap: () {
+
                                                               Navigator.push(
                                                                 context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (
-                                                                        context,
-                                                                      ) => UpdateBookSerialDlalog(
-                                                                        bookingDetails:
-                                                                            bookSerial,
-                                                                      ),
+                                                                PageRouteBuilder(
+                                                                  pageBuilder: (_, __, ___) => UpdateBookSerialDlalog(
+                                                                    bookingDetails:
+                                                                    bookSerial,
+                                                                  ),
+                                                                  transitionsBuilder: (_, anim, __, child) {
+                                                                    return FadeTransition(
+                                                                      opacity: anim,
+                                                                      child: child,
+                                                                    );
+                                                                  },
+                                                                  fullscreenDialog: true,
                                                                 ),
                                                               );
                                                             },
@@ -548,16 +561,6 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                               ),
                                             ),
                                           ],
-                                        ),
-                                        const SizedBox(height: 5),
-
-                                        // approx time
-                                        Text(
-                                          "Approx Time : ${ApproxTime}",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15,
-                                          ),
                                         ),
                                       ],
                                     ),

@@ -493,7 +493,7 @@ class _HomeScreenState extends State<HomeScreen>
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 10,
-                                vertical: 7,
+                                vertical: 8,
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -699,7 +699,7 @@ class _HomeScreenState extends State<HomeScreen>
                           child: Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: 15,
-                              vertical: 7,
+                              vertical: 8,
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
@@ -754,7 +754,7 @@ class _HomeScreenState extends State<HomeScreen>
                     // queue and served tabBar
                     TabBar(
                       controller: tabController,
-                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorSize: TabBarIndicatorSize.label,
                       unselectedLabelColor: Colors.grey.shade600,
                       labelColor: AppColor().primariColor,
                       labelStyle: TextStyle(fontWeight: FontWeight.w500),
@@ -764,8 +764,8 @@ class _HomeScreenState extends State<HomeScreen>
                         Tab(
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
+                              horizontal: 40,
+                              vertical: 8,
                             ),
                             decoration: BoxDecoration(
                               color: AppColor().primariColor,
@@ -787,8 +787,8 @@ class _HomeScreenState extends State<HomeScreen>
                         Tab(
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
+                              horizontal: 40,
+                              vertical: 8,
                             ),
                             decoration: BoxDecoration(
                               color: AppColor().primariColor,
