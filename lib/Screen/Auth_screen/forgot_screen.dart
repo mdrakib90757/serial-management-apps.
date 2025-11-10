@@ -62,6 +62,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
               // custom email field
               CustomTextField(
                 isPassword: false,
+                prefixIcon: Icon(Icons.email,color: Colors.grey.shade400,),
                 keyboardType: TextInputType.emailAddress,
                 hintText: "Email address",
               ),

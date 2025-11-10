@@ -59,6 +59,8 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
   final Date = DateTime.now();
   DateTime _selectedDate = DateTime.now();
   bool _isFetchingServiceTypes = true;
+  bool _isUpdating = false;
+
 
   // initialize fields
   void _initializeFields() {
@@ -143,12 +145,18 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
 
   // save book serial request
   Future<void> _UpdateBook_serial() async {
+
     if (!_dialogFormKey.currentState!.validate()) {
       setState(() {
         _autovalidateMode = AutovalidateMode.onUserInteraction;
       });
       return;
     }
+
+    setState(() {
+      _isUpdating = true;
+    });
+
     final updateProvider = Provider.of<UpdateBookSerialProvider>(
       context,
       listen: false,
@@ -188,7 +196,9 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
       bookingId,
       serviceCenterId,
     );
-
+    setState(() {
+      _isUpdating = false;
+    });
     if (success) {
       final isoDate = DateTime.now().toIso8601String().split('.').first;
       await Provider.of<GetBookSerialProvider>(
@@ -525,7 +535,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                                 onPressed: () async {
                                   _UpdateBook_serial();
                                 },
-                                child: getUpdateProvider.isLoading
+                                child: _isUpdating
                                     ? Text(
                                         "Please wait...",
                                         style: TextStyle(

@@ -1,4 +1,3 @@
-import 'package:SerialMan/Screen/servicecenter_screen/serviceCenter_widget/queue_list_edit_dialog/queue_list_edit_dialog.dart';
 import 'package:SerialMan/model/serviceCenter_model.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart';
 
@@ -112,12 +111,15 @@ class _ServiceTakerQueueServedDialogState
                     labelStyle: TextStyle(fontWeight: FontWeight.w500),
                     indicatorColor: AppColor().primariColor,
                     dividerColor: Colors.transparent,
+                    // indicator: BoxDecoration(
+                    //
+                    // ),
                     tabs: [
                       Tab(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 8,
+                            horizontal: 35,
+                            vertical: 11,
                           ),
                           decoration: BoxDecoration(
                             color: AppColor().primariColor,
@@ -140,8 +142,8 @@ class _ServiceTakerQueueServedDialogState
                       Tab(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 8,
+                            horizontal: 35,
+                            vertical: 10,
                           ),
                           decoration: BoxDecoration(
                             color: AppColor().primariColor,
