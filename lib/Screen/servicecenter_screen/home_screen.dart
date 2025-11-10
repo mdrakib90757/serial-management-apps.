@@ -384,7 +384,11 @@ class _HomeScreenState extends State<HomeScreen>
                                 fillColor: Colors.white,
                                 controller: _dateController,
                                 hintText: todayString,
-                                textStyle: TextStyle(color: Colors.black),
+                                textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
                                 isPassword: false,
                                 prefix: Padding(
                                   padding: const EdgeInsets.only(right: 12.0),

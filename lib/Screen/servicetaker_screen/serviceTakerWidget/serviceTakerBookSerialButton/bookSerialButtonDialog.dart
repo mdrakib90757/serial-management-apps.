@@ -76,6 +76,7 @@ class _BookSerialButtonState extends State<BookSerialButton> {
   final FocusNode _serviceCenterFocusNode = FocusNode();
   bool _isSuggestionSelected = false;
   final ScrollController _scrollController = ScrollController();
+  final LayerLink _layerLink = LayerLink();
 
   @override
   void initState() {
@@ -332,561 +333,586 @@ class _BookSerialButtonState extends State<BookSerialButton> {
           ),
           child: Form(
             key: _dialogFormKey,
-            child: SingleChildScrollView(
-              child: Stack(
-                children: [
-                  // top custom design
-                  ClipPath(
-                    clipper: ClipPathClipper(),
-                    child: Container(
-                      color: AppColor().primariColor,
-                      height: 250,
-                      width: double.maxFinite,
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.only(
-                        top: 0,
-                        left: 10,
-                        right: 10,
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    // top custom design
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
+                        ),
                       ),
                     ),
-                  ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: Icon(Icons.arrow_back, color: Colors.white),
-                            ),
-
-                            Text(
-                              "Book a Serial",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
 
-                        // serviceType Provider Type field
-                        const CustomLabeltext(
-                          "ServiceType Provider Type",
-                          color: Colors.white,
-                        ),
-                        const SizedBox(height: 10),
-                        Consumer<BusinessTypeProvider>(
-                          builder: (context, BusProvider, child) {
-                            return CustomDropdown<Businesstype>(
-                              selectedItem: _selectedBusinessType,
-                              value: _selectedBusinessType,
-                              items: _businessTypes,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _selectedBusinessType = newValue;
-                                  _selectedOrganization = null;
-                                  _selectedServiceCenter = null;
-                                  _selectedServiceType = null;
-                                  context
-                                      .read<OrganizationProvider>()
-                                      .clearData();
-                                  context
-                                      .read<serviceCenter_serialBookProvider>()
-                                      .clearData();
-                                  context
-                                      .read<ServiceCenterByTypeProvider>()
-                                      .clearData();
-                                  context
-                                      .read<serviceTypeSerialbook_Provider>()
-                                      .clearData();
-                                });
-                                if (newValue == null) return;
+                              Text(
+                                "Book a Serial",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
 
-                                if (newValue.id == 1) {
-                                  print(
-                                    "Fetching organizations for Business Type ID: ${newValue.id}",
-                                  );
+                          // serviceType Provider Type field
+                          const CustomLabeltext(
+                            "ServiceType Provider Type",
+                            color: Colors.white,
+                          ),
+                          const SizedBox(height: 10),
+                          Consumer<BusinessTypeProvider>(
+                            builder: (context, BusProvider, child) {
+                              return CustomDropdown<Businesstype>(
+                                selectedItem: _selectedBusinessType,
+                                value: _selectedBusinessType,
+                                items: _businessTypes,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _selectedBusinessType = newValue;
+                                    _selectedOrganization = null;
+                                    _selectedServiceCenter = null;
+                                    _selectedServiceType = null;
+                                    context
+                                        .read<OrganizationProvider>()
+                                        .clearData();
+                                    context
+                                        .read<
+                                          serviceCenter_serialBookProvider
+                                        >()
+                                        .clearData();
+                                    context
+                                        .read<ServiceCenterByTypeProvider>()
+                                        .clearData();
+                                    context
+                                        .read<serviceTypeSerialbook_Provider>()
+                                        .clearData();
+                                  });
+                                  if (newValue == null) return;
 
-                                  context
-                                      .read<OrganizationProvider>()
-                                      .get_Organization(
-                                        businessTypeId: newValue.id.toString(),
-                                      );
-                                } else {
-                                  context
-                                      .read<ServiceCenterByTypeProvider>()
-                                      .fetchServiceCenters(
-                                        newValue.id.toString(),
-                                      );
-                                }
-                              },
-                              itemAsString: (Businesstype type) => type.name,
-                              hinText: "Select ServiceType",
-                              validator: (value) {
-                                if (value == null)
-                                  return "Please select a business type";
-                                return null;
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
+                                  if (newValue.id == 1) {
+                                    print(
+                                      "Fetching organizations for Business Type ID: ${newValue.id}",
+                                    );
 
-                        // service center field
-                        const CustomLabeltext(
-                          "Service Center",
-                          color: Colors.white,
-                        ),
-                        const SizedBox(height: 8),
-
-                        // This entire Consumer2 block needs to be replaced
-                        Consumer2<
-                          ServiceCenterSearchProvider,
-                          OrganizationProvider
-                        >(
-                          builder: (context, searchProvider, orgProvider, child) {
-                            String getOrgNameById(String? companyId) {
-                              if (companyId == null)
-                                return 'Organization not found';
-                              try {
-                                return orgProvider.organizations
-                                        .firstWhere(
-                                          (org) => org.id == companyId,
-                                        )
-                                        .name ??
-                                    'Unknown Org';
-                              } catch (e) {
-                                return 'Organization not found';
-                              }
-                            }
-
-                            return LayoutBuilder(
-                              builder: (context, constraints) {
-                                return RawAutocomplete<ServiceCenterModel>(
-                                  textEditingController:
-                                      _serviceCenterController,
-                                  focusNode: _serviceCenterFocusNode,
-                                  displayStringForOption: (option) =>
-                                      option.name ?? '',
-                                  optionsBuilder:
-                                      (TextEditingValue textEditingValue) {
-                                        return searchProvider.results;
-                                      },
-                                  fieldViewBuilder:
-                                      (
-                                        context,
-                                        controller,
-                                        focusNode,
-                                        onFieldSubmitted,
-                                      ) {
-                                        return TextFormField(
-                                          cursorColor: Colors.grey.shade500,
-                                          controller: controller,
-                                          focusNode: focusNode,
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                          ),
-                                          onChanged: (value) {
-                                            _isSuggestionSelected = false;
-                                            context
-                                                .read<
-                                                  ServiceCenterSearchProvider
-                                                >()
-                                                .search(value);
-                                          },
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            hintText:
-                                                "Search Service Center...",
-                                            hintStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                  horizontal: 16,
-                                                  vertical: 14,
-                                                ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.grey.shade400,
-                                              ),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: AppColor().primariColor,
-                                                width: 2,
-                                              ),
-                                            ),
-                                            suffixIcon: searchProvider.isLoading
-                                                ? Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                          12.0,
-                                                        ),
-                                                    child: CustomLoading(
-                                                      size: 2.5,
-                                                      strokeWidth: 2.5,
-                                                    ),
-                                                  )
-                                                : null,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              borderSide: BorderSide.none,
-                                            ),
-                                          ),
-                                          validator: (value) {
-                                            if (_selectedServiceCenter ==
-                                                    null ||
-                                                value!.isEmpty) {
-                                              return "Please select a Service Center";
-                                            }
-                                            return null;
-                                          },
+                                    context
+                                        .read<OrganizationProvider>()
+                                        .get_Organization(
+                                          businessTypeId: newValue.id
+                                              .toString(),
                                         );
-                                      },
-                                  optionsViewBuilder: (context, onSelected, options) {
-                                    return Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Material(
-                                        elevation: 4.0,
-                                        child: Container(
-                                          width: constraints.maxWidth,
-                                          margin: const EdgeInsets.only(
-                                            top: 8.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.1,
-                                                ),
-                                                blurRadius: 8,
-                                                offset: Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
-                                          child: ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxHeight: 280,
-                                            ),
-                                            child: Scrollbar(
-                                              thumbVisibility: true,
-                                              thickness: 6.0,
-                                              radius: Radius.circular(10),
-                                              controller: _scrollController,
-                                              interactive: true,
-                                              child: ListView.separated(
-                                                controller: _scrollController,
-                                                padding: EdgeInsets.zero,
-                                                itemCount: options.length,
-                                                separatorBuilder:
-                                                    (context, index) => Divider(
-                                                      height: 1,
-                                                      thickness: 1,
-                                                      indent: 16,
-                                                      endIndent: 16,
-                                                    ),
-                                                itemBuilder: (context, index) {
-                                                  final option = options
-                                                      .elementAt(index);
-                                                  final orgName =
-                                                      getOrgNameById(
-                                                        option.companyId,
-                                                      );
+                                  } else {
+                                    context
+                                        .read<ServiceCenterByTypeProvider>()
+                                        .fetchServiceCenters(
+                                          newValue.id.toString(),
+                                        );
+                                  }
+                                },
+                                itemAsString: (Businesstype type) => type.name,
+                                hinText: "Select ServiceType",
+                                validator: (value) {
+                                  if (value == null)
+                                    return "Please select a business type";
+                                  return null;
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
 
-                                                  return InkWell(
-                                                    onTap: () =>
-                                                        onSelected(option),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 16.0,
-                                                            vertical: 12.0,
-                                                          ),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            orgName,
-                                                            style: TextStyle(
-                                                              fontSize: 13,
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                    0.9,
-                                                                  ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 4),
-                                                          Text(
-                                                            option.name ??
-                                                                'No Name',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 15,
-                                                              color: Colors
-                                                                  .black87,
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 4),
-                                                          Text(
-                                                            option.hotlineNo ??
-                                                                'No contact',
-                                                            style: TextStyle(
-                                                              color: Colors
-                                                                  .grey
-                                                                  .shade700,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                        ],
+                          // service center field
+                          const CustomLabeltext(
+                            "Service Center",
+                            color: Colors.white,
+                          ),
+                          const SizedBox(height: 8),
+                          Consumer2<
+                            ServiceCenterSearchProvider,
+                            OrganizationProvider
+                          >(
+                            builder: (context, searchProvider, orgProvider, child) {
+                              String getOrgNameById(String? companyId) {
+                                if (companyId == null)
+                                  return 'Organization not found';
+                                try {
+                                  return orgProvider.organizations
+                                          .firstWhere(
+                                            (org) => org.id == companyId,
+                                          )
+                                          .name ??
+                                      'Unknown Org';
+                                } catch (e) {
+                                  return 'Organization not found';
+                                }
+                              }
+
+                              return LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return RawAutocomplete<ServiceCenterModel>(
+                                    textEditingController:
+                                        _serviceCenterController,
+                                    focusNode: _serviceCenterFocusNode,
+                                    displayStringForOption: (option) =>
+                                        option.name ?? '',
+                                    optionsBuilder:
+                                        (TextEditingValue textEditingValue) {
+                                          if (textEditingValue.text == '') {
+                                            return const Iterable<
+                                              ServiceCenterModel
+                                            >.empty();
+                                          }
+                                          return searchProvider.results;
+                                        },
+                                    fieldViewBuilder:
+                                        (
+                                          context,
+                                          controller,
+                                          focusNode,
+                                          onFieldSubmitted,
+                                        ) {
+                                          return CompositedTransformTarget(
+                                            link: _layerLink,
+                                            child: TextFormField(
+                                              cursorColor: Colors.grey.shade500,
+                                              controller: controller,
+                                              focusNode: focusNode,
+                                              style: TextStyle(
+                                                color: Colors.black87,
+                                              ),
+                                              onChanged: (value) {
+                                                _isSuggestionSelected = false;
+                                                Future.delayed(
+                                                  const Duration(
+                                                    milliseconds: 300,
+                                                  ),
+                                                  () {
+                                                    if (focusNode.hasFocus) {
+                                                      context
+                                                          .read<
+                                                            ServiceCenterSearchProvider
+                                                          >()
+                                                          .search(value);
+                                                    }
+                                                  },
+                                                );
+                                              },
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Colors.white,
+                                                hintText:
+                                                    "Search Service Center...",
+                                                hintStyle: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 14,
+                                                    ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: Colors
+                                                            .grey
+                                                            .shade400,
                                                       ),
                                                     ),
-                                                  );
-                                                },
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: AppColor()
+                                                            .primariColor,
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                suffixIcon:
+                                                    searchProvider.isLoading
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                              12.0,
+                                                            ),
+                                                        child: CustomLoading(
+                                                          size: 2.5,
+                                                          strokeWidth: 2.5,
+                                                        ),
+                                                      )
+                                                    : null,
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        5.0,
+                                                      ),
+                                                  borderSide: BorderSide.none,
+                                                ),
+                                              ),
+                                              validator: (value) {
+                                                if (_selectedServiceCenter ==
+                                                        null ||
+                                                    value!.isEmpty) {
+                                                  return "Please select a Service Center";
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          );
+                                        },
+                                    optionsViewBuilder: (context, onSelected, options) {
+                                      return CompositedTransformFollower(
+                                        link: _layerLink,
+                                        showWhenUnlinked: false,
+                                        targetAnchor: Alignment.bottomLeft,
+                                        followerAnchor: Alignment.topLeft,
+                                        offset: const Offset(0.0, 5.0),
+                                        child: Material(
+                                          elevation: 4.0,
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          child: Container(
+                                            width: constraints.maxWidth,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            child: ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxHeight: 280,
+                                              ),
+                                              child: Scrollbar(
+                                                controller: _scrollController,
+                                                thumbVisibility: true,
+                                                thickness: 6.0,
+                                                radius: Radius.circular(10),
+                                                interactive: true,
+                                                child: ListView.separated(
+                                                  controller: _scrollController,
+                                                  padding: EdgeInsets.zero,
+                                                  shrinkWrap: true,
+                                                  itemCount: options.length,
+                                                  separatorBuilder:
+                                                      (context, index) =>
+                                                          Divider(
+                                                            height: 1,
+                                                            thickness: 1,
+                                                            indent: 16,
+                                                            endIndent: 16,
+                                                          ),
+                                                  itemBuilder: (context, index) {
+                                                    final option = options
+                                                        .elementAt(index);
+                                                    final orgName =
+                                                        getOrgNameById(
+                                                          option.companyId,
+                                                        );
+                                                    return InkWell(
+                                                      onTap: () =>
+                                                          onSelected(option),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 16.0,
+                                                              vertical: 12.0,
+                                                            ),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              orgName,
+                                                              style: TextStyle(
+                                                                fontSize: 13,
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                      0.9,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 4),
+                                                            Text(
+                                                              option.name ??
+                                                                  'No Name',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 4),
+                                                            Text(
+                                                              option.hotlineNo ??
+                                                                  'No contact',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade700,
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  onSelected: (selection) {
-                                    _isSuggestionSelected = true;
-                                    setState(() {
-                                      _selectedServiceCenter = selection;
-                                      _serviceCenterController.text =
-                                          selection.name ?? '';
-                                      _selectedServiceType = null;
-                                    });
+                                      );
+                                    },
+                                    onSelected: (selection) {
+                                      _isSuggestionSelected = true;
+                                      setState(() {
+                                        _selectedServiceCenter = selection;
+                                        _serviceCenterController.text =
+                                            selection.name ?? '';
+                                        _selectedServiceType = null;
+                                      });
+                                      if (selection.companyId != null &&
+                                          selection.companyId!.isNotEmpty) {
+                                        Provider.of<
+                                              serviceTypeSerialbook_Provider
+                                            >(context, listen: false)
+                                            .serviceType_serialbook(
+                                              selection.companyId!,
+                                            );
+                                      }
+                                      _serviceCenterFocusNode.unfocus();
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
 
-                                    if (selection.companyId != null &&
-                                        selection.companyId!.isNotEmpty) {
-                                      Provider.of<
-                                            serviceTypeSerialbook_Provider
-                                          >(context, listen: false)
-                                          .serviceType_serialbook(
-                                            selection.companyId!,
-                                          );
+                          // service type field
+                          const CustomLabeltext("Service Type"),
+                          const SizedBox(height: 8),
+                          Consumer<serviceTypeSerialbook_Provider>(
+                            builder: (context, serviceTypeProvider, child) {
+                              return CustomDropdown<serviceTypeModel>(
+                                hinText: "select ServiceType",
+                                itemAsString: (serviceTypeModel item) =>
+                                    item.name ?? "",
+                                selectedItem: _selectedServiceType,
+                                items: serviceTypeProvider.serviceTypeList,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _selectedServiceType = newValue;
+                                  });
+                                  print(newValue?.name);
+                                },
+                                validator: (value) {
+                                  if (value == null)
+                                    return "Please select a Service Type";
+                                  return null;
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+
+                          // date field
+                          const CustomLabeltext("Date"),
+                          const SizedBox(height: 8),
+                          GestureDetector(
+                            onTap: () {
+                              _SelectDate(context);
+                            },
+                            child: AbsorbPointer(
+                              child: CustomTextField(
+                                controller: _dateController,
+                                //hintText: "Select Date",
+                                readOnly: true,
+                                isPassword: false,
+                                suffixIcon: Icon(
+                                  Icons.date_range_outlined,
+                                  color: Colors.grey.shade400,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "For",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          CustomRadioGroup<UserName>(
+                            groupValue: _SelectUserName,
+                            items: [UserName.Self, UserName.Other],
+                            onChanged: (UserName? newValue) {
+                              setState(() {
+                                _SelectUserName = newValue;
+                              });
+                            },
+                            itemTitleBuilder: (UserName value) {
+                              switch (value) {
+                                case UserName.Self:
+                                  return "Self";
+                                case UserName.Other:
+                                  return "Other";
+                              }
+                            },
+                          ),
+                          Visibility(
+                            visible: _SelectUserName == UserName.Self,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomLabeltext("Name"),
+                                SizedBox(height: 10),
+                                CustomTextField(
+                                  enabled: false,
+                                  filled: true,
+                                  isPassword: false,
+                                  controller: _nameController,
+                                ),
+                                SizedBox(height: 15),
+                                CustomLabeltext("Contact No"),
+                                SizedBox(height: 10),
+                                CustomTextField(
+                                  enabled: false,
+                                  filled: true,
+                                  isPassword: false,
+                                  controller: _contactNoController,
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Visibility(
+                            visible: _SelectUserName == UserName.Other,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomLabeltext("Name"),
+                                SizedBox(height: 10),
+                                CustomTextField(
+                                  isPassword: false,
+                                  controller: _nameController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Required';
                                     }
-
-                                    _serviceCenterFocusNode.unfocus();
+                                    return null;
                                   },
-                                );
-                              },
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 10),
-                        // service type field
-                        const CustomLabeltext("Service Type"),
-                        const SizedBox(height: 8),
-                        Consumer<serviceTypeSerialbook_Provider>(
-                          builder: (context, serviceTypeProvider, child) {
-                            return CustomDropdown<serviceTypeModel>(
-                              hinText: "select ServiceType",
-                              itemAsString: (serviceTypeModel item) =>
-                                  item.name ?? "",
-                              selectedItem: _selectedServiceType,
-                              items: serviceTypeProvider.serviceTypeList,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _selectedServiceType = newValue;
-                                });
-                                print(newValue?.name);
-                              },
-                              validator: (value) {
-                                if (value == null)
-                                  return "Please select a Service Type";
-                                return null;
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-
-                        // date field
-                        const CustomLabeltext("Date"),
-                        const SizedBox(height: 8),
-                        GestureDetector(
-                          onTap: () {
-                            _SelectDate(context);
-                          },
-                          child: AbsorbPointer(
-                            child: CustomTextField(
-                              controller: _dateController,
-                              //hintText: "Select Date",
-                              readOnly: true,
-                              isPassword: false,
-                              suffixIcon: Icon(
-                                Icons.date_range_outlined,
-                                color: Colors.grey.shade400,
-                              ),
+                                ),
+                                SizedBox(height: 15),
+                                CustomLabeltext("Contact No"),
+                                SizedBox(height: 10),
+                                CustomTextField(
+                                  isPassword: false,
+                                  controller: _contactNoController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Required';
+                                    }
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "For",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        CustomRadioGroup<UserName>(
-                          groupValue: _SelectUserName,
-                          items: [UserName.Self, UserName.Other],
-                          onChanged: (UserName? newValue) {
-                            setState(() {
-                              _SelectUserName = newValue;
-                            });
-                          },
-                          itemTitleBuilder: (UserName value) {
-                            switch (value) {
-                              case UserName.Self:
-                                return "Self";
-                              case UserName.Other:
-                                return "Other";
-                            }
-                          },
-                        ),
-                        Visibility(
-                          visible: _SelectUserName == UserName.Self,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          const SizedBox(height: 10),
+
+                          // book button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CustomLabeltext("Name"),
-                              SizedBox(height: 10),
-                              CustomTextField(
-                                enabled: false,
-                                filled: true,
-                                isPassword: false,
-                                controller: _nameController,
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColor().primariColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  await _saveBookSerialRequest();
+                                },
+                                child: bookProvider.isLoading
+                                    ? Text(
+                                        "Please wait...",
+                                        style: TextStyle(color: Colors.white),
+                                      )
+                                    : Text(
+                                        "Request for serial",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                               ),
-                              SizedBox(height: 15),
-                              CustomLabeltext("Contact No"),
-                              SizedBox(height: 10),
-                              CustomTextField(
-                                enabled: false,
-                                filled: true,
-                                isPassword: false,
-                                controller: _contactNoController,
-                                keyboardType: TextInputType.number,
+                              SizedBox(width: 10),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    color: AppColor().primariColor,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Visibility(
-                          visible: _SelectUserName == UserName.Other,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomLabeltext("Name"),
-                              SizedBox(height: 10),
-                              CustomTextField(
-                                isPassword: false,
-                                controller: _nameController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Required';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(height: 15),
-                              CustomLabeltext("Contact No"),
-                              SizedBox(height: 10),
-                              CustomTextField(
-                                isPassword: false,
-                                controller: _contactNoController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Required';
-                                  }
-                                  return null;
-                                },
-                                keyboardType: TextInputType.number,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-
-                        // book button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColor().primariColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              onPressed: () async {
-                                await _saveBookSerialRequest();
-                              },
-                              child: bookProvider.isLoading
-                                  ? Text(
-                                      "Please wait...",
-                                      style: TextStyle(color: Colors.white),
-                                    )
-                                  : Text(
-                                      "Request for serial",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                            ),
-                            SizedBox(width: 10),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "Cancel",
-                                style: TextStyle(
-                                  color: AppColor().primariColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

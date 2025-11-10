@@ -473,6 +473,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                                 CustomTextField(
                                   enabled: false,
                                   filled: true,
+                                  fillColor: Colors.red.shade50,
                                   isPassword: false,
                                   controller: _nameController,
                                 ),
@@ -483,6 +484,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                                 SizedBox(height: 10),
                                 CustomTextField(
                                   enabled: false,
+                                  fillColor: Colors.red.shade50,
                                   filled: true,
                                   isPassword: false,
                                   controller: _contactNoController,

@@ -119,7 +119,7 @@ class _ServiceTakerQueueServedDialogState
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 35,
-                            vertical: 11,
+                            vertical: 8,
                           ),
                           decoration: BoxDecoration(
                             color: AppColor().primariColor,
@@ -143,7 +143,7 @@ class _ServiceTakerQueueServedDialogState
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 35,
-                            vertical: 10,
+                            vertical: 8,
                           ),
                           decoration: BoxDecoration(
                             color: AppColor().primariColor,

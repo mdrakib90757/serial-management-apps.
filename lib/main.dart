@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:SerialMan/global_widgets/custom_circle_progress_indicator/custom_circle_progress_indicator.dart';
 import 'package:SerialMan/providers/app_provider/app_provider.dart';
 import 'package:SerialMan/providers/auth_provider/auth_providers.dart';
-
 import 'package:SerialMan/routes/app_routes.dart';
 import 'package:SerialMan/utils/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Screen/Auth_screen/login_screen.dart';
-import 'global_widgets/Custom_NavigationBar/custom_servicecenter_navigationBar.dart';
-import 'global_widgets/Custom_NavigationBar/custom_servicetaker_navigationbar.dart';
 import 'main_layouts/service_center_layout/service_center_layout.dart';
 import 'main_layouts/service_taker_layout/service_taker_layout.dart';
 

@@ -111,6 +111,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       },
       obscureText: obscureText,
       obscuringCharacter: "*",
+      style: widget.textStyle,
       decoration: InputDecoration(
         constraints: BoxConstraints(),
         contentPadding: const EdgeInsets.symmetric(
@@ -136,7 +137,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         filled: true,
         fillColor: widget.fillColor ?? Colors.white,
-
         prefixIcon: widget.prefixIcon,
         hintText: widget.hintText,
         hintStyle: TextStyle(

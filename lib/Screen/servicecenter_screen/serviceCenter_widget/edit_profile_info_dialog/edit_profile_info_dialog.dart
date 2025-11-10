@@ -273,7 +273,7 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                             CustomTextField(
                               enabled: false,
                               filled: true,
-                              //fillColor: Colors.orange.shade400,
+                              fillColor: Colors.red.shade50,
                               controller: loginName,
                               hintText: "Login name",
                               isPassword: false,
