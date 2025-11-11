@@ -661,6 +661,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           builder: (context) {
                                             return ManageSerialDialog(
                                               serialDetails: nextSerial,
+                                              isFromNextButton: true,
                                               date: DateFormat(
                                                 'yyyy-MM-dd',
                                               ).format(_selectedDate),
@@ -764,11 +765,17 @@ class _HomeScreenState extends State<HomeScreen>
                       labelStyle: TextStyle(fontWeight: FontWeight.w500),
                       indicatorColor: AppColor().primariColor,
                       dividerColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
+                      overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                          return Colors.transparent;
+                        },
+                      ),
                       tabs: [
                         Tab(
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 40,
+                              horizontal: 25,
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
@@ -777,7 +784,7 @@ class _HomeScreenState extends State<HomeScreen>
                               border: Border.all(color: Colors.white, width: 2),
                             ),
                             child: Text(
-                              "Queue(${serialProvider.totalQueueCount})",
+                              "Queue${serialProvider.totalQueueCount > 0 ? '(${serialProvider.totalQueueCount})' : ''}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -791,7 +798,7 @@ class _HomeScreenState extends State<HomeScreen>
                         Tab(
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 40,
+                              horizontal: 25,
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
@@ -800,7 +807,8 @@ class _HomeScreenState extends State<HomeScreen>
                               border: Border.all(color: Colors.white, width: 2),
                             ),
                             child: Text(
-                              "Served(${serialProvider.totalServedCount})",
+                              "Served${serialProvider.totalServedCount > 0 ? '(${serialProvider.totalServedCount})' : ''}",
+                              //"Served(${serialProvider.totalServedCount})",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -848,11 +856,9 @@ class _HomeScreenState extends State<HomeScreen>
       context: context,
       builder: (context) {
         return ManageSerialDialog(
-          // initialStatus: serial.status ?? "",
-          // serviceCenterId: serviceCenterId,
-          // serviceId: serviceId,
           date: formattedDate,
           serialDetails: serial,
+          isFromNextButton: false,
         );
       },
     ).then((wasSuccessful) {

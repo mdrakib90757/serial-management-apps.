@@ -111,14 +111,17 @@ class _ServiceTakerQueueServedDialogState
                     labelStyle: TextStyle(fontWeight: FontWeight.w500),
                     indicatorColor: AppColor().primariColor,
                     dividerColor: Colors.transparent,
-                    // indicator: BoxDecoration(
-                    //
-                    // ),
+                    splashFactory: NoSplash.splashFactory,
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                        return Colors.transparent;
+                      },
+                    ),
                     tabs: [
                       Tab(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 35,
+                            horizontal: 25,
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
@@ -127,7 +130,7 @@ class _ServiceTakerQueueServedDialogState
                             border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: Text(
-                            "Queue(${serialProvider.totalQueueCount})",
+                            "Queue${serialProvider.totalQueueCount > 0 ? '(${serialProvider.totalQueueCount})' : ''}",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
@@ -138,11 +141,10 @@ class _ServiceTakerQueueServedDialogState
 
                         //text: "Queue(${serialProvider.totalQueueCount})"
                       ),
-
                       Tab(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 35,
+                            horizontal: 25,
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
@@ -151,7 +153,8 @@ class _ServiceTakerQueueServedDialogState
                             border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: Text(
-                            "Served(${serialProvider.totalServedCount})",
+                            "Served${serialProvider.totalServedCount > 0 ? '(${serialProvider.totalServedCount})' : ''}",
+                            //"Served(${serialProvider.totalServedCount})",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
@@ -159,6 +162,7 @@ class _ServiceTakerQueueServedDialogState
                             ),
                           ),
                         ),
+
                         //text: "Served(${serialProvider.totalServedCount})"
                       ),
                     ],

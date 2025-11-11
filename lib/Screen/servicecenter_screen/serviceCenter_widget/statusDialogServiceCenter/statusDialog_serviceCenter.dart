@@ -12,8 +12,13 @@ import '../../../../providers/serviceCenter_provider/statusButtonProvider/status
 class ManageSerialDialog extends StatefulWidget {
   final String? date;
   final SerialModel serialDetails;
-  const ManageSerialDialog({Key? key, this.date, required this.serialDetails})
-    : super(key: key);
+  final bool isFromNextButton;
+  const ManageSerialDialog({
+    Key? key,
+    this.date,
+    required this.serialDetails,
+    this.isFromNextButton = false,
+  }) : super(key: key);
 
   @override
   _ManageSerialDialogState createState() => _ManageSerialDialogState();
@@ -33,17 +38,26 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
   late String _selectedStatus;
   final _commentController = TextEditingController();
   final _amountController = TextEditingController();
+  bool _isUpdating = false;
 
   @override
   void initState() {
     super.initState();
     final details = widget.serialDetails;
     final String currentStatus = details.status?.toLowerCase() ?? 'booked';
-    if (currentStatus == 'serving') {
+    // if (currentStatus == 'serving') {
+    //   _selectedStatus = 'Served';
+    // } else {
+    //   _selectedStatus = details.status ?? 'Booked';
+    // }
+    // _selectedStatus = details.status ?? 'Booked';
+
+    if (widget.isFromNextButton && currentStatus == 'serving') {
       _selectedStatus = 'Served';
     } else {
       _selectedStatus = details.status ?? 'Booked';
     }
+
     final defaultPrice = details.serviceType?.price?.toString() ?? '0.0';
     _amountController.text = defaultPrice;
 
@@ -143,14 +157,19 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
                 const Text("Collected Amount (BDT)"),
                 const SizedBox(height: 8),
                 CustomTextField(
+                  //keyboardType: TextInputType.number,
                   readOnly: false,
                   controller: _amountController,
                   hintText: _amountController.text,
                   textStyle: TextStyle(color: Colors.black),
                   isPassword: false,
+                  keyboardType: TextInputType.number,
                   suffixIcon: Container(
-                    padding: EdgeInsets.all(8),
-                    child: Text("BDT"),
+                    width: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(child: Text("BDT")),
                   ),
                 ),
               ],
@@ -191,65 +210,82 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
       ),
 
       actions: [
+
+        // update button
         ElevatedButton(
-          onPressed: () async {
-            final statusProvider = Provider.of<statusUpdateButton_provder>(
-              context,
-              listen: false,
-            );
+          onPressed: _isUpdating
+              ? null
+              : () async {
+                  setState(() {
+                    _isUpdating = true;
+                  });
 
-            final getProvider = Provider.of<getStatusUpdate_Provider>(
-              context,
-              listen: false,
-            );
-            final SeriallistProvider = Provider.of<GetNewSerialButtonProvider>(
-              context,
-              listen: false,
-            );
+                  try {
+                    final statusProvider =
+                        Provider.of<statusUpdateButton_provder>(
+                          context,
+                          listen: false,
+                        );
 
-            final messenger = ScaffoldMessenger.of(context);
+                    final getProvider = Provider.of<getStatusUpdate_Provider>(
+                      context,
+                      listen: false,
+                    );
 
-            final status = _selectedStatus;
-            final comment = _commentController.text;
-            double? collectedAmount;
-            if (status == 'Served') {
-              collectedAmount = double.tryParse(_amountController.text) ?? 0.0;
-            }
+                    final messenger = ScaffoldMessenger.of(context);
 
-            final String serviceId = widget.serialDetails.id!;
-            final String serviceCenterId =
-                widget.serialDetails.serviceCenterId!;
+                    final status = _selectedStatus;
+                    final comment = _commentController.text;
+                    double? collectedAmount;
+                    if (status == 'Served') {
+                      collectedAmount =
+                          double.tryParse(_amountController.text) ?? 0.0;
+                    }
 
-            final bool isPresent = [
-              'Present',
-              'Serving',
-              'Served',
-            ].contains(status);
+                    final String serviceId = widget.serialDetails.id!;
+                    final String serviceCenterId =
+                        widget.serialDetails.serviceCenterId!;
 
-            StatusButtonRequest requestData = StatusButtonRequest(
-              isPresent: isPresent,
-              status: status,
-              comment: comment.isNotEmpty ? comment : null,
-              serviceCenterId: serviceCenterId,
-              serviceId: serviceId,
-              charge: collectedAmount,
-            );
+                    final bool isPresent = [
+                      'Present',
+                      'Serving',
+                      'Served',
+                    ].contains(status);
 
-            final navigator = Navigator.of(context);
-            final success = await statusProvider.updateStatus(
-              requestData,
-              serviceCenterId,
-              serviceId,
-            );
+                    StatusButtonRequest requestData = StatusButtonRequest(
+                      isPresent: isPresent,
+                      status: status,
+                      comment: comment.isNotEmpty ? comment : null,
+                      serviceCenterId: serviceCenterId,
+                      serviceId: serviceId,
+                      charge: collectedAmount,
+                    );
 
-            if (!mounted) return;
+                    final navigator = Navigator.of(context);
+                    final success = await statusProvider.updateStatus(
+                      requestData,
+                      serviceCenterId,
+                      serviceId,
+                    );
 
-            if (success) {
-              await getProvider.fetchStatusButton(serviceCenterId, widget.date);
+                    if (!mounted) return;
 
-              navigator.pop(true);
-            } else {}
-          },
+                    if (success) {
+                      await getProvider.fetchStatusButton(
+                        serviceCenterId,
+                        widget.date,
+                      );
+
+                      navigator.pop(true);
+                    }
+                  } finally {
+                    if (mounted) {
+                      setState(() {
+                        _isUpdating = false;
+                      });
+                    }
+                  }
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColor().primariColor,
             foregroundColor: Colors.white,
@@ -258,12 +294,16 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
             ),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
-          child: Provider.of<statusUpdateButton_provder>(context).isLoading
-              ? Text('Please wait...')
-              : Text('Update'),
+          child: _isUpdating
+              ? Text('Please wait...', style: TextStyle(color: Colors.white))
+              : Text('Update', style: TextStyle(color: Colors.white)),
         ),
+
+        // cancel button
         OutlinedButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.black87,
             shape: RoundedRectangleBorder(
