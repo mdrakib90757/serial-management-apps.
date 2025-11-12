@@ -210,7 +210,6 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
       ),
 
       actions: [
-
         // update button
         ElevatedButton(
           onPressed: _isUpdating

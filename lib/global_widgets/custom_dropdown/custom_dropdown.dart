@@ -12,6 +12,8 @@ class CustomDropdown<T> extends StatefulWidget {
   final double popupHeight;
   final String? Function(T? value)? validator;
   final String? hinText;
+  final bool isLoading;
+  final Widget? suffixIcon;
 
   const CustomDropdown({
     Key? key,
@@ -24,6 +26,8 @@ class CustomDropdown<T> extends StatefulWidget {
     this.selectedItem,
     this.validator,
     this.hinText,
+    this.isLoading = false,
+    this.suffixIcon,
   }) : super(key: key);
 
   @override
@@ -181,6 +185,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
               : Colors.grey.shade600;
 
           return GestureDetector(
+            //onTap: widget.isLoading ? null : _togglePopup,
             onTap: _togglePopup,
             child: Focus(
               focusNode: _focusNode,
@@ -218,11 +223,13 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                       width: 2,
                     ),
                   ),
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: iconColor),
+                  suffixIcon:
+                      widget.suffixIcon ??
+                      Icon(Icons.arrow_drop_down, color: iconColor),
                   errorText: state.errorText,
                 ),
                 isEmpty: state.value == null,
-                //isEmpty: state.value == null && state.errorText == null, // Consider errorText for isEmpty
+                //isEmpty: state.value == null && state.errorText == null,
                 isFocused: _focusNode.hasFocus || _isPopupOpen,
                 child: Text(
                   state.value == null ? '' : widget.itemAsString(state.value!),

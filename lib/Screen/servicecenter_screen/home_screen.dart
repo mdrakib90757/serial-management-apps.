@@ -24,7 +24,6 @@ import '../../providers/serviceCenter_provider/addButton_provider/get_AddButton_
 import '../../providers/serviceCenter_provider/addUser_serviceCenter_provider/SingleUserInfoProvider/singleUserInfoProvider.dart';
 import '../../providers/serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart';
 import '../../providers/serviceCenter_provider/newSerialButton_provider/newSerialProvider.dart';
-import '../../providers/serviceCenter_provider/nextButton_provider/nextButton_provider.dart';
 import '../../providers/serviceCenter_provider/statusButtonProvider/status_UpdateButton_provider.dart';
 import '../../request_model/serviceCanter_request/status_UpdateButtonRequest/status_updateButtonRequest.dart';
 import '../../utils/color.dart';
@@ -445,6 +444,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           return NewSerialButtonDialog(
                                             serviceCenterModel:
                                                 _selectedServiceCenter!,
+                                            rootContext: context,
                                           );
                                         },
                                       );
@@ -545,11 +545,6 @@ class _HomeScreenState extends State<HomeScreen>
                                           context,
                                           listen: false,
                                         );
-
-                                    // if (statusUpdateProvider.isLoading ||
-                                    //     serialProvider.isLoading) {
-                                    //   return;
-                                    // }
 
                                     final SerialModel? nextSerial =
                                         serialProvider.nextInQueue;
@@ -755,73 +750,78 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+
                     // queue and served tabBar
-                    TabBar(
-                      controller: tabController,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      unselectedLabelColor: Colors.grey.shade600,
-                      labelColor: AppColor().primariColor,
-                      labelStyle: TextStyle(fontWeight: FontWeight.w500),
-                      indicatorColor: AppColor().primariColor,
-                      dividerColor: Colors.transparent,
-                      splashFactory: NoSplash.splashFactory,
-                      overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                          return Colors.transparent;
-                        },
-                      ),
-                      tabs: [
-                        Tab(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 25,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColor().primariColor,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: Text(
-                              "Queue${serialProvider.totalQueueCount > 0 ? '(${serialProvider.totalQueueCount})' : ''}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TabBar(
+                            controller: tabController,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            unselectedLabelColor: Colors.grey.shade600,
+                            labelColor: AppColor().primariColor,
+                            labelStyle: TextStyle(fontWeight: FontWeight.w500),
+                            indicatorColor: AppColor().primariColor,
+                            tabAlignment: TabAlignment.start,
+                            isScrollable: true,
+                            dividerColor: Colors.transparent,
+                            splashFactory: NoSplash.splashFactory,
+                            overlayColor:
+                                MaterialStateProperty.resolveWith<Color?>((
+                                  Set<MaterialState> states,
+                                ) {
+                                  return Colors.transparent;
+                                }),
+                            tabs: [
+                              Tab(
+                                child: Text(
+                                  "Queue${serialProvider.totalQueueCount > 0 ? '(${serialProvider.totalQueueCount})' : ''}",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                              Tab(
+                                child: Text(
+                                  "Served${serialProvider.totalServedCount > 0 ? '(${serialProvider.totalServedCount})' : ''}",
 
-                          //text: "Queue(${serialProvider.totalQueueCount})"
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        Tab(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 25,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
+
+                        // refresh button
+                        TextButton.icon(
+                          onPressed: () {
+                            _fetchDataForUI();
+                          },
+                          icon: Icon(
+                            Icons.refresh,
+                            size: 18,
+                            color: AppColor().primariColor,
+                          ),
+                          label: Text(
+                            "Refresh",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                               color: AppColor().primariColor,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: Text(
-                              "Served${serialProvider.totalServedCount > 0 ? '(${serialProvider.totalServedCount})' : ''}",
-                              //"Served(${serialProvider.totalServedCount})",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                              ),
                             ),
                           ),
-
-                          //text: "Served(${serialProvider.totalServedCount})"
+                          style: TextButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
                     //tabBar list
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.6,
@@ -840,37 +840,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  //Status DialogBox
-  void _showDialogBoxManage(SerialModel serial) {
-    final String? serviceCenterId = _selectedServiceCenter?.id;
-    final String? serviceId = serial.id;
-
-    if (serviceCenterId == null || serviceId == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Error: ID is missing!")));
-      return;
-    }
-    final String formattedDate = DateFormatter.formatForApi(_selectedDate);
-    showDialog<bool?>(
-      context: context,
-      builder: (context) {
-        return ManageSerialDialog(
-          date: formattedDate,
-          serialDetails: serial,
-          isFromNextButton: false,
-        );
-      },
-    ).then((wasSuccessful) {
-      if (mounted) {
-        if (wasSuccessful == true) {
-          debugPrint("Dialog returned success. Refreshing UI...");
-          _fetchDataForUI();
-        }
-      }
-    });
-  }
-
   //queue build Widget
   Widget _buildQueueList() {
     final String todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -878,7 +847,6 @@ class _HomeScreenState extends State<HomeScreen>
       'yyyy-MM-dd',
     ).format(_selectedDate);
     final bool isToday = todayString == selectedDateString;
-
     return Consumer<GetNewSerialButtonProvider>(
       builder: (context, serialProvider, child) {
         if (serialProvider.isLoading) {
@@ -920,6 +888,8 @@ class _HomeScreenState extends State<HomeScreen>
             );
 
             final bool canBeEdited = serial.status?.toLowerCase() != 'serving';
+            final bool wasCreatedByAdmin = serial.isAdmin ?? false;
+
             return Container(
               margin: EdgeInsets.symmetric(vertical: 1),
               padding: EdgeInsets.all(8),
@@ -968,7 +938,9 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                if (isToday && canBeEdited) ...[
+                                if (isToday &&
+                                    wasCreatedByAdmin &&
+                                    canBeEdited) ...[
                                   GestureDetector(
                                     onTap: () {
                                       showDialog(
@@ -1215,5 +1187,36 @@ class _HomeScreenState extends State<HomeScreen>
         );
       },
     );
+  }
+
+  //Status DialogBox
+  void _showDialogBoxManage(SerialModel serial) {
+    final String? serviceCenterId = _selectedServiceCenter?.id;
+    final String? serviceId = serial.id;
+
+    if (serviceCenterId == null || serviceId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Error: ID is missing!")));
+      return;
+    }
+    final String formattedDate = DateFormatter.formatForApi(_selectedDate);
+    showDialog<bool?>(
+      context: context,
+      builder: (context) {
+        return ManageSerialDialog(
+          date: formattedDate,
+          serialDetails: serial,
+          isFromNextButton: false,
+        );
+      },
+    ).then((wasSuccessful) {
+      if (mounted) {
+        if (wasSuccessful == true) {
+          debugPrint("Dialog returned success. Refreshing UI...");
+          _fetchDataForUI();
+        }
+      }
+    });
   }
 }

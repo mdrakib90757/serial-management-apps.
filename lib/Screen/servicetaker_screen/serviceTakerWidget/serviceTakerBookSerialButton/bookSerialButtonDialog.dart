@@ -18,6 +18,7 @@ import '../../../../global_widgets/custom_labeltext.dart';
 import '../../../../global_widgets/custom_sanckbar.dart';
 import '../../../../global_widgets/custom_textfield.dart';
 import '../../../../main_layouts/main_layout/main_layout.dart';
+import '../../../../model/ServiceTypesDeFaultifNotSet.dart';
 import '../../../../model/organization_model.dart';
 import '../../../../model/serviceCenter_model.dart';
 import '../../../../model/service_type_model.dart';
@@ -31,6 +32,7 @@ import '../../../../providers/serviceTaker_provider/organaizationProvider/organi
 import '../../../../providers/serviceTaker_provider/serviceCenter_serialBookProvider/serviceCenter_serialBookProvider.dart';
 import '../../../../providers/serviceTaker_provider/serviceType_serialbook_provider.dart';
 import '../../../../providers/serviceTaker_provider/service_center_search_provider/service_center_search_provider.dart';
+import '../../../../providers/serviceTaker_provider/service_types_de_fault_provider/service_types_de_fault_provider.dart';
 import '../../../../utils/color.dart';
 import '../../../../utils/date_formatter/date_formatter.dart';
 import '../../servicetaker_homescreen.dart';
@@ -71,6 +73,7 @@ class _BookSerialButtonState extends State<BookSerialButton> {
   OrganizationModel? _selectedOrganization;
   ServiceCenterModel? _selectedServiceCenter;
   serviceTypeModel? _selectedServiceType;
+  ServiceTypesDeFaultifNotSetModel? _selectedServiceTypeDeFault;
   bool _isInit = true;
   DateTime _selectedDate = DateTime.now();
   final FocusNode _serviceCenterFocusNode = FocusNode();
@@ -179,7 +182,7 @@ class _BookSerialButtonState extends State<BookSerialButton> {
     final String? businessTypeId = _selectedBusinessType?.id?.toString();
     final String? organizationId = _selectedOrganization?.id;
     final String? serviceCenterId = _selectedServiceCenter?.id;
-    final String? serviceTypeId = _selectedServiceType?.id;
+    final String? serviceTypeId = _selectedServiceTypeDeFault?.id;
 
     bool isIdMissing =
         businessTypeId == null ||
@@ -303,6 +306,7 @@ class _BookSerialButtonState extends State<BookSerialButton> {
     }
   }
 
+  // handleRefresh load business types
   Future<void> _handleRefresh() async {
     await _loadBusinessTypes();
     // final String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -508,7 +512,9 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                               controller: controller,
                                               focusNode: focusNode,
                                               style: TextStyle(
-                                                color: Colors.black87,
+                                                color: Colors.black,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                               onChanged: (value) {
                                                 _isSuggestionSelected = false;
@@ -527,16 +533,18 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                                   },
                                                 );
                                               },
+
                                               decoration: InputDecoration(
                                                 filled: true,
                                                 fillColor: Colors.white,
                                                 hintText:
-                                                    "Search Service Center...",
+                                                    "Search Service Center",
                                                 hintStyle: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w500,
                                                 ),
+
                                                 contentPadding:
                                                     EdgeInsets.symmetric(
                                                       horizontal: 16,
@@ -706,16 +714,14 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                         _selectedServiceCenter = selection;
                                         _serviceCenterController.text =
                                             selection.name ?? '';
-                                        _selectedServiceType = null;
+                                        _selectedServiceTypeDeFault = null;
                                       });
-                                      if (selection.companyId != null &&
-                                          selection.companyId!.isNotEmpty) {
+                                      if (selection.id != null &&
+                                          selection.id!.isNotEmpty) {
                                         Provider.of<
-                                              serviceTypeSerialbook_Provider
+                                              service_types_de_fault_provider
                                             >(context, listen: false)
-                                            .serviceType_serialbook(
-                                              selection.companyId!,
-                                            );
+                                            .fetchServiceTypes(selection.id!);
                                       }
                                       _serviceCenterFocusNode.unfocus();
                                     },
@@ -729,17 +735,23 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                           // service type field
                           const CustomLabeltext("Service Type"),
                           const SizedBox(height: 8),
-                          Consumer<serviceTypeSerialbook_Provider>(
+                          Consumer<service_types_de_fault_provider>(
                             builder: (context, serviceTypeProvider, child) {
-                              return CustomDropdown<serviceTypeModel>(
+                              final bool isLoading =
+                                  serviceTypeProvider.state ==
+                                  NotifierState.loading;
+                              return CustomDropdown<
+                                ServiceTypesDeFaultifNotSetModel
+                              >(
                                 hinText: "select ServiceType",
-                                itemAsString: (serviceTypeModel item) =>
-                                    item.name ?? "",
-                                selectedItem: _selectedServiceType,
-                                items: serviceTypeProvider.serviceTypeList,
+                                itemAsString:
+                                    (ServiceTypesDeFaultifNotSetModel item) =>
+                                        item.name ?? "",
+                                selectedItem: _selectedServiceTypeDeFault,
+                                items: serviceTypeProvider.serviceTypes,
                                 onChanged: (newValue) {
                                   setState(() {
-                                    _selectedServiceType = newValue;
+                                    _selectedServiceTypeDeFault = newValue;
                                   });
                                   print(newValue?.name);
                                 },
@@ -748,6 +760,19 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                     return "Please select a Service Type";
                                   return null;
                                 },
+                                suffixIcon: isLoading
+                                    ? Container(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: SizedBox(
+                                          height: 15,
+                                          width: 15,
+                                          child: CustomLoading(
+                                            color: AppColor().primariColor,
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      )
+                                    : null,
                               );
                             },
                           ),

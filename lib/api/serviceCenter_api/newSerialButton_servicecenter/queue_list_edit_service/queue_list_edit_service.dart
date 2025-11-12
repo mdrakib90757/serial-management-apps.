@@ -6,6 +6,7 @@ import '../../../../model/serialService_model.dart';
 import '../../../../request_model/serviceCanter_request/newSerialButton_request/queue_edit_list_request/queue_edit_list_request.dart';
 
 class QueueListEditService {
+  // Queue List Edit for service center home screen
   Future<dynamic> QueueListEdit(
     queueEditListRequest queueListEditRequest,
     String serviceCenterId,
@@ -19,6 +20,7 @@ class QueueListEditService {
     return response;
   }
 
+  // New Serial Button service center home screen
   Future<List<SerialModel>> getNewSerialButton(
     String serviceCenterId,
     String date,

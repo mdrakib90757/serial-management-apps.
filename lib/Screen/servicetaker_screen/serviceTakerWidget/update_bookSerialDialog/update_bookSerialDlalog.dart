@@ -61,7 +61,6 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
   bool _isFetchingServiceTypes = true;
   bool _isUpdating = false;
 
-
   // initialize fields
   void _initializeFields() {
     final booking = widget.bookingDetails;
@@ -71,11 +70,11 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
       _contactNoController.text =
           authProvider.userModel?.user.mobileNo ?? booking.contactNo ?? '';
       _nameController.text =
-          (authProvider.userModel?.user.name ?? booking.name)??"";
+          (authProvider.userModel?.user.name ?? booking.name) ?? "";
       _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     } else {
       _contactNoController.text = booking.contactNo ?? '';
-      _nameController.text = booking.name??"";
+      _nameController.text = booking.name ?? "";
     }
   }
 
@@ -83,19 +82,22 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
   void _fetchInitialData() {
     final companyId = widget.bookingDetails.company?.id;
     if (companyId != null) {
-
-      Provider.of<serviceTypeSerialbook_Provider>(context, listen: false)
-          .serviceType_serialbook(companyId)
-          .then((_) {
+      Provider.of<serviceTypeSerialbook_Provider>(
+        context,
+        listen: false,
+      ).serviceType_serialbook(companyId).then((_) {
         if (mounted) {
           final serviceTypeProvider =
-          Provider.of<serviceTypeSerialbook_Provider>(context, listen: false);
+              Provider.of<serviceTypeSerialbook_Provider>(
+                context,
+                listen: false,
+              );
           serviceTypeModel? preSelectedType;
           if (widget.bookingDetails.serviceType?.id != null &&
               serviceTypeProvider.serviceTypeList.isNotEmpty) {
             try {
               preSelectedType = serviceTypeProvider.serviceTypeList.firstWhere(
-                    (type) => type.id == widget.bookingDetails.serviceType!.id,
+                (type) => type.id == widget.bookingDetails.serviceType!.id,
               );
             } catch (e) {
               print("Pre-selected service type not found by ID. Error: $e");
@@ -145,7 +147,6 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
 
   // save book serial request
   Future<void> _UpdateBook_serial() async {
-
     if (!_dialogFormKey.currentState!.validate()) {
       setState(() {
         _autovalidateMode = AutovalidateMode.onUserInteraction;
@@ -234,13 +235,16 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
 
   Future<void> _handleRefresh() async {
     _fetchInitialData();
-   // await Future.delayed(const Duration(seconds: 1));
+    // await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
   Widget build(BuildContext context) {
     final updateProvider = Provider.of<UpdateBookSerialProvider>(context);
-    final getUpdateProvider = Provider.of<GetBookSerialProvider>(context,listen: false);
+    final getUpdateProvider = Provider.of<GetBookSerialProvider>(
+      context,
+      listen: false,
+    );
     final String todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     return MainLayout(
@@ -250,334 +254,323 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
       userType: UserType.customer,
       isExtraScreen: true,
       child: RefreshIndicator(
-        onRefresh: ()async => _fetchInitialData(),
+        onRefresh: () async => _fetchInitialData(),
         backgroundColor: Colors.white,
         color: AppColor().primariColor,
         child: _isFetchingServiceTypes
             ? CustomShimmerList()
             : Form(
-              key: _dialogFormKey,
-              child: SingleChildScrollView(
-                child: Stack(
-                  children: [
-                    // top custom design
-                    ClipPath(
-                      clipper: ClipPathClipper(),
-                      child: Container(
-                        color: AppColor().primariColor,
-                        height: 250,
-                        width: double.maxFinite,
-                        alignment: Alignment.topLeft,
-                        padding: const EdgeInsets.only(
-                          top: 0,
-                          left: 10,
-                          right: 10,
+                key: _dialogFormKey,
+                child: SingleChildScrollView(
+                  child: Stack(
+                    children: [
+                      // top custom design
+                      ClipPath(
+                        clipper: ClipPathClipper(),
+                        child: Container(
+                          color: AppColor().primariColor,
+                          height: 250,
+                          width: double.maxFinite,
+                          alignment: Alignment.topLeft,
+                          padding: const EdgeInsets.only(
+                            top: 0,
+                            left: 10,
+                            right: 10,
+                          ),
                         ),
                       ),
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  "Edit Book a Serial",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Custom service center filed
+                            const CustomLabeltext(
+                              "Service Center",
+                              color: Colors.white,
+                            ),
+                            const SizedBox(height: 8),
+                            CustomTextField(
+                              controller: _serviceCenterController,
+                              fillColor: Colors.red.shade50,
+                              filled: true,
+                              isPassword: false,
+                              enabled: false,
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Custom service type field
+                            const CustomLabeltext(
+                              "Service Type",
+                              color: Colors.white,
+                            ),
+                            const SizedBox(height: 8),
+
+                            Consumer<serviceTypeSerialbook_Provider>(
+                              builder: (context, serviceTypeProvider, child) {
+                                return CustomDropdown<serviceTypeModel>(
+                                  hinText: "select serviceType",
+                                  items: serviceTypeProvider.serviceTypeList,
+                                  onChanged: (serviceTypeModel? newValue) {
+                                    setState(() {
+                                      _selectedServiceType = newValue;
+                                    });
+                                    print(newValue?.name);
+                                  },
+                                  itemAsString: (serviceTypeModel item) =>
+                                      item.name ?? "no data",
+                                  selectedItem: _selectedServiceType,
+                                  validator: (value) {
+                                    if (value == null)
+                                      return "Please select a Service Type";
+                                    return null;
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Custom date field
+                            const CustomLabeltext("Date"),
+                            const SizedBox(height: 8),
+                            CustomTextField(
+                              fillColor: Colors.red.shade50,
+                              filled: true,
+                              enabled: false,
+                              controller: _dateController,
+                              hintText: todayString,
+                              isPassword: false,
+                              suffixIcon: IconButton(
+                                onPressed: () async {
+                                  DateTime? newDate = await showDatePicker(
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(
+                                          useMaterial3: false,
+                                          colorScheme: ColorScheme.light(
+                                            primary: AppColor().primariColor,
+                                            // Header color
+                                            onPrimary: Colors.white,
+                                            // Header text color
+                                            onSurface:
+                                                Colors.black, // Body text color
+                                          ),
+                                          dialogTheme: DialogThemeData(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16.0),
+                                            ),
+                                          ),
+                                          textButtonTheme: TextButtonThemeData(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: AppColor()
+                                                  .primariColor, // Button text color
+                                            ),
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
+                                    context: context,
+                                    initialDate: _selectedDate,
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime(2100),
+                                  );
+                                  if (newDate != null) {
+                                    setState(() {
+                                      _selectedDate = newDate;
+                                      _dateController.text = DateFormat(
+                                        "yyyy-MM-dd",
+                                      ).format(newDate);
+                                    });
+                                  }
                                 },
                                 icon: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
+                                  Icons.date_range_outlined,
+                                  color: Colors.grey.shade400,
                                 ),
                               ),
-                              Text(
-                                "Edit Book a Serial",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            ),
+
+                            const SizedBox(height: 10),
+                            const Text(
+                              "For",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
+                            ),
 
-                          // Custom service center filed
-                          const CustomLabeltext(
-                            "Service Center",
-                            color: Colors.white,
-                          ),
-                          const SizedBox(height: 8),
-                          CustomTextField(
-                            controller: _serviceCenterController,
-                            fillColor: Colors.red.shade50,
-                            filled: true,
-                            isPassword: false,
-                            enabled: false,
-                          ),
-                          const SizedBox(height: 10),
-
-                          // Custom service type field
-                          const CustomLabeltext(
-                            "Service Type",
-                            color: Colors.white,
-                          ),
-                          const SizedBox(height: 8),
-
-
-                          Consumer<serviceTypeSerialbook_Provider>(
-                            builder: (context, serviceTypeProvider, child) {
-                              return CustomDropdown<serviceTypeModel>(
-                                hinText: "select serviceType",
-                                items: serviceTypeProvider.serviceTypeList,
-                                onChanged: (serviceTypeModel? newValue) {
-                                  setState(() {
-                                    _selectedServiceType = newValue;
-                                  });
-                                  print(newValue?.name);
-                                },
-                                itemAsString: (serviceTypeModel item) =>
-                                    item.name ?? "no data",
-                                selectedItem: _selectedServiceType,
-                                validator: (value) {
-                                  if (value == null)
-                                    return "Please select a Service Type";
-                                  return null;
-                                },
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 10),
-
-
-
-                          // Custom date field
-                          const CustomLabeltext("Date"),
-                          const SizedBox(height: 8),
-                          CustomTextField(
-                            fillColor: Colors.red.shade50,
-                            filled: true,
-                            enabled: false,
-                            controller: _dateController,
-                            hintText: todayString,
-                            isPassword: false,
-                            suffixIcon: IconButton(
-                              onPressed: () async {
-                                DateTime? newDate = await showDatePicker(
-                                  builder: (context, child) {
-                                    return Theme(
-                                      data: Theme.of(context).copyWith(
-                                        useMaterial3: false,
-                                        colorScheme: ColorScheme.light(
-                                          primary: AppColor().primariColor,
-                                          // Header color
-                                          onPrimary: Colors.white,
-                                          // Header text color
-                                          onSurface: Colors
-                                              .black, // Body text color
-                                        ),
-                                        dialogTheme: DialogThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(16.0),
-                                          ),
-                                        ),
-                                        textButtonTheme: TextButtonThemeData(
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: AppColor()
-                                                .primariColor, // Button text color
-                                          ),
-                                        ),
-                                      ),
-                                      child: child!,
-                                    );
-                                  },
-                                  context: context,
-                                  initialDate: _selectedDate,
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime(2100),
-                                );
-                                if (newDate != null) {
-                                  setState(() {
-                                    _selectedDate = newDate;
-                                    _dateController.text = DateFormat(
-                                      "yyyy-MM-dd",
-                                    ).format(newDate);
-                                  });
-                                }
+                            // Custom radio button for user name
+                            CustomRadioGroup<UserName>(
+                              groupValue: _selectUserName,
+                              items: const [UserName.Self, UserName.Other],
+                              onChanged: (newValue) {
+                                setState(() {
+                                  _selectUserName = newValue;
+                                  final authProvider =
+                                      Provider.of<AuthProvider>(
+                                        context,
+                                        listen: false,
+                                      );
+                                  if (newValue == UserName.Self) {
+                                    _contactNoController.text =
+                                        authProvider.userModel?.user.mobileNo ??
+                                        '';
+                                    _nameController.text =
+                                        authProvider.userModel?.user.name ?? '';
+                                  } else {
+                                    _contactNoController.text =
+                                        widget.bookingDetails.contactNo ?? '';
+                                    _nameController.text =
+                                        widget.bookingDetails.name!;
+                                  }
+                                });
                               },
-                              icon: Icon(
-                                Icons.date_range_outlined,
-                                color: Colors.grey.shade400,
+                              itemTitleBuilder: (value) =>
+                                  value == UserName.Self ? "Self" : "Other",
+                            ),
+                            const SizedBox(height: 10),
+                            Visibility(
+                              visible: _selectUserName == UserName.Self,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Custom name field
+                                  CustomLabeltext("Name"),
+                                  SizedBox(height: 10),
+                                  CustomTextField(
+                                    enabled: false,
+                                    filled: true,
+                                    fillColor: Colors.red.shade50,
+                                    isPassword: false,
+                                    controller: _nameController,
+                                  ),
+                                  SizedBox(height: 10),
+
+                                  // Custom contact no field
+                                  CustomLabeltext("Contact No"),
+                                  SizedBox(height: 10),
+                                  CustomTextField(
+                                    enabled: false,
+                                    fillColor: Colors.red.shade50,
+                                    filled: true,
+                                    isPassword: false,
+                                    controller: _contactNoController,
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
+                            const SizedBox(width: 10),
+                            Visibility(
+                              visible: _selectUserName == UserName.Other,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Custom name field
+                                  CustomLabeltext("Name"),
+                                  SizedBox(height: 10),
+                                  CustomTextField(
+                                    isPassword: false,
+                                    controller: _nameController,
+                                  ),
+                                  SizedBox(height: 10),
 
-                          const SizedBox(height: 10),
-                          const Text(
-                            "For",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                                  // Custom contact no field
+                                  CustomLabeltext("Contact No"),
+                                  SizedBox(height: 10),
+                                  CustomTextField(
+                                    isPassword: false,
+                                    controller: _contactNoController,
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  SizedBox(height: 15),
+                                ],
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 10),
 
-                          // Custom radio button for user name
-                          CustomRadioGroup<UserName>(
-                            groupValue: _selectUserName,
-                            items: const [UserName.Self, UserName.Other],
-                            onChanged: (newValue) {
-                              setState(() {
-                                _selectUserName = newValue;
-                                final authProvider =
-                                    Provider.of<AuthProvider>(
-                                      context,
-                                      listen: false,
-                                    );
-                                if (newValue == UserName.Self) {
-                                  _contactNoController.text =
-                                      authProvider
-                                          .userModel
-                                          ?.user
-                                          .mobileNo ??
-                                      '';
-                                  _nameController.text =
-                                      authProvider.userModel?.user.name ??
-                                      '';
-                                } else {
-                                  _contactNoController.text =
-                                      widget.bookingDetails.contactNo ?? '';
-                                  _nameController.text =
-                                      widget.bookingDetails.name!;
-                                }
-                              });
-                            },
-                            itemTitleBuilder: (value) =>
-                                value == UserName.Self ? "Self" : "Other",
-                          ),
-                          const SizedBox(height: 10),
-                          Visibility(
-                            visible: _selectUserName == UserName.Self,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            // Custom button
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // Custom name field
-                                CustomLabeltext("Name"),
-                                SizedBox(height: 10),
-                                CustomTextField(
-                                  enabled: false,
-                                  filled: true,
-                                  fillColor: Colors.red.shade50,
-                                  isPassword: false,
-                                  controller: _nameController,
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColor().primariColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    _UpdateBook_serial();
+                                  },
+                                  child: _isUpdating
+                                      ? Text(
+                                          "Please wait...",
+                                          style: TextStyle(color: Colors.white),
+                                        )
+                                      : Text(
+                                          "Request for serial",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                 ),
-                                SizedBox(height: 10),
-
-                                // Custom contact no field
-                                CustomLabeltext("Contact No"),
-                                SizedBox(height: 10),
-                                CustomTextField(
-                                  enabled: false,
-                                  fillColor: Colors.red.shade50,
-                                  filled: true,
-                                  isPassword: false,
-                                  controller: _contactNoController,
-                                  keyboardType: TextInputType.number,
+                                SizedBox(width: 10),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                      color: AppColor().primariColor,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Visibility(
-                            visible: _selectUserName == UserName.Other,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Custom name field
-                                CustomLabeltext("Name"),
-                                SizedBox(height: 10),
-                                CustomTextField(
-                                  isPassword: false,
-                                  controller: _nameController,
-                                ),
-                                SizedBox(height: 10),
-
-                                // Custom contact no field
-                                CustomLabeltext("Contact No"),
-                                SizedBox(height: 10),
-                                CustomTextField(
-                                  isPassword: false,
-                                  controller: _contactNoController,
-                                  keyboardType: TextInputType.number,
-                                ),
-                                SizedBox(height: 15),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-
-                          // Custom button
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColor().primariColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  _UpdateBook_serial();
-                                },
-                                child: _isUpdating
-                                    ? Text(
-                                        "Please wait...",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(
-                                        "Request for serial",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                              ),
-                              SizedBox(width: 10),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    color: AppColor().primariColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
       ),
     );
   }

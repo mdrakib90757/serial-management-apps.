@@ -5,6 +5,7 @@ import 'package:SerialMan/model/serialService_model.dart';
 import 'package:SerialMan/request_model/serviceCanter_request/newSerialButton_request/newSerialButton_request.dart';
 
 class NewSerialButtonService {
+  // create new serial button for service center home screen
   Future<dynamic> NewSerialButton(
     NewSerialButtonRequest serialRequest,
     String serviceCenterId,
@@ -17,6 +18,7 @@ class NewSerialButtonService {
     return response;
   }
 
+  // get new serial button fro serviceCenter home screen
   Future<List<SerialModel>> getNewSerialButton(
     String serviceCenterId,
     String date,

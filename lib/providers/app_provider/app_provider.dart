@@ -39,6 +39,7 @@ import '../serviceCenter_provider/nextButton_provider/get_nextButton_provider.da
 import '../serviceCenter_provider/nextButton_provider/nextButton_provider.dart';
 import '../serviceCenter_provider/roles_service_center_provider/roles_service_center_provider.dart';
 
+import '../serviceCenter_provider/service_types_de_faultif_not_set_provider/service_types_de_faultif_not_set_provider.dart';
 import '../serviceCenter_provider/statusButtonProvider/get_status_updateButtonButton_provider.dart';
 import '../serviceCenter_provider/statusButtonProvider/status_UpdateButton_provider.dart';
 import '../serviceCenter_provider/update_service_center_service_type_provider/update_service_center_service_type_provider.dart';
@@ -49,6 +50,7 @@ import '../serviceTaker_provider/commentCancelProvider/commentCancelButton_provi
 //import '../serviceTaker_provider/getBookSerialButtonProvider/getBookSerial_provider.dart';
 import '../serviceTaker_provider/commentCancelProvider/getCommentCancelButtonProvider.dart';
 import '../serviceTaker_provider/serviceCenter_serialBookProvider/serviceCenter_serialBookProvider.dart';
+import '../serviceTaker_provider/service_types_de_fault_provider/service_types_de_fault_provider.dart';
 import '../serviceTaker_provider/update_bookserialProvider/getUpdate_bookSerial_provider.dart';
 import '../serviceTaker_provider/mySerials/mySerial_provider.dart';
 import '../serviceTaker_provider/organaizationProvider/organization_provider.dart';
@@ -84,6 +86,9 @@ class AppProviders {
       ),
       ChangeNotifierProvider(
         create: (context) => GetEditButtonServiceTypeProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => service_types_de_faultif_not_setProvider(),
       ),
 
       ChangeNotifierProvider(
@@ -152,6 +157,10 @@ class AppProviders {
       ChangeNotifierProvider(create: (context) => GetBookSerialProvider()),
       ChangeNotifierProvider(
         create: (context) => MySerialServiceTakerProvider(),
+      ),
+
+      ChangeNotifierProvider(
+        create: (context) => service_types_de_fault_provider(),
       ),
 
       ///BusinessType Provider

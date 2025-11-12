@@ -1,25 +1,32 @@
+import 'package:SerialMan/global_widgets/custom_circle_progress_indicator/custom_circle_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import 'package:SerialMan/model/serviceCenter_model.dart';
 import 'package:SerialMan/model/service_type_model.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/newSerialButton_provider/newSerialProvider.dart';
 import 'package:SerialMan/request_model/serviceCanter_request/newSerialButton_request/newSerialButton_request.dart';
 import 'package:SerialMan/utils/color.dart';
 import 'package:SerialMan/utils/date_formatter/date_formatter.dart';
-import '../../../../global_widgets/custom_circle_progress_indicator/custom_circle_progress_indicator.dart';
 import '../../../../global_widgets/custom_dropdown/custom_dropdown.dart';
 import '../../../../global_widgets/custom_flushbar.dart';
 import '../../../../global_widgets/custom_labeltext.dart';
 import '../../../../global_widgets/custom_sanckbar.dart';
 import '../../../../global_widgets/custom_textfield.dart';
+import '../../../../model/ServiceTypesDeFaultifNotSet.dart';
 import '../../../../providers/serviceCenter_provider/addButtonServiceType_Provider/getAddButtonServiceType.dart';
 import '../../../../providers/serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart';
+import '../../../../providers/serviceCenter_provider/service_types_de_faultif_not_set_provider/service_types_de_faultif_not_set_provider.dart';
 
 class NewSerialButtonDialog extends StatefulWidget {
   final ServiceCenterModel serviceCenterModel;
-  const NewSerialButtonDialog({super.key, required this.serviceCenterModel});
+  final BuildContext rootContext;
+
+  const NewSerialButtonDialog({
+    super.key,
+    required this.serviceCenterModel,
+    required this.rootContext,
+  });
 
   @override
   State<NewSerialButtonDialog> createState() => _NewSerialButtonDialogState();
@@ -38,6 +45,7 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
   serviceTypeModel? _selectedServiceType;
   DateTime _selectedDate = DateTime.now();
   bool _serviceTypeHasError = false;
+  ServiceTypesDeFaultifNotSetModel? _selectedServiceTypeDeFault;
 
   @override
   void initState() {
@@ -52,15 +60,28 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
       text: DateFormat('yyyy-MM-dd').format(_selectedDate),
     );
 
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final companyId = widget.serviceCenterModel.companyId;
+    //   if (companyId != null && companyId.isNotEmpty) {
+    //     Provider.of<GetAddButtonServiceType_Provider>(
+    //       context,
+    //       listen: false,
+    //     ).fetchGetAddButton_ServiceType(companyId);
+    //   } else {
+    //     print("Error: Company ID is missing, cannot fetch service types.");
+    //   }
+    // });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final companyId = widget.serviceCenterModel.companyId;
-      if (companyId != null && companyId.isNotEmpty) {
-        Provider.of<GetAddButtonServiceType_Provider>(
+      final serviceCenterId = widget.serviceCenterModel.id;
+      if (serviceCenterId != null && serviceCenterId.isNotEmpty) {
+        Provider.of<service_types_de_faultif_not_setProvider>(
           context,
           listen: false,
-        ).fetchGetAddButton_ServiceType(companyId);
+        ).fetchServiceTypes(serviceCenterId);
       } else {
-        print("Error: Company ID is missing, cannot fetch service types.");
+        print(
+          "Error: Service Center ID is missing, cannot fetch service types.",
+        );
       }
     });
   }
@@ -74,6 +95,7 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
     super.dispose();
   }
 
+  // new serial save function
   Future<void> _saveNewSerial() async {
     if (!(_dialogFormKey.currentState?.validate() ?? false)) {
       setState(() {
@@ -82,10 +104,12 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
       return;
     }
 
-    if (_selectedServiceType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select a service type.")),
-      );
+    if (_selectedServiceTypeDeFault == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select a service type.")),
+        );
+      }
       return;
     }
 
@@ -100,7 +124,7 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
     );
 
     String dateForApiCreate = DateFormatter.formatForApi(_selectedDate);
-    String serviceTypeId = _selectedServiceType!.id!;
+    String serviceTypeId = _selectedServiceTypeDeFault!.id!;
     String serviceCenterId = widget.serviceCenterModel.id!;
 
     NewSerialButtonRequest buttonRequest = NewSerialButtonRequest(
@@ -117,13 +141,13 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
       buttonRequest,
       serviceCenterId,
     );
-
+    if (!mounted) return;
     if (success) {
       await getSerialProvider.fetchSerialsButton(
         serviceCenterId,
         dateForApiCreate,
       );
-      Navigator.of(context);
+      // Navigator.of(context);
       await CustomFlushbar.showSuccess(
         context: context,
         title: "Success",
@@ -131,7 +155,7 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
       );
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(widget.rootContext).showSnackBar(
         SnackBar(
           content: CustomSnackBarWidget(
             title: "Error",
@@ -139,6 +163,7 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
             iconColor: Colors.red.shade400,
             icon: Icons.dangerous_outlined,
           ),
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -155,9 +180,7 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
             useMaterial3: false,
             colorScheme: ColorScheme.light(
               primary: AppColor().primariColor,
-              // Header color
               onPrimary: Colors.white,
-              // Header text color
               onSurface: Colors.black,
             ),
             dialogTheme: DialogThemeData(
@@ -204,10 +227,7 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
     return Dialog(
       backgroundColor: Colors.grey.shade300,
       insetPadding: EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(
-        //side: BorderSide(color: AppColor().primariColor),
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
         child: Container(
@@ -262,29 +282,56 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
                     const SizedBox(height: 10),
                     CustomLabeltext("Service Type"),
                     const SizedBox(height: 8),
-                    Consumer<GetAddButtonServiceType_Provider>(
+                    Consumer<service_types_de_faultif_not_setProvider>(
                       builder: (context, serviceTypeProvider, child) {
-                        return CustomDropdown<serviceTypeModel>(
+                        // if (serviceTypeProvider.state ==
+                        //     NotifierState.loading) {
+                        //   return const Center(
+                        //     child: CircularProgressIndicator(),
+                        //   );
+                        // }
+                        final bool isLoading =
+                            serviceTypeProvider.state == NotifierState.loading;
+                        if (serviceTypeProvider.state == NotifierState.error) {
+                          return Text(
+                            'Error: ${serviceTypeProvider.errorMessage}',
+                            style: const TextStyle(color: Colors.red),
+                          );
+                        }
+                        return CustomDropdown<ServiceTypesDeFaultifNotSetModel>(
                           hinText: "Select ServiceType",
-                          items:
-                              getAddButton_serviceType_Provider.serviceTypeList,
-                          value: _selectedServiceType,
-                          selectedItem: _selectedServiceType,
-                          onChanged: (serviceTypeModel? newvalue) {
+                          items: serviceTypeProvider.serviceTypes,
+                          value: _selectedServiceTypeDeFault,
+                          selectedItem: _selectedServiceTypeDeFault,
+                          onChanged: (ServiceTypesDeFaultifNotSetModel? newvalue) {
                             debugPrint(
                               "DROPDOWN CHANGED: User selected Service Center ID: ${newvalue?.id}",
                             );
                             setState(() {
-                              _selectedServiceType = newvalue;
+                              _selectedServiceTypeDeFault = newvalue;
                             });
                           },
-                          itemAsString: (serviceTypeModel item) =>
-                              item.name ?? "No Name",
+                          itemAsString:
+                              (ServiceTypesDeFaultifNotSetModel item) =>
+                                  item.name ?? "No Name",
                           validator: (value) {
                             if (value == null)
                               return "Please select a Service Type";
                             return null;
                           },
+                          suffixIcon: isLoading
+                              ? Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: SizedBox(
+                                    height: 15,
+                                    width: 15,
+                                    child: CustomLoading(
+                                      color: AppColor().primariColor,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                )
+                              : null,
                         );
                       },
                     ),

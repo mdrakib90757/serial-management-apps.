@@ -477,7 +477,7 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                                 fontSize: 15,
                                               ),
                                             ),
-                                            SizedBox(width: 50,),
+                                            SizedBox(width: 50),
                                             // for cancel button edit button only for serving and waiting status
                                             Visibility(
                                               visible:
@@ -522,21 +522,34 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                                               ),
                                                           child: GestureDetector(
                                                             onTap: () {
-
                                                               Navigator.push(
                                                                 context,
                                                                 PageRouteBuilder(
-                                                                  pageBuilder: (_, __, ___) => UpdateBookSerialDlalog(
-                                                                    bookingDetails:
-                                                                    bookSerial,
-                                                                  ),
-                                                                  transitionsBuilder: (_, anim, __, child) {
-                                                                    return FadeTransition(
-                                                                      opacity: anim,
-                                                                      child: child,
-                                                                    );
-                                                                  },
-                                                                  fullscreenDialog: true,
+                                                                  pageBuilder:
+                                                                      (
+                                                                        _,
+                                                                        __,
+                                                                        ___,
+                                                                      ) => UpdateBookSerialDlalog(
+                                                                        bookingDetails:
+                                                                            bookSerial,
+                                                                      ),
+                                                                  transitionsBuilder:
+                                                                      (
+                                                                        _,
+                                                                        anim,
+                                                                        __,
+                                                                        child,
+                                                                      ) {
+                                                                        return FadeTransition(
+                                                                          opacity:
+                                                                              anim,
+                                                                          child:
+                                                                              child,
+                                                                        );
+                                                                      },
+                                                                  fullscreenDialog:
+                                                                      true,
                                                                 ),
                                                               );
                                                             },

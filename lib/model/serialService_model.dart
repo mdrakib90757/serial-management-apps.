@@ -16,6 +16,7 @@ class SerialModel {
   final String? statusTime;
   final String? createdTime;
   final String? comment;
+  final bool? isAdmin;
 
   SerialModel({
     this.user,
@@ -35,6 +36,7 @@ class SerialModel {
     this.createdTime,
     this.charge,
     this.comment,
+    this.isAdmin,
   });
 
   factory SerialModel.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class SerialModel {
       createdTime: json['createdTime'] as String?,
       charge: json["charge"],
       comment: json["comment"],
+      isAdmin: json["isAdmin"],
     );
   }
 }

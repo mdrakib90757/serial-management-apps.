@@ -112,54 +112,32 @@ class _ServiceTakerQueueServedDialogState
                     indicatorColor: AppColor().primariColor,
                     dividerColor: Colors.transparent,
                     splashFactory: NoSplash.splashFactory,
-                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                          (Set<MaterialState> states) {
-                        return Colors.transparent;
-                      },
-                    ),
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>((
+                      Set<MaterialState> states,
+                    ) {
+                      return Colors.transparent;
+                    }),
                     tabs: [
                       Tab(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 25,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColor().primariColor,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Text(
-                            "Queue${serialProvider.totalQueueCount > 0 ? '(${serialProvider.totalQueueCount})' : ''}",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
-                            ),
+                        child: Text(
+                          "Queue${serialProvider.totalQueueCount > 0 ? '(${serialProvider.totalQueueCount})' : ''}",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
                           ),
                         ),
 
                         //text: "Queue(${serialProvider.totalQueueCount})"
                       ),
                       Tab(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 25,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColor().primariColor,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Text(
-                            "Served${serialProvider.totalServedCount > 0 ? '(${serialProvider.totalServedCount})' : ''}",
-                            //"Served(${serialProvider.totalServedCount})",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
-                            ),
+                        child: Text(
+                          "Served${serialProvider.totalServedCount > 0 ? '(${serialProvider.totalServedCount})' : ''}",
+                          //"Served(${serialProvider.totalServedCount})",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
                           ),
                         ),
 

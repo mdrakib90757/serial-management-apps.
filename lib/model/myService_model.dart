@@ -13,7 +13,7 @@ class MyService {
   final DateTime? statusTime;
   final DateTime? createdTime;
   final String? approxServeTime;
-
+  final bool? isAdmin;
   final Company? company;
   final ServiceCenter? serviceCenter;
   final ServiceType? serviceType;
@@ -34,6 +34,7 @@ class MyService {
     this.serviceCenter,
     this.serviceType,
     this.statusTime,
+    this.isAdmin,
   });
 
   factory MyService.fromJson(Map<String, dynamic> json) {
@@ -63,6 +64,7 @@ class MyService {
       //     ? DateTime.tryParse(json['createdTime'])
       //     : null,
       approxServeTime: json['approxServeTime'],
+      isAdmin: json['isAdmin'],
       company: json['company'] != null
           ? Company.fromJson(json['company'])
           : null,

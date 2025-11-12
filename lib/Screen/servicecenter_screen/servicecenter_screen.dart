@@ -68,11 +68,11 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
         getAddButtonProvider.fetchGetAddButton(companyId);
       });
     }
-    if (companyId == null) {
-      return Scaffold(
-        body: Center(child: CustomLoading(color: AppColor().primariColor)),
-      );
-    }
+    // if (companyId == null) {
+    //   return Scaffold(
+    //     body: Center(child: CustomLoading(color: AppColor().primariColor)),
+    //   );
+    // }
 
     return Form(
       child: Scaffold(
