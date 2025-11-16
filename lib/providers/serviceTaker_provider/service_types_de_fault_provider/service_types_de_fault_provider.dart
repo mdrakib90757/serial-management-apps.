@@ -34,4 +34,10 @@ class service_types_de_fault_provider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  void clearData() {
+    _serviceTypes = [];
+    _state = NotifierState.initial;
+    notifyListeners();
+  }
 }

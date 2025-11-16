@@ -141,9 +141,10 @@ class _AddUser_SettingServiceCenterDialogState
       userRequest,
       companyId,
     );
-
+    if (!mounted) return;
     if (success) {
       await getAddUserButton.fetchUsers(companyId);
+      if (!mounted) return;
       navigator.pop();
       await CustomFlushbar.showSuccess(
         context: context,
@@ -200,27 +201,43 @@ class _AddUser_SettingServiceCenterDialogState
             //
             : Form(
                 key: _fromkey,
-                child: SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      // top custom design
-                      ClipPath(
-                        clipper: ClipPathClipper(),
-                        child: Container(
-                          color: AppColor().primariColor,
-                          height: 250,
-                          width: double.maxFinite,
-                          alignment: Alignment.topLeft,
-                          padding: const EdgeInsets.only(
-                            top: 0,
-                            left: 10,
-                            right: 10,
-                          ),
+                child: Stack(
+                  children: [
+                    // top custom design
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
                         ),
                       ),
+                    ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                    SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          //color: Colors.transparent.withOpacity(0.0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,13 +251,13 @@ class _AddUser_SettingServiceCenterDialogState
                                   },
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 Text(
                                   "Add User",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -250,13 +267,12 @@ class _AddUser_SettingServiceCenterDialogState
                             const SizedBox(height: 13),
 
                             //Name custom text field
-                            const CustomLabeltext("Name", color: Colors.white),
+                            const CustomLabeltext("Name"),
                             const SizedBox(height: 8),
                             CustomTextField(
                               controller: _nameController,
                               isPassword: false,
                               hintText: "Name",
-                              // prefixIcon: Icons.person,
                               prefixIconConstraints: const BoxConstraints(
                                 minWidth: 0,
                                 minHeight: 0,
@@ -265,10 +281,7 @@ class _AddUser_SettingServiceCenterDialogState
                             const SizedBox(height: 10),
 
                             // login name custom text field
-                            const CustomLabeltext(
-                              "Login Name",
-                              color: Colors.white,
-                            ),
+                            const CustomLabeltext("Login Name"),
                             const SizedBox(height: 8),
                             CustomTextField(
                               controller: _loginNameController,
@@ -481,7 +494,9 @@ class _AddUser_SettingServiceCenterDialogState
                                     ),
                                     backgroundColor: AppColor().primariColor,
                                   ),
-                                  onPressed: _saveAddUser,
+                                  onPressed: addUserButton.isLoading
+                                      ? null
+                                      : _saveAddUser,
                                   child: addUserButton.isLoading
                                       ? Text(
                                           "Please Wait",
@@ -519,8 +534,8 @@ class _AddUser_SettingServiceCenterDialogState
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
       ),

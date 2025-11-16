@@ -24,24 +24,35 @@ class _SettingScreenState extends State<SettingScreen> {
               width: double.maxFinite,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.inbox_outlined,
-                    size: 60,
-                    color: Colors.grey.shade300,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'No Data Found',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[300]),
-                  ),
-                ],
+
+          SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                //color: Colors.transparent.withOpacity(0.0),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black.withOpacity(0.3)),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.inbox_outlined,
+                      size: 60,
+                      color: Colors.grey.shade300,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'No Data Found',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[300]),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

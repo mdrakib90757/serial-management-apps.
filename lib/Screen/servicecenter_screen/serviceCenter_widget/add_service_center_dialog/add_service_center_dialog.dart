@@ -192,25 +192,31 @@ class _Add_button_Dialog_serviceCenter_screenState
         color: AppColor().primariColor,
         child: Form(
           key: _dialogFormKey,
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            //
-            child: Stack(
-              children: [
-                // top custom design
-                ClipPath(
-                  clipper: ClipPathClipper(),
-                  child: Container(
-                    color: AppColor().primariColor,
-                    height: 250,
-                    width: double.maxFinite,
-                    alignment: Alignment.topLeft,
-                    padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
-                  ),
+          child: Stack(
+            children: [
+              // top custom design
+              ClipPath(
+                clipper: ClipPathClipper(),
+                child: Container(
+                  color: AppColor().primariColor,
+                  height: 250,
+                  width: double.maxFinite,
+                  alignment: Alignment.topLeft,
+                  padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
                 ),
+              ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+              SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    //color: Colors.transparent.withOpacity(0.0),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.black.withOpacity(0.3)),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -222,14 +228,14 @@ class _Add_button_Dialog_serviceCenter_screenState
                             onPressed: () => Navigator.pop(context),
                             icon: const Icon(
                               Icons.arrow_back,
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                           SizedBox(width: 8),
                           const Text(
                             "Add Service Center",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -239,7 +245,7 @@ class _Add_button_Dialog_serviceCenter_screenState
                       const SizedBox(height: 10),
 
                       // custom name text field
-                      const CustomLabeltext("Name", color: Colors.white),
+                      const CustomLabeltext("Name"),
                       const SizedBox(height: 10),
                       CustomTextField(
                         controller: _nameController,
@@ -249,7 +255,7 @@ class _Add_button_Dialog_serviceCenter_screenState
                       const SizedBox(height: 10),
 
                       // custom email text field
-                      const CustomLabeltext("Hotline No.", color: Colors.white),
+                      const CustomLabeltext("Hotline No."),
                       const SizedBox(height: 8),
                       CustomTextField(
                         controller: _hotLineController,
@@ -431,7 +437,9 @@ class _Add_button_Dialog_serviceCenter_screenState
                               ),
                               backgroundColor: AppColor().primariColor,
                             ),
-                            onPressed: _saveServiceCenter,
+                            onPressed: addButtonProvider.isLoading
+                                ? null
+                                : _saveServiceCenter,
                             child: addButtonProvider.isLoading
                                 ? Text(
                                     "Please Wait",
@@ -462,257 +470,8 @@ class _Add_button_Dialog_serviceCenter_screenState
                     ],
                   ),
                 ),
-              ],
-              //
-              //             child: Padding(
-              //               padding: const EdgeInsets.symmetric(horizontal: 15),
-              //               child: Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.start,
-              //                 mainAxisSize: MainAxisSize.min,
-              //                 children: [
-              //                   // add Service Center
-              //                   Row(
-              //                     children: [
-              //                       IconButton(
-              //                         onPressed: () => Navigator.pop(context),
-              //                         icon: const Icon(Icons.arrow_back),
-              //                       ),
-              //                       SizedBox(width: 8),
-              //                       const Text(
-              //                         "Add Service Center",
-              //                         style: TextStyle(
-              //                           color: Colors.black,
-              //                           fontSize: 20,
-              //                           fontWeight: FontWeight.bold,
-              //                         ),
-              //                       ),
-              //                     ],
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom name text field
-              //                   const CustomLabeltext("Name"),
-              //                   const SizedBox(height: 10),
-              //                   CustomTextField(
-              //                     controller: _nameController,
-              //                     hintText: "Name",
-              //                     isPassword: false,
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom email text field
-              //                   const CustomLabeltext("Hotline No."),
-              //                   const SizedBox(height: 8),
-              //                   CustomTextField(
-              //                     controller: _hotLineController,
-              //                     hintText: "HotlineNo",
-              //                     isPassword: false,
-              //                     keyboardType: TextInputType.number,
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom email text field
-              //                   const CustomLabeltext("Email", showStar: false),
-              //                   const SizedBox(height: 8),
-              //                   CustomTextField(
-              //                     controller: _emailController,
-              //                     hintText: "Email",
-              //                     isPassword: false,
-              //                     enableValidation: false,
-              //                     keyboardType: TextInputType.emailAddress,
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom Weekly off-day button
-              //                   const CustomLabeltext("Weekly off-day", showStar: false),
-              //                   const SizedBox(height: 8),
-              //                   //custom weekly off days dropdown
-              //                   WeeklyOff_daysDropdown(
-              //                     availableDays: _availableDays,
-              //                     onSelectionChanged: (selectedDays) {
-              //                       setState(() {
-              //                         _selectedOffDays = selectedDays;
-              //                       });
-              //                     },
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //                   // custom tab button
-              //                   CustomFieldWithTabs(
-              //                     onEndTimeChanged: (time) {
-              //                       setState(() {
-              //                         _dialogEndTime = time;
-              //                       });
-              //                     },
-              //                     onStartTimeChanged: (time) {
-              //                       setState(() {
-              //                         _dialogStartTime = time;
-              //                       });
-              //                     },
-              //                     tabController: _tabControllerForDialog,
-              //                     textController: _customFieldTextController,
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom advance serial text field
-              //                   const CustomLabeltext("Advance Serials", showStar: false),
-              //                   const SizedBox(height: 8),
-              //                   CustomTextField(
-              //                     controller: _advanceSerialController,
-              //                     isPassword: false,
-              //                     enableValidation: false,
-              //                     suffixIcon: Container(
-              //                       width: 50,
-              //                       decoration: BoxDecoration(
-              //                         borderRadius: BorderRadius.circular(8),
-              //                       ),
-              //                       child: const Center(child: Text("Day(s)")),
-              //                     ),
-              //                     suffixIconConstraints: const BoxConstraints(
-              //                       minWidth: 0,
-              //                       minHeight: 0,
-              //                     ),
-              //                     keyboardType: TextInputType.number,
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom serial number policy tab button
-              //                   const CustomLabeltext(
-              //                     "Serial Number Policy",
-              //                     showStar: false,
-              //                   ),
-              //                   const SizedBox(height: 8),
-              //                   //custom policy dropdown
-              //                   CustomTab(
-              //                     onPolicyChanged: (policy) {
-              //                       setState(() {
-              //                         _selectedPolicy = policy;
-              //                       });
-              //                     },
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom reserved serial text field
-              //                   const CustomLabeltext("Reserved Serials", showStar: false),
-              //                   const SizedBox(height: 8),
-              //                   TextFormField(
-              //                     cursorColor: Colors.grey.shade400,
-              //                     controller: _reservedController,
-              //                     keyboardType: TextInputType.number,
-              //                     textAlign: TextAlign.left,
-              //                     decoration: InputDecoration(
-              //                       contentPadding: const EdgeInsets.symmetric(
-              //                         horizontal: 14,
-              //                         vertical: 12,
-              //                       ),
-              //                       isDense: true,
-              //                       border: OutlineInputBorder(
-              //                         borderSide: BorderSide(color: Colors.grey.shade400),
-              //                       ),
-              //                       focusedBorder: OutlineInputBorder(
-              //                         borderSide: BorderSide(
-              //                           color: AppColor().primariColor,
-              //                           width: 2,
-              //                         ),
-              //                       ),
-              //                       enabledBorder: OutlineInputBorder(
-              //                         borderSide: BorderSide(color: Colors.grey.shade400),
-              //                       ),
-              //                       prefixIcon: Container(
-              //                         margin: EdgeInsets.symmetric(vertical: 12),
-              //                         width: 70,
-              //                         decoration: BoxDecoration(
-              //                           borderRadius: BorderRadiusGeometry.circular(8),
-              //                         ),
-              //                         child: const Center(
-              //                           child: Text("First", style: TextStyle()),
-              //                         ),
-              //                       ),
-              //                       suffixIcon: Container(
-              //                         margin: EdgeInsets.symmetric(vertical: 12),
-              //                         width: 70,
-              //                         decoration: BoxDecoration(
-              //                           borderRadius: BorderRadiusGeometry.circular(8),
-              //                         ),
-              //                         child: const Center(child: Text("Serial(s)")),
-              //                       ),
-              //                       prefixIconConstraints: const BoxConstraints(
-              //                         minWidth: 0,
-              //                         minHeight: 0,
-              //                       ),
-              //                       suffixIconConstraints: const BoxConstraints(
-              //                         minWidth: 0,
-              //                         minHeight: 0,
-              //                       ),
-              //                     ),
-              //                   ),
-              //                   const SizedBox(height: 10),
-              //
-              //                   // custom daily quota text field
-              //                   CustomLabeltext("Daily Quota", showStar: false),
-              //                   const SizedBox(height: 8),
-              //                   CustomTextField(
-              //                     controller: _dailyQuotaController,
-              //                     isPassword: false,
-              //                     keyboardType: TextInputType.number,
-              //                     enableValidation: false,
-              //                     suffixIcon: Container(
-              //                       width: 50,
-              //                       decoration: BoxDecoration(
-              //                         borderRadius: BorderRadius.circular(8),
-              //                       ),
-              //                       child: const Center(child: Text("Serials")),
-              //                     ),
-              //                     suffixIconConstraints: const BoxConstraints(
-              //                       minWidth: 0,
-              //                       minHeight: 0,
-              //                     ),
-              //                   ),
-              //                   const SizedBox(height: 20),
-              //
-              //                   // save and cancel button
-              //                   Row(
-              //                     mainAxisAlignment: MainAxisAlignment.center,
-              //                     children: [
-              //                       ElevatedButton(
-              //                         style: ElevatedButton.styleFrom(
-              //                           shape: RoundedRectangleBorder(
-              //                             borderRadius: BorderRadius.circular(5),
-              //                           ),
-              //                           backgroundColor: AppColor().primariColor,
-              //                         ),
-              //                         onPressed: _saveServiceCenter,
-              //                         child: addButtonProvider.isLoading
-              //                             ? Text(
-              //                                 "Please Wait",
-              //                                 style: TextStyle(color: Colors.white),
-              //                               )
-              //                             : Text(
-              //                                 "Save",
-              //                                 style: TextStyle(color: Colors.white),
-              //                               ),
-              //                       ),
-              //                       const SizedBox(width: 10),
-              //                       ElevatedButton(
-              //                         style: ElevatedButton.styleFrom(
-              //                           shape: RoundedRectangleBorder(
-              //                             borderRadius: BorderRadius.circular(5),
-              //                           ),
-              //                           backgroundColor: Colors.white,
-              //                         ),
-              //                         onPressed: () => Navigator.pop(context),
-              //                         child: Text(
-              //                           "Cancel",
-              //                           style: TextStyle(color: AppColor().primariColor),
-              //                         ),
-              //                       ),
-              //                     ],
-              //                   ),
-              //                   SizedBox(height: 30),
-              //                 ],
-              //               ),
-              // //
-              //             ),
-            ),
+              ),
+            ],
           ),
         ),
       ),

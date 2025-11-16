@@ -1,5 +1,4 @@
 import 'package:SerialMan/global_widgets/custom_clip_path.dart';
-import 'package:SerialMan/global_widgets/custom_refresh_indicator.dart';
 import 'package:SerialMan/global_widgets/custom_sanckbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +12,7 @@ import '../../model/serviceCenter_model.dart';
 import '../../model/user_model.dart';
 import '../../providers/auth_provider/auth_providers.dart';
 import '../../providers/profile_provider/getprofile_provider.dart';
-import '../../providers/serviceCenter_provider/addButton_provider/add_Button_serviceCanter_provider.dart';
 import '../../providers/serviceCenter_provider/addButton_provider/get_AddButton_provider.dart';
-
 import '../../utils/color.dart';
 
 class ServicecenterScreen extends StatefulWidget {
@@ -55,7 +52,7 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
     if (companyId == null) {
       return Scaffold(
         backgroundColor: AppColor().backgroundColor,
-        body: Center(child: CustomLoading(color: AppColor().primariColor)),
+        body: CustomShimmerList(itemCount: 10),
       );
     }
 
@@ -68,6 +65,7 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
         getAddButtonProvider.fetchGetAddButton(companyId);
       });
     }
+
     // if (companyId == null) {
     //   return Scaffold(
     //     body: Center(child: CustomLoading(color: AppColor().primariColor)),
@@ -81,30 +79,43 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
           onRefresh: _handleRefresh,
           backgroundColor: Colors.white,
           color: AppColor().primariColor,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: getAddButtonProvider.isLoading
-                ? CustomShimmerList(itemCount: 10)
-                : Stack(
-                    children: [
-                      ClipPath(
-                        clipper: ClipPathClipper(),
-                        child: Container(
-                          color: AppColor().primariColor,
-                          height: 250,
-                          width: double.maxFinite,
-                          alignment: Alignment.topLeft,
-                          padding: const EdgeInsets.only(
-                            top: 0,
-                            left: 10,
-                            right: 10,
-                          ),
+          child: getAddButtonProvider.isLoading
+              ? CustomShimmerList(itemCount: 10)
+              : Stack(
+                  children: [
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
+                    ),
+
+                    SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
                           horizontal: 10,
-                          vertical: 5,
+                          vertical: 10,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          //color: Colors.transparent.withOpacity(0.0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -117,7 +128,7 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
                                 Text(
                                   "Service Center",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -125,20 +136,20 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
                                 _buildAddButton(context),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             _buildServiceCenterList(),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-          ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
   }
 
-  ///  Correct Widget return type for Add Button
+  //  Correct Widget return type for Add Button
   Widget _buildAddButton(BuildContext context) {
     final getAddButtonProvider = Provider.of<GetAddButtonProvider>(
       context,
@@ -287,6 +298,7 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
                         bool isServiceTakerUser =
                             authProvider.userType?.toLowerCase().trim() ==
                             "customer";
+
                         Navigator.push(
                           context,
                           PageRouteBuilder(
@@ -434,15 +446,10 @@ class _ServicecenterScreenState extends State<ServicecenterScreen>
                       );
                       if (mounted && success) {
                         await getAddButtonProvider.fetchGetAddButton(companyId);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: CustomSnackBarWidget(
-                              message: "Service Center deleted successfully.",
-                              title: 'Success',
-                            ),
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                          ),
+                        CustomFlushbar.showSuccess(
+                          context: context,
+                          title: "Success",
+                          message: "Service Center Delete Successfully",
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

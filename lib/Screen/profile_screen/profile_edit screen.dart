@@ -71,9 +71,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     width: double.maxFinite,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: SingleChildScrollView(
+                SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      //color: Colors.transparent.withOpacity(0.0),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black.withOpacity(0.3)),
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,15 +98,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   },
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: Colors.white,
-                                    //color: AppColor().primariColor,
+                                    // color: Colors.black,
+                                    color: AppColor().primariColor,
                                   ),
                                 ),
                                 Text(
                                   "Basic Information",
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    //color: AppColor().primariColor,
+                                    // color: Colors.black,
+                                    color: AppColor().primariColor,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -131,8 +139,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                               icon: Icon(
                                 Icons.edit_sharp,
                                 size: 25,
-                                color: Colors.white,
-                                //color: AppColor().primariColor,
+                                //color: Colors.white,
+                                color: AppColor().primariColor,
                               ),
                             ),
                           ],

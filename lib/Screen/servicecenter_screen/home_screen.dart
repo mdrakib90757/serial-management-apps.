@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:SerialMan/global_widgets/custom_clip_path.dart';
-import 'package:SerialMan/global_widgets/custom_refresh_indicator.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/nextButton_provider/get_nextButton_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -57,9 +56,7 @@ class _HomeScreenState extends State<HomeScreen>
       debugPrint(
         " FETCHING SERIALS for Service Center ID: ${_selectedServiceCenter!.id!}",
       );
-
       final formattedDate = DateFormatter.formatForApi(_selectedDate);
-
       Provider.of<GetNewSerialButtonProvider>(
         context,
         listen: false,
@@ -91,6 +88,10 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     tabController = TabController(length: tabList.length, vsync: this);
+    tabController.addListener(() {
+      setState(() {});
+    });
+
     _updateTime();
     _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _updateTime());
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -207,9 +208,7 @@ class _HomeScreenState extends State<HomeScreen>
       _selectedServiceCenter!.id!,
       DateFormat('yyyy-MM-dd').format(_selectedDate),
     );
-
     final newNextSerial = serialProvider.nextInQueue;
-
     //  If there is a new serial, update it to 'Serving' and the next to 'Waiting'
     if (newNextSerial != null) {
       StatusButtonRequest newServingRequest = StatusButtonRequest(
@@ -223,13 +222,11 @@ class _HomeScreenState extends State<HomeScreen>
         newNextSerial.serviceCenterId!,
         newNextSerial.id!,
       );
-
       final finalNextWaiting = serialProvider.queueSerials.firstWhereOrNull(
         (s) =>
             s.serialNo! > newNextSerial.serialNo! &&
             s.status?.toLowerCase() == 'booked',
       );
-
       if (finalNextWaiting != null) {
         StatusButtonRequest finalWaitingRequest = StatusButtonRequest(
           serviceId: finalNextWaiting.id!,
@@ -281,9 +278,7 @@ class _HomeScreenState extends State<HomeScreen>
         body: CustomShimmerList(itemCount: 10),
       );
     }
-
     final company = profile.currentCompany;
-
     final userInfo = singleUserInfoProvider.userInfo;
     if (userInfo == null) {
       return Scaffold(
@@ -291,13 +286,11 @@ class _HomeScreenState extends State<HomeScreen>
         body: CustomShimmerList(itemCount: 10),
       );
     }
-
     final allCompanyServiceCenters = getAddButtonProvider.serviceCenterList;
     final assignedCenterIds = userInfo.serviceCenterIds;
     final userAssignedServiceCenters = allCompanyServiceCenters.where((center) {
       return assignedCenterIds.contains(center.id);
     }).toList();
-
     if (_selectedServiceCenter == null &&
         userAssignedServiceCenters.isNotEmpty) {
       _selectedServiceCenter = userAssignedServiceCenters.first;
@@ -312,25 +305,30 @@ class _HomeScreenState extends State<HomeScreen>
         onRefresh: _fetchDataForUI,
         backgroundColor: Colors.white,
         color: AppColor().primariColor,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          //
-          child: Stack(
-            children: [
-              ClipPath(
-                clipper: ClipPathClipper(),
-                child: Container(
-                  color: AppColor().primariColor,
-                  height: 250,
-                  width: double.maxFinite,
-                  alignment: Alignment.topLeft,
-                  padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
-                ),
+        child: Stack(
+          children: [
+            // cliPath top design
+            ClipPath(
+              clipper: ClipPathClipper(),
+              child: Container(
+                height: 250,
+                decoration: BoxDecoration(color: AppColor().primariColor),
+                width: double.maxFinite,
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
+            ),
+
+            // main container for the app
+            SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  // color: Colors.transparent.withOpacity(0.0),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.black.withOpacity(0.3)),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -340,10 +338,10 @@ class _HomeScreenState extends State<HomeScreen>
                       company.name,
                       style: GoogleFonts.acme(
                         fontSize: 25,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 5),
 
                     //customToday date and serving circle
                     CustomDateDisplay(selectedDate: _selectedDate),
@@ -822,19 +820,25 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ],
                     ),
-                    //tabBar list
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      child: TabBarView(
-                        controller: tabController,
-                        children: [_buildQueueList(), _buildServedList()],
-                      ),
+
+                    // //tabBar list
+                    // SizedBox(
+                    //   height: MediaQuery.of(context).size.height,
+                    //   child: TabBarView(
+                    //     physics: NeverScrollableScrollPhysics(),
+                    //     controller: tabController,
+                    //     children: [_buildQueueList(), _buildServedList()],
+                    //   ),
+                    // ),
+                    IndexedStack(
+                      index: tabController.index,
+                      children: <Widget>[_buildQueueList(), _buildServedList()],
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -873,6 +877,7 @@ class _HomeScreenState extends State<HomeScreen>
           );
         }
         return ListView.builder(
+          shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: queueList.length,
           itemBuilder: (context, index) {
@@ -919,6 +924,7 @@ class _HomeScreenState extends State<HomeScreen>
                     child: Icon(Icons.person, color: Colors.white),
                   ),
                   const SizedBox(width: 8),
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -927,42 +933,49 @@ class _HomeScreenState extends State<HomeScreen>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  serial.name ?? "N/A",
-                                  style: TextStyle(
-                                    color: AppColor().primariColor,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                if (isToday &&
-                                    wasCreatedByAdmin &&
-                                    canBeEdited) ...[
-                                  GestureDetector(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return QueueListEditDialog(
-                                            serviceCenterModel:
-                                                _selectedServiceCenter!,
-                                            serialToEdit: serial,
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Icon(
-                                      Icons.edit,
-                                      size: 18,
-                                      color: AppColor().primariColor,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      serial.name ?? "N/A",
+                                      style: TextStyle(
+                                        color: AppColor().primariColor,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
+                                  const SizedBox(width: 10),
+                                  if (isToday &&
+                                      wasCreatedByAdmin &&
+                                      canBeEdited) ...[
+                                    GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return QueueListEditDialog(
+                                              serviceCenterModel:
+                                                  _selectedServiceCenter!,
+                                              serialToEdit: serial,
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        size: 18,
+                                        color: AppColor().primariColor,
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
+                            const SizedBox(width: 10),
                             GestureDetector(
                               onTap: isToday
                                   ? () async {
@@ -1045,6 +1058,7 @@ class _HomeScreenState extends State<HomeScreen>
         }
 
         return ListView.builder(
+          shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: servedList.length + 1,
           itemBuilder: (context, index) {
@@ -1116,44 +1130,56 @@ class _HomeScreenState extends State<HomeScreen>
                     child: Icon(Icons.person, color: Colors.white),
                   ),
                   const SizedBox(width: 8),
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Column(
                           children: [
-                            Text(
-                              serial.name ?? "N/A",
-                              style: TextStyle(
-                                color: AppColor().primariColor,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: isToday
-                                  ? () async {
-                                      _showDialogBoxManage(serial);
-                                    }
-                                  : null,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Center(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
                                   child: Text(
-                                    serial.status.toString(),
+                                    serial.name ?? "N/A",
                                     style: TextStyle(
-                                      color: AppColor.getStatusColor(
-                                        serial.status,
+                                      color: AppColor().primariColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: isToday
+                                      ? () async {
+                                          _showDialogBoxManage(serial);
+                                        }
+                                      : null,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        serial.status.toString(),
+                                        style: TextStyle(
+                                          color: AppColor.getStatusColor(
+                                            serial.status,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
                           ],
                         ),

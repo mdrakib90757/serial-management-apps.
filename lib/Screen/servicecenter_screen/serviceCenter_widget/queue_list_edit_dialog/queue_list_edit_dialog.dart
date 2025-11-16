@@ -1,3 +1,4 @@
+import 'package:SerialMan/global_widgets/custom_error_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -89,15 +90,12 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
     super.dispose();
   }
 
-  Future<void> _selectDate() async {
-    DateTime? newDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? newDate = await showDatePicker(
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
+            useMaterial3: false,
             colorScheme: ColorScheme.light(
               primary: AppColor().primariColor,
               onPrimary: Colors.white,
@@ -117,8 +115,11 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
           child: child!,
         );
       },
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
     );
-
     if (newDate != null) {
       setState(() {
         _selectedDate = newDate;
@@ -193,17 +194,21 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
       );
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: CustomSnackBarWidget(
-            title: "Error",
-            message: serialProvider.errorMessage ?? "Failed to update serial",
-            iconColor: Colors.red.shade400,
-            icon: Icons.dangerous_outlined,
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: CustomSnackBarWidget(
+      //       title: "Error",
+      //       message: serialProvider.errorMessage ?? "Failed to update serial",
+      //       iconColor: Colors.red.shade400,
+      //       icon: Icons.dangerous_outlined,
+      //     ),
+      //     backgroundColor: Colors.transparent,
+      //     elevation: 0,
+      //   ),
+      // );
+      showCustomErrorPopup(
+        context,
+        serialProvider.errorMessage ?? "Failed to update serial",
       );
     }
   }
@@ -327,64 +332,25 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
 
                     const CustomLabeltext("Date"),
                     const SizedBox(height: 8),
-                    CustomTextField(
-                      readOnly: false,
-                      onTap: _selectDate,
-                      hintText: DateFormatter.formatForApi(_selectedDate),
-                      textStyle: TextStyle(color: Colors.grey.shade400),
-                      isPassword: false,
-                      controller: _serviceDateDisplayController,
-                      // readOnly: true,
-                      suffixIcon: IconButton(
-                        onPressed: () async {
-                          DateTime? newDate = await showDatePicker(
-                            builder: (context, child) {
-                              return Theme(
-                                data: Theme.of(context).copyWith(
-                                  colorScheme: ColorScheme.light(
-                                    primary: AppColor().primariColor,
-                                    // Header color
-                                    onPrimary: Colors.white,
-                                    // Header text color
-                                    onSurface: Colors.black, // Body text color
-                                  ),
-                                  dialogTheme: DialogThemeData(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16.0),
-                                    ),
-                                  ),
-                                  textButtonTheme: TextButtonThemeData(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: AppColor()
-                                          .primariColor, // Button text color
-                                    ),
-                                  ),
-                                ),
-                                child: child!,
-                              );
-                            },
-                            context: context,
-                            initialDate: _selectedDate,
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime(2100),
-                          );
-
-                          if (newDate != null) {
-                            setState(() {
-                              _selectedDate = newDate;
-                              _serviceDateDisplayController.text = DateFormat(
-                                "yyyy-MM-dd",
-                              ).format(_selectedDate);
-                            });
-                          }
-                        },
-                        icon: Icon(
-                          Icons.date_range_outlined,
-                          color: Colors.grey.shade400,
+                    GestureDetector(
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                      child: AbsorbPointer(
+                        child: CustomTextField(
+                          //  hintText: todayString,
+                          textStyle: TextStyle(color: Colors.black),
+                          isPassword: false,
+                          readOnly: true,
+                          controller: _serviceDateDisplayController,
+                          suffixIcon: Icon(
+                            Icons.calendar_month_outlined,
+                            color: AppColor().primariColor,
+                            // color: Colors.grey.shade600,
+                          ),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 10),
                     const CustomLabeltext("Name"),
                     const SizedBox(height: 8),
@@ -416,14 +382,16 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
                               borderRadius: BorderRadius.circular(5),
                             ),
                           ),
-                          onPressed: _updateQueueSerial,
+                          onPressed: queueEditListProvider.isLoading
+                              ? null
+                              : _updateQueueSerial,
                           child: queueEditListProvider.isLoading
                               ? Text(
                                   "Please wait",
                                   style: TextStyle(color: Colors.white),
                                 )
                               : Text(
-                                  "save",
+                                  "Save",
                                   style: TextStyle(color: Colors.white),
                                 ),
                         ),
@@ -454,5 +422,38 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
         ),
       ),
     );
+  }
+
+  OverlayEntry? _overlayEntry;
+  void showCustomErrorPopup(BuildContext context, String message) {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: CustomErrorPopup(
+          message: message,
+          onClose: () {
+            if (_overlayEntry != null) {
+              _overlayEntry!.remove();
+              _overlayEntry = null;
+            }
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 5), () {
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      }
+    });
   }
 }

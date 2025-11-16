@@ -62,10 +62,20 @@ class _profile_screenState extends State<profile_screen> {
                   height: 250,
                   width: double.maxFinite,
                 ),
-              ), // Adjust vertical padding as needed
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
+              ),
+
+              // Adjust vertical padding as needed
+              SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    //color: Colors.transparent.withOpacity(0.0),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.black.withOpacity(0.3)),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     //crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,118 +189,118 @@ class _profile_screenState extends State<profile_screen> {
                     ],
                     //
                   ),
-
-                  ///
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //   child: SingleChildScrollView(
-                  //     child: Column(
-                  //       mainAxisAlignment: MainAxisAlignment.start,
-                  //       //crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         CircleAvatar(
-                  //           radius: 70,
-                  //           backgroundColor: Colors.grey.shade400,
-                  //           child: Icon(
-                  //             CupertinoIcons.person,
-                  //             size: 60,
-                  //             color: AppColor().primariColor,
-                  //           ),
-                  //         ),
-                  //         const SizedBox(height: 20),
-                  //         Divider(height: 3),
-                  //         const SizedBox(height: 10),
-                  //
-                  //         // navigate to Profile Edit screen
-                  //         GestureDetector(
-                  //           onTap: () async {
-                  //             Navigator.push(
-                  //               context,
-                  //               PageRouteBuilder(
-                  //                 pageBuilder: (_, __, ___) => ProfileEditScreen(),
-                  //                 transitionsBuilder: (_, anim, __, child) {
-                  //                   return FadeTransition(opacity: anim, child: child);
-                  //                 },
-                  //                 fullscreenDialog: true,
-                  //               ),
-                  //             );
-                  //             Future.microtask(() {
-                  //               getupdateprofile.fetchProfileData();
-                  //             });
-                  //           },
-                  //           child: Container(
-                  //             height: 50,
-                  //             width: double.infinity,
-                  //             decoration: BoxDecoration(
-                  //               border: Border.all(color: Colors.grey.shade400),
-                  //               color: Colors.white,
-                  //               borderRadius: BorderRadius.circular(8),
-                  //             ),
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.symmetric(horizontal: 15),
-                  //               child: Row(
-                  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   Text(
-                  //                     "Profile information",
-                  //                     style: TextStyle(
-                  //                       color: Colors.black.withOpacity(0.9),
-                  //                       fontSize: 18,
-                  //                     ),
-                  //                   ),
-                  //                   Icon(Icons.arrow_forward_ios, size: 20),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const SizedBox(height: 10),
-                  //
-                  //         // navigate to Service Taker Password screen
-                  //         GestureDetector(
-                  //           onTap: () async {
-                  //             Navigator.push(
-                  //               context,
-                  //               PageRouteBuilder(
-                  //                 pageBuilder: (_, __, ___) => PasswordScreen(),
-                  //                 transitionsBuilder: (_, anim, __, child) {
-                  //                   return FadeTransition(opacity: anim, child: child);
-                  //                 },
-                  //                 fullscreenDialog: true,
-                  //               ),
-                  //             );
-                  //           },
-                  //           child: Container(
-                  //             height: 50,
-                  //             width: double.infinity,
-                  //             decoration: BoxDecoration(
-                  //               border: Border.all(color: Colors.grey.shade400),
-                  //               color: Colors.white,
-                  //               borderRadius: BorderRadius.circular(8),
-                  //             ),
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.symmetric(horizontal: 15),
-                  //               child: Row(
-                  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   Text(
-                  //                     "Change Password",
-                  //                     style: TextStyle(
-                  //                       color: Colors.black.withOpacity(0.9),
-                  //                       fontSize: 18,
-                  //                     ),
-                  //                   ),
-                  //                   Icon(Icons.arrow_forward_ios, size: 20),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                 ),
+
+                ///
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                //   child: SingleChildScrollView(
+                //     child: Column(
+                //       mainAxisAlignment: MainAxisAlignment.start,
+                //       //crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         CircleAvatar(
+                //           radius: 70,
+                //           backgroundColor: Colors.grey.shade400,
+                //           child: Icon(
+                //             CupertinoIcons.person,
+                //             size: 60,
+                //             color: AppColor().primariColor,
+                //           ),
+                //         ),
+                //         const SizedBox(height: 20),
+                //         Divider(height: 3),
+                //         const SizedBox(height: 10),
+                //
+                //         // navigate to Profile Edit screen
+                //         GestureDetector(
+                //           onTap: () async {
+                //             Navigator.push(
+                //               context,
+                //               PageRouteBuilder(
+                //                 pageBuilder: (_, __, ___) => ProfileEditScreen(),
+                //                 transitionsBuilder: (_, anim, __, child) {
+                //                   return FadeTransition(opacity: anim, child: child);
+                //                 },
+                //                 fullscreenDialog: true,
+                //               ),
+                //             );
+                //             Future.microtask(() {
+                //               getupdateprofile.fetchProfileData();
+                //             });
+                //           },
+                //           child: Container(
+                //             height: 50,
+                //             width: double.infinity,
+                //             decoration: BoxDecoration(
+                //               border: Border.all(color: Colors.grey.shade400),
+                //               color: Colors.white,
+                //               borderRadius: BorderRadius.circular(8),
+                //             ),
+                //             child: Padding(
+                //               padding: const EdgeInsets.symmetric(horizontal: 15),
+                //               child: Row(
+                //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //                 children: [
+                //                   Text(
+                //                     "Profile information",
+                //                     style: TextStyle(
+                //                       color: Colors.black.withOpacity(0.9),
+                //                       fontSize: 18,
+                //                     ),
+                //                   ),
+                //                   Icon(Icons.arrow_forward_ios, size: 20),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //         const SizedBox(height: 10),
+                //
+                //         // navigate to Service Taker Password screen
+                //         GestureDetector(
+                //           onTap: () async {
+                //             Navigator.push(
+                //               context,
+                //               PageRouteBuilder(
+                //                 pageBuilder: (_, __, ___) => PasswordScreen(),
+                //                 transitionsBuilder: (_, anim, __, child) {
+                //                   return FadeTransition(opacity: anim, child: child);
+                //                 },
+                //                 fullscreenDialog: true,
+                //               ),
+                //             );
+                //           },
+                //           child: Container(
+                //             height: 50,
+                //             width: double.infinity,
+                //             decoration: BoxDecoration(
+                //               border: Border.all(color: Colors.grey.shade400),
+                //               color: Colors.white,
+                //               borderRadius: BorderRadius.circular(8),
+                //             ),
+                //             child: Padding(
+                //               padding: const EdgeInsets.symmetric(horizontal: 15),
+                //               child: Row(
+                //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //                 children: [
+                //                   Text(
+                //                     "Change Password",
+                //                     style: TextStyle(
+                //                       color: Colors.black.withOpacity(0.9),
+                //                       fontSize: 18,
+                //                     ),
+                //                   ),
+                //                   Icon(Icons.arrow_forward_ios, size: 20),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ),
             ],
           ),

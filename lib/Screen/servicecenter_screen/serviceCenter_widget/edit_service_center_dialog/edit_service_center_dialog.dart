@@ -240,24 +240,31 @@ class _EditServiceCenterDialogState extends State<EditServiceCenterDialog>
         color: AppColor().primariColor,
         child: Form(
           key: _dialogFormKey,
-          child: SingleChildScrollView(
-            //
-            child: Stack(
-              children: [
-                // top custom design
-                ClipPath(
-                  clipper: ClipPathClipper(),
-                  child: Container(
-                    color: AppColor().primariColor,
-                    height: 250,
-                    width: double.maxFinite,
-                    alignment: Alignment.topLeft,
-                    padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
-                  ),
+          child: Stack(
+            children: [
+              // top custom design
+              ClipPath(
+                clipper: ClipPathClipper(),
+                child: Container(
+                  color: AppColor().primariColor,
+                  height: 250,
+                  width: double.maxFinite,
+                  alignment: Alignment.topLeft,
+                  padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
                 ),
+              ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+              SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    //color: Colors.transparent.withOpacity(0.0),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.black.withOpacity(0.3)),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -268,13 +275,13 @@ class _EditServiceCenterDialogState extends State<EditServiceCenterDialog>
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            icon: Icon(Icons.arrow_back, color: Colors.white),
+                            icon: Icon(Icons.arrow_back, color: Colors.black),
                           ),
                           SizedBox(width: 8),
                           Text(
                             "Edit Service Center",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -284,10 +291,7 @@ class _EditServiceCenterDialogState extends State<EditServiceCenterDialog>
                       const SizedBox(height: 13),
 
                       // Service Center Name text field
-                      const CustomLabeltext(
-                        "ServiceCenter Name",
-                        color: Colors.white,
-                      ),
+                      const CustomLabeltext("ServiceCenter Name"),
                       const SizedBox(height: 8),
                       CustomTextField(
                         controller: nameController,
@@ -297,7 +301,7 @@ class _EditServiceCenterDialogState extends State<EditServiceCenterDialog>
                       const SizedBox(height: 13),
 
                       // custom hotline text filed
-                      const CustomLabeltext("Hotline No.", color: Colors.white),
+                      const CustomLabeltext("Hotline No."),
                       const SizedBox(height: 10),
                       CustomTextField(
                         controller: hotlinenoController,
@@ -478,7 +482,9 @@ class _EditServiceCenterDialogState extends State<EditServiceCenterDialog>
                                 borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            onPressed: _UpdateServiceCenter,
+                            onPressed: editButtonProvider.isLoading
+                                ? null
+                                : _UpdateServiceCenter,
                             child: editButtonProvider.isLoading
                                 ? Text(
                                     "Please wait...",
@@ -514,8 +520,8 @@ class _EditServiceCenterDialogState extends State<EditServiceCenterDialog>
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

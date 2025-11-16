@@ -85,6 +85,10 @@ class _BookSerialButtonState extends State<BookSerialButton> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<service_types_de_fault_provider>(
+        context,
+        listen: false,
+      ).clearData();
       final String currentDateTimeISO = DateTime.now().toIso8601String();
       Provider.of<GetBookSerialProvider>(
         context,
@@ -339,27 +343,43 @@ class _BookSerialButtonState extends State<BookSerialButton> {
             key: _dialogFormKey,
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
-              child: SingleChildScrollView(
-                child: Stack(
-                  children: [
-                    // top custom design
-                    ClipPath(
-                      clipper: ClipPathClipper(),
-                      child: Container(
-                        color: AppColor().primariColor,
-                        height: 250,
-                        width: double.maxFinite,
-                        alignment: Alignment.topLeft,
-                        padding: const EdgeInsets.only(
-                          top: 0,
-                          left: 10,
-                          right: 10,
-                        ),
+              child: Stack(
+                children: [
+                  // top custom design
+                  ClipPath(
+                    clipper: ClipPathClipper(),
+                    child: Container(
+                      color: AppColor().primariColor,
+                      height: 250,
+                      width: double.maxFinite,
+                      alignment: Alignment.topLeft,
+                      padding: const EdgeInsets.only(
+                        top: 0,
+                        left: 10,
+                        right: 10,
                       ),
                     ),
+                  ),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                  SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        //color: Colors.transparent.withOpacity(0.0),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.black.withOpacity(0.3),
+                        ),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -373,14 +393,14 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                 },
                                 icon: Icon(
                                   Icons.arrow_back,
-                                  color: Colors.white,
+                                  color: AppColor().primariColor,
                                 ),
                               ),
 
                               Text(
                                 "Book a Serial",
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColor().primariColor,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -390,10 +410,7 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                           const SizedBox(height: 10),
 
                           // serviceType Provider Type field
-                          const CustomLabeltext(
-                            "ServiceType Provider Type",
-                            color: Colors.white,
-                          ),
+                          const CustomLabeltext("ServiceType Provider Type"),
                           const SizedBox(height: 10),
                           Consumer<BusinessTypeProvider>(
                             builder: (context, BusProvider, child) {
@@ -420,6 +437,10 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                         .clearData();
                                     context
                                         .read<serviceTypeSerialbook_Provider>()
+                                        .clearData();
+
+                                    context
+                                        .read<service_types_de_fault_provider>()
                                         .clearData();
                                   });
                                   if (newValue == null) return;
@@ -456,10 +477,7 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                           const SizedBox(height: 10),
 
                           // service center field
-                          const CustomLabeltext(
-                            "Service Center",
-                            color: Colors.white,
-                          ),
+                          const CustomLabeltext("Service Center"),
                           const SizedBox(height: 8),
                           Consumer2<
                             ServiceCenterSearchProvider,
@@ -764,8 +782,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                     ? Container(
                                         padding: const EdgeInsets.all(12.0),
                                         child: SizedBox(
-                                          height: 15,
-                                          width: 15,
+                                          height: 10,
+                                          width: 10,
                                           child: CustomLoading(
                                             color: AppColor().primariColor,
                                             strokeWidth: 2,
@@ -900,9 +918,11 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                 ),
-                                onPressed: () async {
-                                  await _saveBookSerialRequest();
-                                },
+                                onPressed: bookProvider.isLoading
+                                    ? null
+                                    : () async {
+                                        await _saveBookSerialRequest();
+                                      },
                                 child: bookProvider.isLoading
                                     ? Text(
                                         "Please wait...",
@@ -936,8 +956,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:SerialMan/Screen/servicecenter_screen/serviceCenter_widget/addUser_setting_serviceCenterDialog/addUser_setting_serviceCenterdialo.dart';
 import 'package:SerialMan/Screen/servicecenter_screen/serviceCenter_widget/edit_addUser_settingDialog/edit_addUser_settingDialog.dart';
 import 'package:SerialMan/Screen/servicecenter_screen/serviceCenter_widget/edit_organizationInfo/edit_organizationInfo.dart';
+import 'package:SerialMan/global_widgets/adaptive_text_color_row.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -81,6 +82,7 @@ class _Servicecenter_SettingscreenState
 
   @override
   Widget build(BuildContext context) {
+    const double blueClipPathHeight = 230.0;
     return Consumer<Getprofileprovider>(
       builder: (context, profileProvider, child) {
         final companyId = profileProvider.profileData?.currentCompany.id;
@@ -188,27 +190,31 @@ class _Servicecenter_SettingscreenState
             onRefresh: _handleRefresh,
             backgroundColor: Colors.white,
             color: AppColor().primariColor,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Stack(
-                children: [
-                  // top custom color
-                  ClipPath(
-                    clipper: ClipPathClipper(),
-                    child: Container(
-                      color: AppColor().primariColor,
-                      height: 230,
-                      width: double.maxFinite,
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.only(
-                        top: 0,
-                        left: 10,
-                        right: 10,
-                      ),
-                    ),
+            child: Stack(
+              children: [
+                // top custom color
+                ClipPath(
+                  clipper: ClipPathClipper(),
+                  child: Container(
+                    color: AppColor().primariColor,
+                    height: blueClipPathHeight,
+                    width: double.maxFinite,
+                    alignment: Alignment.topLeft,
+                    padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                ),
+
+                SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      //color: Colors.transparent.withOpacity(0.0),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black.withOpacity(0.3)),
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,11 +225,13 @@ class _Servicecenter_SettingscreenState
                             Text(
                               "Organization info",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
                             ),
+
+                            // edit button
                             IconButton(
                               onPressed: () async {
                                 final authProvider = Provider.of<AuthProvider>(
@@ -258,240 +266,30 @@ class _Servicecenter_SettingscreenState
                                   _fetchScreenData(companyId);
                                 }
                               },
-                              icon: Icon(Icons.edit, color: Colors.white),
+                              icon: Icon(
+                                Icons.edit,
+                                color: AppColor().primariColor,
+                              ),
                             ),
                           ],
                         ),
 
-                        // name
-                        Row(
-                          children: [
-                            Text(
-                              "Name :-   ",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.name}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        _buildInfoRow("Name", company_man.name),
+                        _buildInfoRow(
+                          "Address Line1",
+                          company_man.addressLine1,
                         ),
-                        const SizedBox(height: 8),
-
-                        // address line 1
-                        Row(
-                          children: [
-                            Text(
-                              "Address Line1 :-    ",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.addressLine1} ",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        _buildInfoRow("AddressLine2", company_man.addressLine2),
+                        _buildInfoRow("Email", company_man.email),
+                        _buildInfoRow("Phone", company_man.phone),
+                        _buildInfoRow(
+                          "Business Type",
+                          companyDetails.companyDetails?.businessType?.name,
                         ),
-                        const SizedBox(height: 8),
-
-                        // addressLine2 info
-                        Row(
-                          children: [
-                            Text(
-                              "AddressLine2:-   ",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.addressLine2}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-
-                        // email info
-                        Row(
-                          children: [
-                            Text(
-                              "Email:-    ",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.email}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-
-                        // phone info
-                        Row(
-                          children: [
-                            Text(
-                              "Phone :-   ",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.phone} ",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-
-                        // business type info
-                        Row(
-                          children: [
-                            Text(
-                              "Business Type :-   ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${companyDetails.companyDetails?.businessType?.name}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-
-                        // division info
-                        Row(
-                          children: [
-                            Text(
-                              "Division :-    ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.division?.name}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-
-                        // district info
-                        Row(
-                          children: [
-                            Text(
-                              "District :-    ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.district?.name}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-
-                        // thana info
-                        Row(
-                          children: [
-                            Text(
-                              "Thana :-   ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.thana?.name} ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-
-                        // area info
-                        Row(
-                          children: [
-                            Text(
-                              "Area :-    ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              "${company_man.area?.name}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
+                        _buildInfoRow("Division", company_man.division?.name),
+                        _buildInfoRow("District", company_man.district?.name),
+                        _buildInfoRow("Thana", company_man.thana?.name),
+                        _buildInfoRow("Area", company_man.area?.name),
 
                         // location info
                         Row(
@@ -538,10 +336,9 @@ class _Servicecenter_SettingscreenState
                               Text("N/A", style: TextStyle(color: Colors.grey)),
                           ],
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 10),
 
-                        /// add user button section 2
-                        //add user Button
+                        //add user button section 2
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -870,8 +667,8 @@ class _Servicecenter_SettingscreenState
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );
@@ -879,6 +676,32 @@ class _Servicecenter_SettingscreenState
     );
   }
 
+  // build setting screen company information text widget
+  Widget _buildInfoRow(String label, String? value) {
+    const style = TextStyle(
+      color: Colors.black,
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 140.0, child: Text(label, style: style)),
+          // 2. Colon
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(":", style: style),
+          ),
+          Expanded(child: Text(value ?? "N/A", style: style)),
+        ],
+      ),
+    );
+  }
+
+  // delete function
   void _showDeleteConfirmationMenu(
     BuildContext menuContext,
     AddUserModel user,

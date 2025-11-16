@@ -1,3 +1,4 @@
+import 'package:SerialMan/global_widgets/custom_error_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:SerialMan/model/serviceCenter_model.dart';
@@ -113,20 +114,24 @@ class _add_service_center_service_type_dialogState
         ServiceCenterId,
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: CustomSnackBarWidget(
-            title: "Error",
-            message:
-                secondServiceType.errorMessage ?? "Failed to Added ServiceType",
-            iconColor: Colors.red.shade400,
-            icon: Icons.dangerous_outlined,
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 3),
-        ),
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: CustomSnackBarWidget(
+      //       title: "Error",
+      //       message:
+      //           secondServiceType.errorMessage ?? "Failed to Added ServiceType",
+      //       iconColor: Colors.red.shade400,
+      //       icon: Icons.dangerous_outlined,
+      //     ),
+      //     backgroundColor: Colors.transparent,
+      //     elevation: 0,
+      //     behavior: SnackBarBehavior.floating,
+      //     duration: Duration(seconds: 3),
+      //   ),
+      // );
+      showCustomErrorPopup(
+        context,
+        secondServiceType.errorMessage ?? "Failed to Added ServiceType",
       );
     }
   }
@@ -239,7 +244,7 @@ class _add_service_center_service_type_dialogState
                       hintText: "Price in BDT",
                       controller: ServicePriceController,
                       isPassword: false,
-                      enableValidation: true,
+                      // enableValidation: false,
                       keyboardType: TextInputType.number,
                       suffixIcon: Container(
                         width: 50,
@@ -262,6 +267,7 @@ class _add_service_center_service_type_dialogState
                       controller: timeController,
                       isPassword: false,
                       enableValidation: false,
+                      keyboardType: TextInputType.number,
                       suffixIcon: Container(
                         width: 65,
                         decoration: BoxDecoration(
@@ -283,7 +289,9 @@ class _add_service_center_service_type_dialogState
                               borderRadius: BorderRadius.circular(5),
                             ),
                           ),
-                          onPressed: _saveAddSecondServiceType,
+                          onPressed: secondServiceType.isLoading
+                              ? null
+                              : _saveAddSecondServiceType,
                           child: secondServiceType.isLoading
                               ? Text(
                                   "Please Wait",
@@ -320,5 +328,38 @@ class _add_service_center_service_type_dialogState
         ),
       ),
     );
+  }
+
+  OverlayEntry? _overlayEntry;
+  void showCustomErrorPopup(BuildContext context, String message) {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: CustomErrorPopup(
+          message: message,
+          onClose: () {
+            if (_overlayEntry != null) {
+              _overlayEntry!.remove();
+              _overlayEntry = null;
+            }
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 5), () {
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      }
+    });
   }
 }

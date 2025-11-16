@@ -167,29 +167,30 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
               return CustomShimmerList(itemCount: 10);
             }
 
-            return SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Stack(
-                children: [
-                  // top custom design
-                  ClipPath(
-                    clipper: ClipPathClipper(),
-                    child: Container(
-                      color: AppColor().primariColor,
-                      height: 250,
-                      width: double.maxFinite,
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.only(
-                        top: 0,
-                        left: 10,
-                        right: 10,
-                      ),
-                    ),
+            return Stack(
+              children: [
+                // top custom design
+                ClipPath(
+                  clipper: ClipPathClipper(),
+                  child: Container(
+                    color: AppColor().primariColor,
+                    height: 250,
+                    width: double.maxFinite,
+                    alignment: Alignment.topLeft,
+                    padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 8,
+                ),
+
+                SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      // color: Colors.transparent.withOpacity(0.0),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black.withOpacity(0.3)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -200,7 +201,7 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                             Text(
                               Timedate,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -326,19 +327,23 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
+                                          //crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              bookSerial.company?.name ??
-                                                  "No Company Name",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
+                                            Expanded(
+                                              child: Text(
+                                                bookSerial.company?.name ??
+                                                    "No Company Name",
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
                                             Container(
                                               padding: EdgeInsets.symmetric(
                                                 horizontal: 5,
+                                                vertical: 2,
                                               ),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -586,8 +591,8 @@ class _ServicetakerHomescreenState extends State<ServicetakerHomescreen> {
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),

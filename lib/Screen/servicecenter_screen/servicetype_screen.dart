@@ -10,6 +10,7 @@ import 'package:SerialMan/providers/profile_provider/getprofile_provider.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/addButtonServiceType_Provider/deleteServiceTypeProvider/deleteServiceTypeProvider.dart';
 import 'package:SerialMan/providers/serviceCenter_provider/addButtonServiceType_Provider/getAddButtonServiceType.dart';
 import 'package:SerialMan/utils/color.dart';
+import '../../global_widgets/custom_flushbar.dart';
 import '../../global_widgets/custom_shimmer_list/CustomShimmerList .dart';
 import '../../model/serviceCenter_model.dart';
 import '../../providers/serviceCenter_provider/addButton_provider/get_AddButton_provider.dart';
@@ -114,29 +115,41 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
         color: AppColor().primariColor,
         child: _isScreenLoading
             ? CustomShimmerList(itemCount: 10)
-            : SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Stack(
-                  children: [
-                    // top design
-                    ClipPath(
-                      clipper: ClipPathClipper(),
-                      child: Container(
-                        color: AppColor().primariColor,
-                        height: 250,
-                        width: double.maxFinite,
-                        alignment: Alignment.topLeft,
-                        padding: const EdgeInsets.only(
-                          top: 0,
-                          left: 10,
-                          right: 10,
-                        ),
+            : Stack(
+                children: [
+                  // top design
+                  ClipPath(
+                    clipper: ClipPathClipper(),
+                    child: Container(
+                      color: AppColor().primariColor,
+                      height: 250,
+                      width: double.maxFinite,
+                      alignment: Alignment.topLeft,
+                      padding: const EdgeInsets.only(
+                        top: 0,
+                        left: 10,
+                        right: 10,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
+                  ),
+                  SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
                         horizontal: 10,
-                        vertical: 15,
+                        vertical: 10,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        //color: Colors.transparent.withOpacity(0.0),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.black.withOpacity(0.3),
+                        ),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -149,7 +162,7 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
                               const Text(
                                 "Service Type",
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -337,8 +350,8 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
       ),
     );
@@ -456,15 +469,10 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
                       if (mounted && success) {
                         await getAddButtonServiceType
                             .fetchGetAddButton_ServiceType(companyId);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: CustomSnackBarWidget(
-                              message: "User deleted successfully.",
-                              title: 'Success',
-                            ),
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                          ),
+                        CustomFlushbar.showSuccess(
+                          context: context,
+                          title: "Success",
+                          message: "ServiceType Delete Successful",
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -472,7 +480,7 @@ class _ServicetypeScreenState extends State<ServicetypeScreen> {
                             content: CustomSnackBarWidget(
                               message:
                                   deleteProvider.errorMessage ??
-                                  "Failed to delete user.",
+                                  "Failed to delete ServiceType.",
                               title: 'Failed',
                             ),
                             backgroundColor: Colors.transparent,

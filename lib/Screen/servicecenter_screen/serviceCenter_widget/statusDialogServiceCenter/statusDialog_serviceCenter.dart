@@ -88,10 +88,12 @@ class _ManageSerialDialogState extends State<ManageSerialDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "Serial:- ${widget.serialDetails?.serialNo} - ${widget.serialDetails?.name}",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            overflow: TextOverflow.ellipsis,
+          Expanded(
+            child: Text(
+              "Serial:- ${widget.serialDetails?.serialNo} - ${widget.serialDetails?.name}",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              //overflow: TextOverflow.ellipsis,
+            ),
           ),
           CircleAvatar(
             backgroundColor: Colors.grey.shade100,

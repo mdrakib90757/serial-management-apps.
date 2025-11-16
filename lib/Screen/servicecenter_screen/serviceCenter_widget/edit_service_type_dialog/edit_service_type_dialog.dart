@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:SerialMan/model/service_type_model.dart';
 import 'package:SerialMan/utils/color.dart';
+import '../../../../global_widgets/custom_error_popup.dart';
 import '../../../../global_widgets/custom_flushbar.dart';
 import '../../../../global_widgets/custom_labeltext.dart';
 import '../../../../global_widgets/custom_sanckbar.dart';
@@ -101,20 +102,21 @@ class _EditServiceTypeDialogState extends State<EditServiceTypeDialog> {
           );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: CustomSnackBarWidget(
-              title: "Error",
-              message: "Failed to Edit Service Center Update",
-              iconColor: Colors.red.shade400,
-              icon: Icons.dangerous_outlined,
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 3),
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: CustomSnackBarWidget(
+        //       title: "Error",
+        //       message: "Failed to Edit Service Center Update",
+        //       iconColor: Colors.red.shade400,
+        //       icon: Icons.dangerous_outlined,
+        //     ),
+        //     backgroundColor: Colors.transparent,
+        //     elevation: 0,
+        //     behavior: SnackBarBehavior.floating,
+        //     duration: Duration(seconds: 3),
+        //   ),
+        // );
+        showCustomErrorPopup(context, "Failed to Edit Service Center Update");
       }
     }
   }
@@ -206,6 +208,7 @@ class _EditServiceTypeDialogState extends State<EditServiceTypeDialog> {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
+                      keyboardType: TextInputType.number,
                       hintText: "Time in minutes",
                       controller: timeController,
                       isPassword: false,
@@ -224,7 +227,9 @@ class _EditServiceTypeDialogState extends State<EditServiceTypeDialog> {
                               borderRadius: BorderRadius.circular(5),
                             ),
                           ),
-                          onPressed: _saveEditServiceType,
+                          onPressed: editButton.isLoading
+                              ? null
+                              : _saveEditServiceType,
                           child: editButton.isLoading
                               ? Text(
                                   "Please wait...",
@@ -262,5 +267,38 @@ class _EditServiceTypeDialogState extends State<EditServiceTypeDialog> {
         ),
       ),
     );
+  }
+
+  OverlayEntry? _overlayEntry;
+  void showCustomErrorPopup(BuildContext context, String message) {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: CustomErrorPopup(
+          message: message,
+          onClose: () {
+            if (_overlayEntry != null) {
+              _overlayEntry!.remove();
+              _overlayEntry = null;
+            }
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 5), () {
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      }
+    });
   }
 }

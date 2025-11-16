@@ -89,14 +89,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
           }
         }
 
-        if (widget.keyboardType == TextInputType.number &&
-            value != null &&
-            value.isNotEmpty) {
-          final numberRegex = RegExp(r'^[0-9]+$');
-          if (!numberRegex.hasMatch(value)) {
-            return 'Enter a valid number';
-          }
-        }
+        // if (widget.keyboardType == TextInputType.number &&
+        //     value != null &&
+        //     value.isNotEmpty) {
+        //   final numberRegex = RegExp(r'^[0-9]+$');
+        //   if (!numberRegex.hasMatch(value)) {
+        //     return 'Enter a valid number';
+        //   }
+        // }
 
         return null;
       },

@@ -9,6 +9,7 @@ import 'package:SerialMan/request_model/serviceCanter_request/newSerialButton_re
 import 'package:SerialMan/utils/color.dart';
 import 'package:SerialMan/utils/date_formatter/date_formatter.dart';
 import '../../../../global_widgets/custom_dropdown/custom_dropdown.dart';
+import '../../../../global_widgets/custom_error_popup.dart';
 import '../../../../global_widgets/custom_flushbar.dart';
 import '../../../../global_widgets/custom_labeltext.dart';
 import '../../../../global_widgets/custom_sanckbar.dart';
@@ -155,18 +156,9 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
       );
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(widget.rootContext).showSnackBar(
-        SnackBar(
-          content: CustomSnackBarWidget(
-            title: "Error",
-            message: serialProvider.errorMessage ?? "Failed to Add User",
-            iconColor: Colors.red.shade400,
-            icon: Icons.dangerous_outlined,
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
+      showCustomErrorPopup(
+        context,
+        serialProvider.errorMessage ?? "Failed to Add Serial",
       );
     }
   }
@@ -392,14 +384,16 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            onPressed: _saveNewSerial,
+                            onPressed: serialProvider.isLoading
+                                ? null
+                                : _saveNewSerial,
                             child: serialProvider.isLoading
                                 ? Text(
                                     "Please wait",
                                     style: TextStyle(color: Colors.white),
                                   )
                                 : Text(
-                                    "save",
+                                    "Save",
                                     style: TextStyle(color: Colors.white),
                                   ),
                           ),
@@ -432,5 +426,38 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
         ),
       ),
     );
+  }
+
+  OverlayEntry? _overlayEntry;
+  void showCustomErrorPopup(BuildContext context, String message) {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: CustomErrorPopup(
+          message: message,
+          onClose: () {
+            if (_overlayEntry != null) {
+              _overlayEntry!.remove();
+              _overlayEntry = null;
+            }
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 5), () {
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      }
+    });
   }
 }

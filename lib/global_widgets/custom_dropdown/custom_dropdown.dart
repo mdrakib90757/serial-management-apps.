@@ -40,6 +40,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   final GlobalKey<FormFieldState> _formFieldKey = GlobalKey<FormFieldState>();
   bool get _isPopupOpen => _overlayEntry != null;
   late FocusNode _focusNode;
+  late ScrollController _scrollController; // 1. Declare the controller
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     super.initState();
     _focusNode = FocusNode();
     _focusNode.addListener(_handleFocusChange);
+    _scrollController = ScrollController();
   }
 
   @override
@@ -54,6 +56,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
     _overlayEntry?.remove();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -101,10 +104,10 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     bool hasSpaceBelow =
         (screenHeight - fieldBottomY) > (widget.popupHeight + 10);
 
-    var yOffset = hasSpaceBelow
-        ? size.height + 5.0
-        : -(widget.popupHeight + 5.0);
-
+    // var yOffset = hasSpaceBelow
+    //     ? size.height + 5.0
+    //     : -(widget.popupHeight + 5.0);
+    var yOffset = hasSpaceBelow ? size.height : -widget.popupHeight;
     return OverlayEntry(
       builder: (context) {
         return Stack(
@@ -125,34 +128,59 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                 child: Material(
                   color: Colors.white,
                   elevation: 4.0,
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(5.0),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: widget.popupHeight),
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: widget.items.length,
-                      itemBuilder: (context, index) {
-                        final item = widget.items[index];
-                        return ListTile(
-                          visualDensity: VisualDensity(
-                            horizontal: 0,
-                            vertical: -4,
-                          ),
-                          title: Text(
-                            widget.itemAsString(item),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
+                    child: Scrollbar(
+                      controller: _scrollController,
+                      thumbVisibility: true,
+                      radius: Radius.circular(8.0),
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: widget.items.length,
+                        itemBuilder: (context, index) {
+                          final item = widget.items[index];
+                          final T? currentValue =
+                              _formFieldKey.currentState?.value;
+                          final bool isSelected = item == currentValue;
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 3.0,
+                              vertical: 2.0,
                             ),
-                          ),
-                          onTap: () {
-                            _formFieldKey.currentState!.didChange(item);
-                            widget.onChanged(item);
-                            _closePopup();
-                          },
-                        );
-                      },
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColor().primariColor.withOpacity(0.3)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: ListTile(
+                              //tileColor: isSelected ? AppColor().primariColor.withOpacity(0.3) : null,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              visualDensity: VisualDensity(
+                                horizontal: 0,
+                                vertical: -4,
+                              ),
+                              title: Text(
+                                widget.itemAsString(item),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onTap: () {
+                                _formFieldKey.currentState!.didChange(item);
+                                widget.onChanged(item);
+                                _closePopup();
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),

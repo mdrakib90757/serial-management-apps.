@@ -213,10 +213,10 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
           request,
           companyId,
         );
-
+        if (!mounted) return;
         if (success) {
           await getUpdateOrgProvider.fetchDetails(companyId);
-
+          if (!mounted) return;
           navigator.pop(true);
           await CustomFlushbar.showSuccess(
             context: context,
@@ -267,33 +267,44 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
         color: AppColor().primariColor,
         child: Form(
           key: _dialogFormKey,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            //
-            child: _isLoading
-                ? CustomShimmerList(itemCount: 10)
-                : Stack(
-                    children: [
-                      // top custom design
-                      ClipPath(
-                        clipper: ClipPathClipper(),
-                        child: Container(
-                          color: AppColor().primariColor,
-                          height: 250,
-                          width: double.maxFinite,
-                          alignment: Alignment.topLeft,
-                          padding: const EdgeInsets.only(
-                            top: 0,
-                            left: 10,
-                            right: 10,
-                          ),
+          child: _isLoading
+              ? CustomShimmerList(itemCount: 10)
+              : Stack(
+                  children: [
+                    // top custom design
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
                         ),
                       ),
+                    ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          // vertical: 8,
+                    SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          //color: Colors.transparent.withOpacity(0.0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,13 +320,13 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                                   },
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 Text(
                                   "Edit Information",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -325,7 +336,7 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                             const SizedBox(height: 20),
 
                             // custom name field
-                            const CustomLabeltext("Name", color: Colors.white),
+                            const CustomLabeltext("Name"),
                             const SizedBox(height: 10),
                             CustomTextField(
                               hintText: "Name",
@@ -338,7 +349,6 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                             const CustomLabeltext(
                               "Address Line 1",
                               showStar: false,
-                              color: Colors.white,
                             ),
                             const SizedBox(height: 8),
                             CustomTextField(
@@ -577,7 +587,9 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                                     ),
                                     backgroundColor: AppColor().primariColor,
                                   ),
-                                  onPressed: _updateOrganizationInfo,
+                                  onPressed: updateOrgProvider.isLoading
+                                      ? null
+                                      : _updateOrganizationInfo,
                                   child: UpdateOrgProvider.isLoading
                                       ? Text(
                                           "please wait...",
@@ -613,9 +625,9 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                           ],
                         ),
                       ),
-                    ],
-                  ),
-          ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

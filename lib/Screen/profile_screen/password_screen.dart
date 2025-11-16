@@ -108,19 +108,27 @@ class _PasswordScreenState extends State<PasswordScreen> {
       child: Form(
         key: _formkey,
         //
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              ClipPath(
-                clipper: ClipPathClipper(),
-                child: Container(
-                  color: AppColor().primariColor,
-                  height: 250,
-                  width: double.maxFinite,
-                ),
+        child: Stack(
+          children: [
+            ClipPath(
+              clipper: ClipPathClipper(),
+              child: Container(
+                color: AppColor().primariColor,
+                height: 250,
+                width: double.maxFinite,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+            ),
+            SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  //color: Colors.transparent.withOpacity(0.0),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.black.withOpacity(0.3)),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -132,15 +140,15 @@ class _PasswordScreenState extends State<PasswordScreen> {
                           },
                           icon: Icon(
                             Icons.arrow_back,
-                            color: Colors.white,
-                            // color: AppColor().primariColor,
+                            //color: Colors.white,
+                            color: AppColor().primariColor,
                           ),
                         ),
                         Text(
                           "Account Password",
                           style: TextStyle(
-                            color: Colors.white,
-                            //color: AppColor().primariColor,
+                            //color: Colors.white,
+                            color: AppColor().primariColor,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -150,10 +158,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     const SizedBox(height: 20),
 
                     // current password text filed
-                    const CustomLabeltext(
-                      "Current Password",
-                      color: Colors.white,
-                    ),
+                    const CustomLabeltext("Current Password"),
                     const SizedBox(height: 12),
                     CustomTextField(
                       controller: password_controller,
@@ -164,7 +169,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     const SizedBox(height: 20),
 
                     // new password text filed
-                    const CustomLabeltext("New Password", color: Colors.white),
+                    const CustomLabeltext("New Password"),
                     const SizedBox(height: 12),
                     CustomTextField(
                       controller: Newpassword_controller,
@@ -308,8 +313,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

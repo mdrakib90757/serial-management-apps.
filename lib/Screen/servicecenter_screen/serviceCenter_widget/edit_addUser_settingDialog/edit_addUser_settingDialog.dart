@@ -139,11 +139,13 @@ class _EditAdduserSettingDialogState extends State<EditAdduserSettingDialog> {
           .toList(),
       isActive: _isActive,
     );
+    if (!mounted) return;
     final success = await updateAddUserProvider.UpdateAddUserButton(
       userRequest,
       companyId,
       userId!,
     );
+    if (!mounted) return;
     if (success) {
       await getAddUserButton.fetchUsers(companyId);
       navigator.pop();
@@ -201,27 +203,43 @@ class _EditAdduserSettingDialogState extends State<EditAdduserSettingDialog> {
             : Form(
                 key: _fromKey,
                 autovalidateMode: _autoValidateMode,
-                child: SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      // top custom design
-                      ClipPath(
-                        clipper: ClipPathClipper(),
-                        child: Container(
-                          color: AppColor().primariColor,
-                          height: 250,
-                          width: double.maxFinite,
-                          alignment: Alignment.topLeft,
-                          padding: const EdgeInsets.only(
-                            top: 0,
-                            left: 10,
-                            right: 10,
-                          ),
+                child: Stack(
+                  children: [
+                    // top custom design
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
                         ),
                       ),
+                    ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                    SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          //color: Colors.transparent.withOpacity(0.0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,13 +253,13 @@ class _EditAdduserSettingDialogState extends State<EditAdduserSettingDialog> {
                                   },
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 Text(
                                   "Edit Service Man",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -251,21 +269,17 @@ class _EditAdduserSettingDialogState extends State<EditAdduserSettingDialog> {
                             const SizedBox(height: 10),
 
                             // custom name text field
-                            const CustomLabeltext("Name", color: Colors.white),
+                            const CustomLabeltext("Name"),
                             const SizedBox(height: 8),
                             CustomTextField(
                               controller: _nameController,
                               isPassword: false,
                               hintText: "Name",
-                              //  prefixIcon: Icons.person,
                             ),
                             const SizedBox(height: 10),
 
                             // custom login name text field
-                            const CustomLabeltext(
-                              "Login Name",
-                              color: Colors.white,
-                            ),
+                            const CustomLabeltext("Login Name"),
                             const SizedBox(height: 8),
                             CustomTextField(
                               controller: _loginNameController,
@@ -383,7 +397,9 @@ class _EditAdduserSettingDialogState extends State<EditAdduserSettingDialog> {
                                     ),
                                     backgroundColor: AppColor().primariColor,
                                   ),
-                                  onPressed: _UpdateAddUserInfo,
+                                  onPressed: updateProvider.isLoading
+                                      ? null
+                                      : _UpdateAddUserInfo,
                                   child: updateProvider.isLoading
                                       ? Text(
                                           "please wait...",
@@ -419,8 +435,8 @@ class _EditAdduserSettingDialogState extends State<EditAdduserSettingDialog> {
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
       ),

@@ -133,21 +133,28 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
             onRefresh: _handleRefresh,
             backgroundColor: Colors.white,
             color: AppColor().primariColor,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Stack(
-                children: [
-                  ClipPath(
-                    clipper: ClipPathClipper(),
-                    child: Container(
-                      color: AppColor().primariColor,
-                      height: 150,
-                      width: double.maxFinite,
-                    ),
+            child: Stack(
+              children: [
+                ClipPath(
+                  clipper: ClipPathClipper(),
+                  child: Container(
+                    color: AppColor().primariColor,
+                    height: 150,
+                    width: double.maxFinite,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
+                SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      // color: Colors.transparent.withOpacity(0.0),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black.withOpacity(0.3)),
+                    ),
                     child: Column(
                       children: [
                         _buildHeader(todayHint),
@@ -162,8 +169,8 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
@@ -178,12 +185,12 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               "Serial History",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColor().primariColor,
               ),
             ),
             IconButton(
@@ -192,9 +199,9 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   _isFilterVisible = !_isFilterVisible;
                 });
               },
-              icon: const Icon(
+              icon: Icon(
                 Icons.filter_alt_outlined,
-                color: Colors.white,
+                color: AppColor().primariColor,
                 size: 28,
               ),
             ),

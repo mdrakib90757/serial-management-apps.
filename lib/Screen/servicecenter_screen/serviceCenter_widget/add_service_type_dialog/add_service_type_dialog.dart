@@ -1,3 +1,4 @@
+import 'package:SerialMan/global_widgets/custom_error_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:SerialMan/providers/profile_provider/getprofile_provider.dart';
@@ -76,21 +77,25 @@ class _AddServiceTypeDialogState extends State<AddServiceTypeDialog> {
 
       await getAddButtonServiceType.fetchGetAddButton_ServiceType(companyId);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: CustomSnackBarWidget(
-            title: "Error",
-            message:
-                addButtonServiceType.errorMessage ??
-                "Failed to Added ServiceType",
-            iconColor: Colors.red.shade400,
-            icon: Icons.dangerous_outlined,
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 3),
-        ),
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: CustomSnackBarWidget(
+      //       title: "Error",
+      //       message:
+      //           addButtonServiceType.errorMessage ??
+      //           "Failed to Added ServiceType",
+      //       iconColor: Colors.red.shade400,
+      //       icon: Icons.dangerous_outlined,
+      //     ),
+      //     backgroundColor: Colors.transparent,
+      //     elevation: 0,
+      //     behavior: SnackBarBehavior.floating,
+      //     duration: Duration(seconds: 3),
+      //   ),
+      // );
+      showCustomErrorPopup(
+        context,
+        addButtonServiceType.errorMessage ?? "Failed to Added ServiceType",
       );
     }
   }
@@ -189,6 +194,7 @@ class _AddServiceTypeDialogState extends State<AddServiceTypeDialog> {
                       controller: timeController,
                       isPassword: false,
                       enableValidation: false,
+                      keyboardType: TextInputType.number,
                       suffixIcon: Container(
                         width: 65,
                         decoration: BoxDecoration(
@@ -210,7 +216,9 @@ class _AddServiceTypeDialogState extends State<AddServiceTypeDialog> {
                               borderRadius: BorderRadius.circular(5),
                             ),
                           ),
-                          onPressed: _saveAddServiceType,
+                          onPressed: addButtonServiceType.isLoading
+                              ? null
+                              : _saveAddServiceType,
                           child: addButtonServiceType.isLoading
                               ? Text(
                                   "Please Wait",
@@ -248,5 +256,38 @@ class _AddServiceTypeDialogState extends State<AddServiceTypeDialog> {
         ),
       ),
     );
+  }
+
+  OverlayEntry? _overlayEntry;
+  void showCustomErrorPopup(BuildContext context, String message) {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: CustomErrorPopup(
+          message: message,
+          onClose: () {
+            if (_overlayEntry != null) {
+              _overlayEntry!.remove();
+              _overlayEntry = null;
+            }
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 5), () {
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      }
+    });
   }
 }

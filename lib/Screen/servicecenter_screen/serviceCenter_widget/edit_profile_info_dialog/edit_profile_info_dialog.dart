@@ -200,27 +200,43 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                 //height: 760,
                 width: double.infinity,
                 decoration: BoxDecoration(color: Colors.white),
-                child: SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      // top custom design
-                      ClipPath(
-                        clipper: ClipPathClipper(),
-                        child: Container(
-                          color: AppColor().primariColor,
-                          height: 250,
-                          width: double.maxFinite,
-                          alignment: Alignment.topLeft,
-                          padding: const EdgeInsets.only(
-                            top: 0,
-                            left: 10,
-                            right: 10,
-                          ),
+                child: Stack(
+                  children: [
+                    // top custom design
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
                         ),
                       ),
+                    ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                    SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          //color: Colors.transparent.withOpacity(0.0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -234,14 +250,14 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                                   },
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 ),
 
                                 Text(
                                   "Edit Profile Information",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -253,7 +269,6 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                             // custom name field
                             CustomLabeltext(
                               "Name",
-                              color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
                             const SizedBox(height: 10),
@@ -265,10 +280,7 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                             const SizedBox(height: 10),
 
                             // custom login field
-                            const CustomLabeltext(
-                              "Login Name",
-                              color: Colors.white,
-                            ),
+                            const CustomLabeltext("Login Name"),
                             const SizedBox(height: 10),
                             CustomTextField(
                               enabled: false,
@@ -310,11 +322,6 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                               items: genderList,
                               value: _selectGenter,
                               itemAsString: (item) => item,
-                              // validator: (value) {
-                              //   if (value == null)
-                              //     return "Please select a Gender";
-                              //   return null;
-                              // },
                               onChanged: (newValue) {
                                 setState(() {
                                   _selectGenter = newValue;
@@ -368,8 +375,6 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                                           : () async {
                                               UpdateProfileRequest
                                               request = UpdateProfileRequest(
-                                                //                                               UpdateProfileRequest(
-                                                //
                                                 name: name.text,
                                                 mobileNo: mobileNo.text,
                                                 email: email.text,
@@ -379,266 +384,10 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                                                     ? dateOfBirth.text
                                                     : null,
                                               );
-
-                                              //
-                                              //             : Padding(
-                                              //                 padding: const EdgeInsets.symmetric(
-                                              //                   horizontal: 20,
-                                              //                   //vertical: 15
-                                              //                 ),
-                                              //                 child: Container(
-                                              //                   //height: 760,
-                                              //                   width: double.infinity,
-                                              //                   decoration: BoxDecoration(color: Colors.white),
-                                              //                   child: SingleChildScrollView(
-                                              //                     child: Column(
-                                              //                       crossAxisAlignment: CrossAxisAlignment.start,
-                                              //                       mainAxisAlignment: MainAxisAlignment.start,
-                                              //                       children: [
-                                              //                         Row(
-                                              //                           //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              //                           children: [
-                                              //                             IconButton(
-                                              //                               onPressed: () {
-                                              //                                 Navigator.pop(context);
-                                              //                               },
-                                              //                               icon: Icon(Icons.arrow_back, color: Colors.black),
-                                              //                             ),
-                                              //
-                                              //                             Text(
-                                              //                               "Edit Profile Information",
-                                              //                               style: TextStyle(
-                                              //                                 color: Colors.black,
-                                              //                                 fontSize: 20,
-                                              //                                 fontWeight: FontWeight.bold,
-                                              //                               ),
-                                              //                             ),
-                                              //                           ],
-                                              //                         ),
-                                              //                         const SizedBox(height: 20),
-                                              //
-                                              //                         // custom name field
-                                              //                         CustomLabeltext(
-                                              //                           "Name",
-                                              //                           color: Colors.black,
-                                              //                           fontWeight: FontWeight.w500,
-                                              //                         ),
-                                              //                         const SizedBox(height: 10),
-                                              //                         CustomTextField(
-                                              //                           controller: name,
-                                              //                           hintText: "name",
-                                              //                           isPassword: false,
-                                              //                         ),
-                                              //                         const SizedBox(height: 10),
-                                              //
-                                              //                         // custom login field
-                                              //                         const CustomLabeltext("Login Name"),
-                                              //                         const SizedBox(height: 10),
-                                              //                         CustomTextField(
-                                              //                           enabled: false,
-                                              //                           filled: true,
-                                              //                           //fillColor: Colors.orange.shade400,
-                                              //                           controller: loginName,
-                                              //                           hintText: "Login name",
-                                              //                           isPassword: false,
-                                              //                         ),
-                                              //                         const SizedBox(height: 10),
-                                              //
-                                              //                         // custom mobile no field
-                                              //                         const CustomLabeltext("Mobile No"),
-                                              //                         const SizedBox(height: 10),
-                                              //                         CustomTextField(
-                                              //                           controller: mobileNo,
-                                              //                           hintText: "mobile no",
-                                              //                           isPassword: false,
-                                              //                           keyboardType: TextInputType.number,
-                                              //                         ),
-                                              //                         const SizedBox(height: 10),
-                                              //
-                                              //                         // custom email field
-                                              //                         const CustomLabeltext("Email"),
-                                              //                         const SizedBox(height: 10),
-                                              //                         CustomTextField(
-                                              //                           controller: email,
-                                              //                           hintText: "email",
-                                              //                           isPassword: false,
-                                              //                           keyboardType: TextInputType.emailAddress,
-                                              //                         ),
-                                              //                         const SizedBox(height: 10),
-                                              //
-                                              //                         // custom gender field
-                                              //                         const CustomLabeltext("Gender"),
-                                              //                         const SizedBox(height: 12),
-                                              //                         CustomDropdown<String>(
-                                              //                           hinText: "Select Gender",
-                                              //                           items: genderList,
-                                              //                           value: _selectGenter,
-                                              //                           itemAsString: (item) => item,
-                                              //                           // validator: (value) {
-                                              //                           //   if (value == null)
-                                              //                           //     return "Please select a Gender";
-                                              //                           //   return null;
-                                              //                           // },
-                                              //                           onChanged: (newValue) {
-                                              //                             setState(() {
-                                              //                               _selectGenter = newValue;
-                                              //                             });
-                                              //                           },
-                                              //                           selectedItem: _selectGenter,
-                                              //                         ),
-                                              //                         const SizedBox(height: 10),
-                                              //
-                                              //                         // custom date of birth field
-                                              //                         const CustomLabeltext("Date of Birth"),
-                                              //                         const SizedBox(height: 10),
-                                              //                         GestureDetector(
-                                              //                           onTap: () {
-                                              //                             _SelectDate(context);
-                                              //                           },
-                                              //                           child: AbsorbPointer(
-                                              //                             child: CustomTextField(
-                                              //                               readOnly: true,
-                                              //                               controller: dateOfBirth,
-                                              //                               hintText: "Select Date of Birth",
-                                              //                               textStyle: TextStyle(color: Colors.black),
-                                              //                               isPassword: false,
-                                              //                               suffixIcon: Icon(
-                                              //                                 Icons.calendar_month,
-                                              //                                 color: Colors.grey.shade400,
-                                              //                               ),
-                                              //                             ),
-                                              //                           ),
-                                              //                         ),
-                                              //                         const SizedBox(height: 20),
-                                              //
-                                              //                         // save update button
-                                              //                         Row(
-                                              //                           mainAxisAlignment: MainAxisAlignment.center,
-                                              //                           children: [
-                                              //                             Consumer<ProfileProvider>(
-                                              //                               builder: (context, value, child) {
-                                              //                                 return ElevatedButton(
-                                              //                                   style: ElevatedButton.styleFrom(
-                                              //                                     backgroundColor: AppColor().primariColor,
-                                              //                                     shape: RoundedRectangleBorder(
-                                              //                                       borderRadius: BorderRadius.circular(5),
-                                              //                                     ),
-                                              //                                   ),
-                                              //                                   onPressed: UpdateProfile.isLoading
-                                              //                                       ? null
-                                              //                                       : () async {
-                                              //                                           UpdateProfileRequest request =
-                                              //                                               UpdateProfileRequest(
-                                              // //
-                                              //                                                 name: name.text,
-                                              //                                                 mobileNo: mobileNo.text,
-                                              //                                                 email: email.text,
-                                              //                                                 gender: _selectGenter,
-                                              //                                                 dateOfBirth:
-                                              //                                                     dateOfBirth.text.isNotEmpty
-                                              //                                                     ? dateOfBirth.text
-                                              //                                                     : null,
-                                              //                                               );
-                                              //
-                                              // //
-                                              //                                               final success =
-                                              //                                                   await UpdateProfile.updateUserProfile(
-                                              //                                                     request,
-                                              //                                                   );
-                                              //
-                                              //                                               if (success) {
-                                              //                                                 await Provider.of<
-                                              //                                                       Getprofileprovider
-                                              //                                                     >(context, listen: false)
-                                              //                                                     .fetchProfileData();
-                                              //                                                 await CustomFlushbar.showSuccess(
-                                              //                                                   context: context,
-                                              //                                                   title: "Success",
-                                              //                                                   message:
-                                              //                                                       "Profile update Successful",
-                                              //                                                 );
-                                              //                                                 Navigator.pop(context);
-                                              //                                               } else {
-                                              //                                                 ScaffoldMessenger.of(
-                                              //                                                   context,
-                                              //                                                 ).showSnackBar(
-                                              //                                                   SnackBar(
-                                              //                                                     content: CustomSnackBarWidget(
-                                              //                                                       title: "Error",
-                                              //                                                       message:
-                                              //                                                           UpdateProfile
-                                              //                                                               .errorMessage ??
-                                              //                                                           "Profile Update Failed",
-                                              //                                                       iconColor:
-                                              //                                                           Colors.red.shade400,
-                                              //                                                       icon: Icons
-                                              //                                                           .dangerous_outlined,
-                                              //                                                     ),
-                                              //                                                     backgroundColor:
-                                              //                                                         Colors.transparent,
-                                              //                                                     elevation: 0,
-                                              //                                                     behavior: SnackBarBehavior
-                                              //                                                         .floating,
-                                              //                                                     duration: Duration(
-                                              //                                                       seconds: 3,
-                                              //                                                     ),
-                                              //                                                   ),
-                                              //                                                 );
-                                              //                                               }
-                                              //                                             },
-                                              //                                       child: Center(
-                                              //                                         child: UpdateProfile.isLoading
-                                              //                                             ? Text(
-                                              //                                                 "Please Wait..",
-                                              //                                                 style: TextStyle(
-                                              //                                                   color: Colors.white,
-                                              //                                                   fontSize: 15,
-                                              //                                                   fontWeight: FontWeight.w500,
-                                              //                                                 ),
-                                              //                                               )
-                                              //                                             : Text(
-                                              //                                                 "Update",
-                                              //                                                 style: TextStyle(
-                                              //                                                   color: Colors.white,
-                                              //                                                   fontSize: 15,
-                                              //                                                   fontWeight: FontWeight.w500,
-                                              //                                                 ),
-                                              //                                               ),
-                                              //                                       ),
-                                              //                                     );
-                                              //                                   },
-                                              //                                 ),
-                                              //                                 const SizedBox(width: 10),
-                                              //                                 ElevatedButton(
-                                              //                                   style: ElevatedButton.styleFrom(
-                                              //                                     backgroundColor: Colors.white,
-                                              //                                     shape: RoundedRectangleBorder(
-                                              //                                       borderRadius: BorderRadius.circular(5),
-                                              //                                     ),
-                                              //                                   ),
-                                              //                                   onPressed: () {
-                                              //                                     Navigator.pop(context);
-                                              //                                   },
-                                              //                                   child: Text(
-                                              //                                     "Cancel",
-                                              //                                     style: TextStyle(
-                                              //                                       color: AppColor().primariColor,
-                                              //                                     ),
-                                              //                                   ),
-                                              //                                 ),
-                                              //                               ],
-                                              //                             ),
-                                              //                             SizedBox(),
-                                              //                           ],
-                                              //                         ),
-                                              //                       ),
-                                              //                     ],
-                                              //
                                               final success =
                                                   await UpdateProfile.updateUserProfile(
                                                     request,
                                                   );
-
                                               if (success) {
                                                 await Provider.of<
                                                       Getprofileprovider
@@ -724,10 +473,9 @@ class _edit_profile_info_dialogState extends State<edit_profile_info_dialog> {
                             SizedBox(),
                           ],
                         ),
-                        //
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
       ),

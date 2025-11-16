@@ -162,12 +162,14 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
       context,
       listen: false,
     );
-
     final bookingId = widget.bookingDetails.id;
     final serviceCenterId = widget.bookingDetails.serviceCenter?.id;
     final serviceTypeId = _selectedServiceType?.id;
 
     if (bookingId == null || serviceCenterId == null || serviceTypeId == null) {
+      if (!mounted) return;
+      setState(() => _isUpdating = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: CustomSnackBarWidget(
@@ -192,20 +194,24 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
       name: _nameController.text,
       contactNo: _contactNoController.text,
     );
+    // if (!mounted) return;
     final success = await updateProvider.update_bookSerial(
       request,
       bookingId,
       serviceCenterId,
     );
+    if (!mounted) return;
     setState(() {
       _isUpdating = false;
     });
+
     if (success) {
       final isoDate = DateTime.now().toIso8601String().split('.').first;
       await Provider.of<GetBookSerialProvider>(
         context,
         listen: false,
       ).fetchgetBookSerial(isoDate);
+      if (!mounted) return;
       Navigator.pop(context);
       await CustomFlushbar.showSuccess(
         context: context,
@@ -261,27 +267,43 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
             ? CustomShimmerList()
             : Form(
                 key: _dialogFormKey,
-                child: SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      // top custom design
-                      ClipPath(
-                        clipper: ClipPathClipper(),
-                        child: Container(
-                          color: AppColor().primariColor,
-                          height: 250,
-                          width: double.maxFinite,
-                          alignment: Alignment.topLeft,
-                          padding: const EdgeInsets.only(
-                            top: 0,
-                            left: 10,
-                            right: 10,
-                          ),
+                child: Stack(
+                  children: [
+                    // top custom design
+                    ClipPath(
+                      clipper: ClipPathClipper(),
+                      child: Container(
+                        color: AppColor().primariColor,
+                        height: 250,
+                        width: double.maxFinite,
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          left: 10,
+                          right: 10,
                         ),
                       ),
+                    ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                    SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          //color: Colors.transparent.withOpacity(0.0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -295,13 +317,13 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                                   },
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: Colors.white,
+                                    color: AppColor().primariColor,
                                   ),
                                 ),
                                 Text(
                                   "Edit Book a Serial",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppColor().primariColor,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -311,10 +333,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                             const SizedBox(height: 10),
 
                             // Custom service center filed
-                            const CustomLabeltext(
-                              "Service Center",
-                              color: Colors.white,
-                            ),
+                            const CustomLabeltext("Service Center"),
                             const SizedBox(height: 8),
                             CustomTextField(
                               controller: _serviceCenterController,
@@ -326,10 +345,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                             const SizedBox(height: 10),
 
                             // Custom service type field
-                            const CustomLabeltext(
-                              "Service Type",
-                              color: Colors.white,
-                            ),
+                            const CustomLabeltext("Service Type"),
                             const SizedBox(height: 8),
 
                             Consumer<serviceTypeSerialbook_Provider>(
@@ -531,9 +547,11 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                   ),
-                                  onPressed: () async {
-                                    _UpdateBook_serial();
-                                  },
+                                  onPressed: _isUpdating
+                                      ? null
+                                      : () async {
+                                          await _UpdateBook_serial();
+                                        },
                                   child: _isUpdating
                                       ? Text(
                                           "Please wait...",
@@ -567,8 +585,8 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
       ),

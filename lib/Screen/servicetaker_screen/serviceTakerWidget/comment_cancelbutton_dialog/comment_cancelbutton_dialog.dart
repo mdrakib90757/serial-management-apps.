@@ -1,3 +1,4 @@
+import 'package:SerialMan/global_widgets/custom_error_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -37,17 +38,18 @@ class _CommentCancelButtonDialogState extends State<CommentCancelButtonDialog> {
     );
     final String comment = _commentController.text;
     if (comment.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: CustomSnackBarWidget(
-            title: "Error",
-            message: "Please enter a reason to cancel.",
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: CustomSnackBarWidget(
+      //       title: "Error",
+      //       message: "Please enter a reason to cancel.",
+      //     ),
+      //     elevation: 0,
+      //     backgroundColor: Colors.transparent,
+      //     behavior: SnackBarBehavior.floating,
+      //   ),
+      // );
+      showCustomErrorPopup(context, "Please enter a reason to cancel.");
       return;
     }
 
@@ -103,19 +105,9 @@ class _CommentCancelButtonDialogState extends State<CommentCancelButtonDialog> {
       );
     } else {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: CustomSnackBarWidget(
-            title: "Error",
-            message: commentProvider.errorMessage ?? "Booking Failed",
-            iconColor: Colors.red.shade400,
-            icon: Icons.dangerous_outlined,
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 3),
-        ),
+      showCustomErrorPopup(
+        context,
+        commentProvider.errorMessage ?? "Booking Failed",
       );
     }
   }
@@ -206,7 +198,7 @@ class _CommentCancelButtonDialogState extends State<CommentCancelButtonDialog> {
                       contentPadding: EdgeInsets.all(12),
                       hintText: "Reason or comment",
                       hintStyle: TextStyle(
-                        color: Colors.grey.shade300,
+                        color: Colors.grey.shade400,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -228,9 +220,11 @@ class _CommentCancelButtonDialogState extends State<CommentCancelButtonDialog> {
                             borderRadius: BorderRadiusGeometry.circular(5),
                           ),
                         ),
-                        onPressed: () async {
-                          await _CancelComment();
-                        },
+                        onPressed: commentProvider.isLoading
+                            ? null
+                            : () async {
+                                await _CancelComment();
+                              },
                         child: commentProvider.isLoading
                             ? Text(
                                 "Please wait...",
@@ -256,5 +250,38 @@ class _CommentCancelButtonDialogState extends State<CommentCancelButtonDialog> {
         ),
       ),
     );
+  }
+
+  OverlayEntry? _overlayEntry;
+  void showCustomErrorPopup(BuildContext context, String message) {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: CustomErrorPopup(
+          message: message,
+          onClose: () {
+            if (_overlayEntry != null) {
+              _overlayEntry!.remove();
+              _overlayEntry = null;
+            }
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 5), () {
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      }
+    });
   }
 }

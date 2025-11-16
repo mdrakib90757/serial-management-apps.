@@ -268,39 +268,45 @@ class _ServiceTakerQueueServedDialogState
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  serial.name ?? "N/A",
-                                  style: TextStyle(
-                                    color: AppColor().primariColor,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      serial.name ?? "N/A",
+                                      style: TextStyle(
+                                        color: AppColor().primariColor,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                // if (isToday && canBeEdited) ...[
-                                //   GestureDetector(
-                                //     onTap: () {
-                                //       showDialog(
-                                //         context: context,
-                                //         builder: (context) {
-                                //           return QueueListEditDialog(
-                                //             serviceCenterModel:
-                                //                 _selectedServiceCenter!,
-                                //             serialToEdit: serial,
-                                //           );
-                                //         },
-                                //       );
-                                //     },
-                                //     child: Icon(
-                                //       Icons.edit,
-                                //       size: 18,
-                                //       color: AppColor().primariColor,
-                                //     ),
-                                //   ),
-                                // ],
-                              ],
+                                  const SizedBox(width: 10),
+                                  // if (isToday && canBeEdited) ...[
+                                  //   GestureDetector(
+                                  //     onTap: () {
+                                  //       showDialog(
+                                  //         context: context,
+                                  //         builder: (context) {
+                                  //           return QueueListEditDialog(
+                                  //             serviceCenterModel:
+                                  //                 _selectedServiceCenter!,
+                                  //             serialToEdit: serial,
+                                  //           );
+                                  //         },
+                                  //       );
+                                  //     },
+                                  //     child: Icon(
+                                  //       Icons.edit,
+                                  //       size: 18,
+                                  //       color: AppColor().primariColor,
+                                  //     ),
+                                  //   ),
+                                  // ],
+                                ],
+                              ),
                             ),
                             GestureDetector(
                               onTap: isToday
@@ -461,13 +467,18 @@ class _ServiceTakerQueueServedDialogState
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              serial.name ?? "N/A",
-                              style: TextStyle(
-                                color: AppColor().primariColor,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                serial.name ?? "N/A",
+                                style: TextStyle(
+                                  color: AppColor().primariColor,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
                             ),
                             GestureDetector(
