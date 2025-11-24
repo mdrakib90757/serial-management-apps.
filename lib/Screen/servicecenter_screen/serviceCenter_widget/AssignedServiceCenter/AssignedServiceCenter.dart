@@ -1,3 +1,4 @@
+import 'package:SerialMan/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
@@ -24,6 +25,7 @@ class _AssignedServiceCentersDropdownState
     extends State<AssignedServiceCentersDropdown> {
   late List<ServiceCenterModel> _selectedCenters;
   final GlobalKey _buttonKey = GlobalKey();
+  bool _isDropdownOpen = false;
 
   @override
   void initState() {
@@ -37,6 +39,12 @@ class _AssignedServiceCentersDropdownState
   Widget build(BuildContext context) {
     return DropdownButton2<ServiceCenterModel>(
       isExpanded: true,
+      onMenuStateChange: (isOpen) {
+        setState(() {
+          _isDropdownOpen = isOpen;
+        });
+      },
+
       customButton: Builder(
         builder: (context) {
           return Container(
@@ -49,7 +57,11 @@ class _AssignedServiceCentersDropdownState
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.grey.shade400),
+              border: Border.all(
+                color: _isDropdownOpen ? AppColor().primariColor : Colors.grey.shade400,
+                width: _isDropdownOpen ? 2 : 1.0,
+
+              ),
             ),
             child: Row(
               children: [
@@ -89,14 +101,18 @@ class _AssignedServiceCentersDropdownState
                           }).toList(),
                         ),
                 ),
-                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: _isDropdownOpen ? AppColor().primariColor : Colors.grey,
+                ),
               ],
             ),
           );
         },
       ),
       items: widget.availableServiceCenters.map((center) {
-        return DropdownMenuItem<ServiceCenterModel>(
+        return
+          DropdownMenuItem<ServiceCenterModel>(
           value: center,
           enabled: false,
           child: StatefulBuilder(
@@ -110,20 +126,27 @@ class _AssignedServiceCentersDropdownState
                     _selectedCenters.add(center);
                   }
                   widget.onSelectionChanged(_selectedCenters);
+
                   menuSetState(() {});
                   setState(() {});
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          center.name ?? 'N/A',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ],
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColor().primariColor.withOpacity(0.25)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    center.name ?? 'N/A',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               );
@@ -133,7 +156,7 @@ class _AssignedServiceCentersDropdownState
       }).toList(),
       onChanged: (value) {},
       dropdownStyleData: DropdownStyleData(
-        maxHeight: 250,
+        maxHeight: 200,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,

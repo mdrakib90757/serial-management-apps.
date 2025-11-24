@@ -1,4 +1,5 @@
 import 'package:SerialMan/global_widgets/custom_error_popup.dart';
+import 'package:SerialMan/model/ServiceTypesDeFaultifNotSet.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,15 +8,14 @@ import '../../../../global_widgets/custom_circle_progress_indicator/custom_circl
 import '../../../../global_widgets/custom_dropdown/custom_dropdown.dart';
 import '../../../../global_widgets/custom_flushbar.dart';
 import '../../../../global_widgets/custom_labeltext.dart';
-import '../../../../global_widgets/custom_sanckbar.dart';
 import '../../../../global_widgets/custom_textfield.dart';
 import '../../../../model/serialService_model.dart';
 import '../../../../model/serviceCenter_model.dart';
-import '../../../../model/service_type_model.dart';
 import '../../../../providers/serviceCenter_provider/addButtonServiceType_Provider/getAddButtonServiceType.dart';
 import '../../../../providers/serviceCenter_provider/newSerialButton_provider/getNewSerialButton_provider.dart';
 import '../../../../providers/serviceCenter_provider/newSerialButton_provider/newSerialProvider.dart';
 import '../../../../providers/serviceCenter_provider/newSerialButton_provider/queue_edit_list_provider/queue_edit_list_provider.dart';
+import '../../../../providers/serviceCenter_provider/service_types_de_faultif_not_set_provider/service_types_de_faultif_not_set_provider.dart';
 import '../../../../request_model/serviceCanter_request/newSerialButton_request/newSerialButton_request.dart';
 import '../../../../utils/color.dart';
 import '../../../../utils/date_formatter/date_formatter.dart';
@@ -42,9 +42,11 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
   late TextEditingController _contactController;
   late TextEditingController _serviceDateDisplayController;
 
-  serviceTypeModel? _selectedServiceType;
+  ServiceTypesDeFaultifNotSetModel? _ServiceTypesDeFaultifNotSetModel;
+  //serviceTypeModel? _selectedServiceType;
   DateTime _selectedDate = DateTime.now();
   bool _serviceTypeHasError = false;
+  bool _isInitialServiceTypeSet = false;
 
   @override
   void initState() {
@@ -69,14 +71,17 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final companyId = widget.serviceCenterModel.companyId;
-      if (companyId != null && companyId.isNotEmpty) {
-        Provider.of<GetAddButtonServiceType_Provider>(
+      final serviceCenterId = widget.serviceCenterModel.id;
+      print('Fetching service types for Service Center ID: $serviceCenterId');
+      if (serviceCenterId != null && serviceCenterId.isNotEmpty) {
+        Provider.of<service_types_de_faultif_not_setProvider>(
           context,
           listen: false,
-        ).fetchGetAddButton_ServiceType(companyId);
+        ).fetchServiceTypes(serviceCenterId);
       } else {
-        print("Error: Company ID is missing, cannot fetch service types.");
+        print(
+          "Error: Service Center ID is missing, cannot fetch service types.",
+        );
       }
     });
   }
@@ -90,6 +95,7 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
     super.dispose();
   }
 
+  // selectDate function
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? newDate = await showDatePicker(
       builder: (context, child) {
@@ -131,6 +137,7 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
     }
   }
 
+  // updateQueueSerial function
   Future<void> _updateQueueSerial() async {
     if (!(_dialogFormKey.currentState?.validate() ?? false)) {
       setState(() {
@@ -139,7 +146,7 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
       return;
     }
 
-    if (_selectedServiceType == null) {
+    if (_ServiceTypesDeFaultifNotSetModel == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select a service type.")),
       );
@@ -161,7 +168,7 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
     );
 
     String dateForApiCreate = DateFormatter.formatForApi(_selectedDate);
-    String serviceTypeId = _selectedServiceType!.id!;
+    String serviceTypeId = _ServiceTypesDeFaultifNotSetModel!.id!;
     String serviceCenterId = widget.serviceCenterModel.id!;
     String serviceId = widget.serialToEdit.id!;
 
@@ -283,47 +290,72 @@ class _QueueListEditDialogState extends State<QueueListEditDialog> {
                     const SizedBox(height: 10),
                     const CustomLabeltext("Service Type"),
                     const SizedBox(height: 8),
-                    Consumer<GetAddButtonServiceType_Provider>(
+                    Consumer<service_types_de_faultif_not_setProvider>(
                       builder: (context, serviceTypeProvider, child) {
-                        if (_selectedServiceType == null &&
-                            widget.serialToEdit.serviceType != null) {
+                        if (serviceTypeProvider.serviceTypes.isNotEmpty &&
+                            widget.serialToEdit.serviceType != null &&
+                            !_isInitialServiceTypeSet) {
                           try {
-                            _selectedServiceType = serviceTypeProvider
-                                .serviceTypeList
-                                .firstWhere(
+                            _ServiceTypesDeFaultifNotSetModel =
+                                serviceTypeProvider.serviceTypes.firstWhere(
                                   (item) =>
                                       item.id ==
                                       widget.serialToEdit.serviceType!.id,
                                 );
+                            _isInitialServiceTypeSet = true;
                           } catch (e) {
                             print(
-                              "Default service type not found in the list: $e",
+                              "Initial service type not found in the list: $e",
                             );
-                            _selectedServiceType = null;
+                            _ServiceTypesDeFaultifNotSetModel = null;
+                            _isInitialServiceTypeSet = true;
                           }
                         }
-                        return CustomDropdown<serviceTypeModel>(
+                        final bool isLoading =
+                            serviceTypeProvider.state == NotifierState.loading;
+                        if (serviceTypeProvider.state == NotifierState.error) {
+                          return Text(
+                            'Error: ${serviceTypeProvider.errorMessage}',
+                            style: const TextStyle(color: Colors.red),
+                          );
+                        }
+
+                        return CustomDropdown<ServiceTypesDeFaultifNotSetModel>(
                           hinText: "Select ServiceType",
-                          items:
-                              getAddButton_serviceType_Provider.serviceTypeList,
-                          value: _selectedServiceType,
-                          selectedItem: _selectedServiceType,
-                          onChanged: (serviceTypeModel? newValue) {
-                            setState(() {
-                              _selectedServiceType = newValue;
-                              // if (newValue != null) {
-                              //   _serviceTypeHasError = false;
-                              // }
-                            });
-                            print(newValue?.name);
-                          },
-                          itemAsString: (serviceTypeModel item) =>
-                              item.name ?? "No Name",
+                          items: serviceTypeProvider.serviceTypes,
+                          value: _ServiceTypesDeFaultifNotSetModel,
+                          selectedItem: _ServiceTypesDeFaultifNotSetModel,
+                          onChanged:
+                              (ServiceTypesDeFaultifNotSetModel? newValue) {
+                                setState(() {
+                                  _ServiceTypesDeFaultifNotSetModel = newValue;
+                                  // if (newValue != null) {
+                                  //   _serviceTypeHasError = false;
+                                  // }
+                                });
+                                print(newValue?.name);
+                              },
+                          itemAsString:
+                              (ServiceTypesDeFaultifNotSetModel item) =>
+                                  item.name ?? "No Name",
                           validator: (value) {
                             if (value == null)
                               return "Please select a Service Type";
                             return null;
                           },
+                          suffixIcon: isLoading
+                              ? Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: SizedBox(
+                                    height: 15,
+                                    width: 15,
+                                    child: CustomLoading(
+                                      color: AppColor().primariColor,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                )
+                              : null,
                         );
                       },
                     ),

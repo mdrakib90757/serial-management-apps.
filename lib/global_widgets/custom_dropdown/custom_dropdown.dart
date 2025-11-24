@@ -40,7 +40,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   final GlobalKey<FormFieldState> _formFieldKey = GlobalKey<FormFieldState>();
   bool get _isPopupOpen => _overlayEntry != null;
   late FocusNode _focusNode;
-  late ScrollController _scrollController; // 1. Declare the controller
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -60,6 +60,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     super.dispose();
   }
 
+  // handle focus change
   void _handleFocusChange() {
     if (!_focusNode.hasFocus && _isPopupOpen) {
       _closePopup();
@@ -69,6 +70,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     }
   }
 
+  // toggle popup
   void _togglePopup() {
     if (_isPopupOpen) {
       _closePopup();
@@ -78,6 +80,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     }
   }
 
+  // popup
   void _openPopup() {
     _overlayEntry = _createOverlayEntry();
     Overlay.of(context).insert(_overlayEntry!);
@@ -92,21 +95,17 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     setState(() {});
   }
 
+  // create overlay entry
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox =
         _formFieldKey.currentContext!.findRenderObject() as RenderBox;
     var size = renderBox.size;
     var offset = renderBox.localToGlobal(Offset.zero);
     var screenHeight = MediaQuery.of(context).size.height;
-
     var fieldBottomY = offset.dy + size.height;
 
     bool hasSpaceBelow =
         (screenHeight - fieldBottomY) > (widget.popupHeight + 10);
-
-    // var yOffset = hasSpaceBelow
-    //     ? size.height + 5.0
-    //     : -(widget.popupHeight + 5.0);
     var yOffset = hasSpaceBelow ? size.height : -widget.popupHeight;
     return OverlayEntry(
       builder: (context) {
@@ -148,7 +147,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                           return Container(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 3.0,
-                              vertical: 2.0,
+                              //vertical: 5
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
@@ -156,27 +155,28 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(5.0),
                             ),
-                            child: ListTile(
-                              //tileColor: isSelected ? AppColor().primariColor.withOpacity(0.3) : null,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              visualDensity: VisualDensity(
-                                horizontal: 0,
-                                vertical: -4,
-                              ),
-                              title: Text(
-                                widget.itemAsString(item),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                ),
-                              ),
+                            child: GestureDetector(
                               onTap: () {
                                 _formFieldKey.currentState!.didChange(item);
                                 widget.onChanged(item);
                                 _closePopup();
                               },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 10,
+                                  right: 5,
+                                  top: 5,
+                                  bottom: 5,
+                                ),
+                                child: Text(
+                                  widget.itemAsString(item),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
                             ),
                           );
                         },
@@ -223,48 +223,54 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                   _closePopup();
                 }
               },
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: state.value == null ? widget.hinText : null,
-                  hintStyle: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    //vertical: 7,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: AppColor().primariColor,
-                      width: 2,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: 30),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: state.value == null ? widget.hinText : null,
+                    hintStyle: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(color: Colors.grey.shade400),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(color: Colors.grey.shade400),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColor().primariColor,
+                        width: 2,
+                      ),
+                    ),
+                    suffixIcon:
+                        widget.suffixIcon ??
+                        Icon(Icons.arrow_drop_down, color: iconColor),
+                    errorText: state.errorText,
                   ),
-                  suffixIcon:
-                      widget.suffixIcon ??
-                      Icon(Icons.arrow_drop_down, color: iconColor),
-                  errorText: state.errorText,
-                ),
-                isEmpty: state.value == null,
-                //isEmpty: state.value == null && state.errorText == null,
-                isFocused: _focusNode.hasFocus || _isPopupOpen,
-                child: Text(
-                  state.value == null ? '' : widget.itemAsString(state.value!),
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
+                  isEmpty: state.value == null,
+                  //isEmpty: state.value == null && state.errorText == null,
+                  isFocused: _focusNode.hasFocus || _isPopupOpen,
+                  child: Text(
+                    state.value == null
+                        ? ''
+                        : widget.itemAsString(state.value!),
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),

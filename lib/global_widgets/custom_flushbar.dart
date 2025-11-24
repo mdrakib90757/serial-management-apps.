@@ -19,7 +19,7 @@ class CustomFlushbar {
       backgroundColor: Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(6),
       borderColor: AppColor().primariColor,
       borderWidth: 1.5,
       flushbarPosition: FlushbarPosition.TOP,

@@ -61,17 +61,6 @@ class _NewSerialButtonDialogState extends State<NewSerialButtonDialog> {
       text: DateFormat('yyyy-MM-dd').format(_selectedDate),
     );
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   final companyId = widget.serviceCenterModel.companyId;
-    //   if (companyId != null && companyId.isNotEmpty) {
-    //     Provider.of<GetAddButtonServiceType_Provider>(
-    //       context,
-    //       listen: false,
-    //     ).fetchGetAddButton_ServiceType(companyId);
-    //   } else {
-    //     print("Error: Company ID is missing, cannot fetch service types.");
-    //   }
-    // });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final serviceCenterId = widget.serviceCenterModel.id;
       if (serviceCenterId != null && serviceCenterId.isNotEmpty) {

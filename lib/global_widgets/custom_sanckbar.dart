@@ -20,8 +20,8 @@ class CustomSnackBarWidget extends StatelessWidget {
       //height: 90,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.red.shade400),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.red.shade300),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Column(

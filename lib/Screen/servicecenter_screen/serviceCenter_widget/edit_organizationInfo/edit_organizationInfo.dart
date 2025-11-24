@@ -495,21 +495,15 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                                   _selectedThana = newValue;
                                   _selectedArea = null;
                                 });
-                                locationProvider.clearThanas();
+                                //locationProvider.clearThanas();
                                 locationProvider.clearAreas();
 
                                 if (newValue != null) {
                                   locationProvider.getAreas(newValue.id!);
                                 }
                               },
-
-                              // validator: (value) {
-                              //       if (value == null)
-                              //         return "Please select a business type";
-                              //       return null;
-                              //     },
-                              items: locationProvider.districts,
-                              selectedItem: _selectedDistrict,
+                              items: locationProvider.thanas,
+                              selectedItem: _selectedThana,
                             ),
                             SizedBox(height: 10),
 
@@ -523,13 +517,13 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                                 setState(() {
                                   _selectedArea = newValue;
                                 });
-                                locationProvider.clearAreas();
-                                if (newValue != null) {
-                                  locationProvider.getAreas(newValue.id!);
-                                }
+                                // locationProvider.clearAreas();
+                                // if (newValue != null) {
+                                //   locationProvider.getAreas(newValue.id!);
+                                // }
                               },
-                              items: locationProvider.districts,
-                              selectedItem: _selectedDistrict,
+                              items: locationProvider.areas,
+                              selectedItem: _selectedArea,
                             ),
                             const SizedBox(height: 10),
 

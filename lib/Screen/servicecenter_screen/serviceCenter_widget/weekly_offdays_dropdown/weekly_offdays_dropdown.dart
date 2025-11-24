@@ -1,3 +1,4 @@
+import 'package:SerialMan/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
@@ -19,6 +20,7 @@ class WeeklyOff_daysDropdown extends StatefulWidget {
 
 class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
   late List<String> _selectedDays;
+  bool _isDropdownOpen = false;
 
   @override
   void initState() {
@@ -30,6 +32,11 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
   Widget build(BuildContext context) {
     return DropdownButton2<String>(
       isExpanded: true,
+      onMenuStateChange: (isOpen) {
+        setState(() {
+          _isDropdownOpen = isOpen;
+        });
+      },
       customButton: Builder(
         builder: (context) {
           return Container(
@@ -42,7 +49,10 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.grey.shade400),
+              border: Border.all(
+                color: _isDropdownOpen ? AppColor().primariColor : Colors.grey.shade400, // Change color when open
+                width: _isDropdownOpen ? 1.5 : 1.0, // Optionally make the border thicker
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,7 +93,10 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
                           }).toList(),
                         ),
                 ),
-                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                 Icon(
+                  Icons.arrow_drop_down,
+                  color: _isDropdownOpen ? AppColor().primariColor : Colors.grey, // Change color when open
+                ),
               ],
             ),
           );
@@ -110,20 +123,22 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
                   setState(() {});
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          day,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColor().primariColor.withOpacity(0.25)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    day,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               );

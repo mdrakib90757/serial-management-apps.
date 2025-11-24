@@ -16,11 +16,13 @@ import '../../../../global_widgets/custom_labeltext.dart';
 import '../../../../global_widgets/custom_sanckbar.dart';
 import '../../../../global_widgets/custom_textfield.dart';
 import '../../../../main_layouts/main_layout/main_layout.dart';
+import '../../../../model/ServiceTypesDeFaultifNotSet.dart';
 import '../../../../model/mybooked_model.dart';
 
 import '../../../../model/service_type_model.dart';
 import '../../../../providers/serviceTaker_provider/bookSerialButtonProvider/getBookSerial_provider.dart';
 import '../../../../providers/serviceTaker_provider/serviceType_serialbook_provider.dart';
+import '../../../../providers/serviceTaker_provider/service_types_de_fault_provider/service_types_de_fault_provider.dart';
 import '../../../../providers/serviceTaker_provider/update_bookserialProvider/update_bookserial_provider.dart';
 import '../../../../utils/color.dart';
 import '../../../../utils/date_formatter/date_formatter.dart';
@@ -52,7 +54,8 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
   final TextEditingController _serviceCenterController =
       TextEditingController();
 
-  serviceTypeModel? _selectedServiceType;
+  ServiceTypesDeFaultifNotSetModel? _ServiceTypesDeFaultifNotSetModel;
+  //serviceTypeModel? _selectedServiceType;
   UserName? _selectUserName = UserName.Self;
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
   bool _isInit = true;
@@ -80,23 +83,23 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
 
   // fetch initial data
   void _fetchInitialData() {
-    final companyId = widget.bookingDetails.company?.id;
-    if (companyId != null) {
-      Provider.of<serviceTypeSerialbook_Provider>(
+    final serviceCenterId = widget.bookingDetails.serviceCenterId;
+    if (serviceCenterId != null) {
+      Provider.of<service_types_de_fault_provider>(
         context,
         listen: false,
-      ).serviceType_serialbook(companyId).then((_) {
+      ).fetchServiceTypes(serviceCenterId).then((_) {
         if (mounted) {
           final serviceTypeProvider =
-              Provider.of<serviceTypeSerialbook_Provider>(
+              Provider.of<service_types_de_fault_provider>(
                 context,
                 listen: false,
               );
-          serviceTypeModel? preSelectedType;
+          ServiceTypesDeFaultifNotSetModel? preSelectedType;
           if (widget.bookingDetails.serviceType?.id != null &&
-              serviceTypeProvider.serviceTypeList.isNotEmpty) {
+              serviceTypeProvider.serviceTypes.isNotEmpty) {
             try {
-              preSelectedType = serviceTypeProvider.serviceTypeList.firstWhere(
+              preSelectedType = serviceTypeProvider.serviceTypes.firstWhere(
                 (type) => type.id == widget.bookingDetails.serviceType!.id,
               );
             } catch (e) {
@@ -106,7 +109,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
           }
 
           setState(() {
-            _selectedServiceType = preSelectedType;
+            _ServiceTypesDeFaultifNotSetModel = preSelectedType;
             _isFetchingServiceTypes = false;
           });
         }
@@ -134,15 +137,6 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // if (_isInit) {
-    //   _initializeFields();
-    //   _isInit = false;
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     if (mounted) {
-    //       _fetchInitialData();
-    //     }
-    //   });
-    // }
   }
 
   // save book serial request
@@ -164,7 +158,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
     );
     final bookingId = widget.bookingDetails.id;
     final serviceCenterId = widget.bookingDetails.serviceCenter?.id;
-    final serviceTypeId = _selectedServiceType?.id;
+    final serviceTypeId = _ServiceTypesDeFaultifNotSetModel?.id;
 
     if (bookingId == null || serviceCenterId == null || serviceTypeId == null) {
       if (!mounted) return;
@@ -239,10 +233,10 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
     }
   }
 
-  Future<void> _handleRefresh() async {
-    _fetchInitialData();
-    // await Future.delayed(const Duration(seconds: 1));
-  }
+  // Future<void> _handleRefresh() async {
+  //   _fetchInitialData();
+  //   // await Future.delayed(const Duration(seconds: 1));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -317,12 +311,15 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                                   },
                                   icon: Icon(
                                     Icons.arrow_back,
+                                    weight: 3,
+                                    //color: Colors.black,
                                     color: AppColor().primariColor,
                                   ),
                                 ),
                                 Text(
-                                  "Edit Book a Serial",
+                                  "Edit Book Serial",
                                   style: TextStyle(
+                                    // color: Colors.black,
                                     color: AppColor().primariColor,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -347,26 +344,50 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                             // Custom service type field
                             const CustomLabeltext("Service Type"),
                             const SizedBox(height: 8),
-
-                            Consumer<serviceTypeSerialbook_Provider>(
+                            Consumer<service_types_de_fault_provider>(
                               builder: (context, serviceTypeProvider, child) {
-                                return CustomDropdown<serviceTypeModel>(
+                                final bool isLoading =
+                                    serviceTypeProvider.state ==
+                                    NotifierState.loading;
+                                return CustomDropdown<
+                                  ServiceTypesDeFaultifNotSetModel
+                                >(
                                   hinText: "select serviceType",
-                                  items: serviceTypeProvider.serviceTypeList,
-                                  onChanged: (serviceTypeModel? newValue) {
-                                    setState(() {
-                                      _selectedServiceType = newValue;
-                                    });
-                                    print(newValue?.name);
-                                  },
-                                  itemAsString: (serviceTypeModel item) =>
-                                      item.name ?? "no data",
-                                  selectedItem: _selectedServiceType,
+                                  items: serviceTypeProvider.serviceTypes,
+                                  onChanged:
+                                      (
+                                        ServiceTypesDeFaultifNotSetModel?
+                                        newValue,
+                                      ) {
+                                        setState(() {
+                                          _ServiceTypesDeFaultifNotSetModel =
+                                              newValue;
+                                        });
+                                        print(newValue?.name);
+                                      },
+                                  itemAsString:
+                                      (ServiceTypesDeFaultifNotSetModel item) =>
+                                          item.name ?? "no data",
+                                  selectedItem:
+                                      _ServiceTypesDeFaultifNotSetModel,
                                   validator: (value) {
                                     if (value == null)
                                       return "Please select a Service Type";
                                     return null;
                                   },
+                                  suffixIcon: isLoading
+                                      ? Container(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: SizedBox(
+                                            height: 10,
+                                            width: 10,
+                                            child: CustomLoading(
+                                              color: AppColor().primariColor,
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        )
+                                      : null,
                                 );
                               },
                             ),

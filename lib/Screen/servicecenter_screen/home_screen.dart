@@ -321,6 +321,7 @@ class _HomeScreenState extends State<HomeScreen>
 
             // main container for the app
             SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),

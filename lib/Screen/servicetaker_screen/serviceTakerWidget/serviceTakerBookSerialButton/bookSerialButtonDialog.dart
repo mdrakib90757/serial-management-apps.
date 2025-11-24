@@ -393,6 +393,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                 },
                                 icon: Icon(
                                   Icons.arrow_back,
+                                  weight: 3,
+                                  //color: Colors.black,
                                   color: AppColor().primariColor,
                                 ),
                               ),
@@ -400,7 +402,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                               Text(
                                 "Book a Serial",
                                 style: TextStyle(
-                                  color: AppColor().primariColor,
+                                 //color: Colors.black,
+                                 color: AppColor().primariColor,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -584,6 +587,12 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                                         width: 2,
                                                       ),
                                                     ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Colors.red,
+                                                    //width: 2,
+                                                  ),
+                                                ),
                                                 suffixIcon:
                                                     searchProvider.isLoading
                                                     ? Padding(

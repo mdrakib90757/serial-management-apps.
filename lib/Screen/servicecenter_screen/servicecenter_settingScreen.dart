@@ -293,16 +293,21 @@ class _Servicecenter_SettingscreenState
 
                         // location info
                         Row(
+
                           children: [
                             Text(
-                              "Location :-    ",
+                              "Location ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-
+                            Text(": ",style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),),
                             if (company_man.location != null &&
                                 company_man.location!.isNotEmpty)
                               GestureDetector(

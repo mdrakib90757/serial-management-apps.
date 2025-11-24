@@ -22,6 +22,7 @@ class CustomErrorPopup extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(color: Colors.red.shade300),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
@@ -37,7 +38,7 @@ class CustomErrorPopup extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.error, color: Colors.red, size: 24),
+                    const Icon(Icons.error_outline, color: Colors.red, size: 24),
                     const SizedBox(width: 12),
                     const Text(
                       'Error',
@@ -49,18 +50,20 @@ class CustomErrorPopup extends StatelessWidget {
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.close, color: Colors.black),
+                      icon: const Icon(Icons.close, color: Colors.red),
                       onPressed: onClose,
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  message,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                Center(
+                  child: Text(
+                    message,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
