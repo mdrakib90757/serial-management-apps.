@@ -44,7 +44,7 @@ class _AssignedServiceCentersDropdownState
           _isDropdownOpen = isOpen;
         });
       },
-
+      underline: Container(),
       customButton: Builder(
         builder: (context) {
           return Container(
@@ -58,9 +58,10 @@ class _AssignedServiceCentersDropdownState
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               border: Border.all(
-                color: _isDropdownOpen ? AppColor().primariColor : Colors.grey.shade400,
+                color: _isDropdownOpen
+                    ? AppColor().primariColor
+                    : Colors.grey.shade400,
                 width: _isDropdownOpen ? 2 : 1.0,
-
               ),
             ),
             child: Row(
@@ -103,7 +104,9 @@ class _AssignedServiceCentersDropdownState
                 ),
                 Icon(
                   Icons.arrow_drop_down,
-                  color: _isDropdownOpen ? AppColor().primariColor : Colors.grey,
+                  color: _isDropdownOpen
+                      ? AppColor().primariColor
+                      : Colors.grey,
                 ),
               ],
             ),
@@ -111,8 +114,7 @@ class _AssignedServiceCentersDropdownState
         },
       ),
       items: widget.availableServiceCenters.map((center) {
-        return
-          DropdownMenuItem<ServiceCenterModel>(
+        return DropdownMenuItem<ServiceCenterModel>(
           value: center,
           enabled: false,
           child: StatefulBuilder(
@@ -132,7 +134,7 @@ class _AssignedServiceCentersDropdownState
                 },
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   decoration: BoxDecoration(
                     color: isSelected

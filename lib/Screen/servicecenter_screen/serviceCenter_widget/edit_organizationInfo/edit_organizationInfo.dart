@@ -535,28 +535,33 @@ class _EditOrganizationInfoState extends State<EditOrganizationInfo> {
                               isPassword: false,
                               controller: _locationController,
                               suffixIcon: Container(
-                                width: 70,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 10,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade50,
                                   // borderRadius: BorderRadiusGeometry.circular(8),
                                   border: Border.all(color: Colors.grey),
                                 ),
-                                child: IconButton(
-                                  onPressed: () async {
-                                    final result = await showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          LocationPickerDialog(),
-                                    );
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    setState(() async {
+                                      final result = await showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            LocationPickerDialog(),
+                                      );
 
-                                    if (result != null) {
-                                      setState(() {
-                                        _locationController.text =
-                                            '${result.latitude.toStringAsFixed(6)}, ${result.longitude.toStringAsFixed(6)}';
-                                      });
-                                    }
+                                      if (result != null) {
+                                        setState(() {
+                                          _locationController.text =
+                                              '${result.latitude.toStringAsFixed(6)}, ${result.longitude.toStringAsFixed(6)}';
+                                        });
+                                      }
+                                    });
                                   },
-                                  icon: Icon(
+                                  child: Icon(
                                     Icons.location_on_outlined,
                                     color: AppColor().primariColor,
                                   ),

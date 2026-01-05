@@ -33,7 +33,7 @@ class _CustomTabState extends State<CustomTab> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45,
+      height: 40,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
         border: Border.all(color: Colors.grey.shade400),

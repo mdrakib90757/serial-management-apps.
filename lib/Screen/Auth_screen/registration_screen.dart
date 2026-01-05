@@ -408,10 +408,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     controller: fieldTextEditingController,
                                     focusNode: focusNode,
                                     cursorColor: Colors.grey.shade500,
+
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 14,
+                                        horizontal: 14,
+                                        vertical: 10,
                                       ),
                                       isDense: true,
                                       focusedBorder: OutlineInputBorder(
@@ -430,6 +431,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         ),
                                       ),
                                       border: OutlineInputBorder(),
+                                      suffixIconConstraints: BoxConstraints(
+                                        minWidth: 30,
+                                        minHeight: 20,
+                                      ),
+                                      prefixIconConstraints: BoxConstraints(
+                                        minWidth: 30,
+                                        minHeight: 20,
+                                      ),
                                     ),
                                     onSubmitted: (String value) {
                                       final trimmerValue = value.trim();
@@ -554,7 +563,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 14,
-                              vertical: 12,
+                              vertical: 10,
                             ),
                             isDense: true,
                             border: OutlineInputBorder(
@@ -579,21 +588,31 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               color: Colors.grey.shade400,
                               fontSize: 15,
                             ),
-                            suffixIcon: IconButton(
-                              onPressed: () {
+                            suffixIcon: GestureDetector(
+                              onTap: () {
                                 setState(() {
                                   obscureIndex1 = !obscureIndex1;
                                   _formkey.currentState?.validate();
                                 });
                               },
-                              icon: Icon(
+                              child: Icon(
                                 obscureIndex1
                                     ? Icons.visibility_off_outlined
                                     : Icons.visibility_off_outlined,
                                 color: Colors.grey.shade500,
                               ),
                             ),
+
+                            suffixIconConstraints: BoxConstraints(
+                              minWidth: 30,
+                              minHeight: 20,
+                            ),
+                            prefixIconConstraints: BoxConstraints(
+                              minWidth: 30,
+                              minHeight: 20,
+                            ),
                           ),
+
                           cursorColor: Colors.grey.shade500,
                           obscureText: obscureIndex1,
                           obscuringCharacter: "*",
@@ -742,7 +761,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 14,
-                              vertical: 12,
+                              vertical: 10,
                             ),
                             isDense: true,
                             border: OutlineInputBorder(
@@ -766,18 +785,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               color: Colors.grey.shade400,
                               fontSize: 15,
                             ),
-                            suffixIcon: IconButton(
-                              onPressed: () {
+                            suffixIcon: GestureDetector(
+                              onTap: () {
                                 setState(() {
                                   obscureIndex1 = !obscureIndex1;
                                 });
                               },
-                              icon: Icon(
+                              child: Icon(
                                 obscureIndex1
                                     ? Icons.visibility_off_outlined
                                     : Icons.visibility_off_outlined,
                                 color: Colors.grey.shade500,
                               ),
+                            ),
+                            suffixIconConstraints: BoxConstraints(
+                              minWidth: 30,
+                              minHeight: 20,
+                            ),
+                            prefixIconConstraints: BoxConstraints(
+                              minWidth: 30,
+                              minHeight: 20,
                             ),
                           ),
                           obscureText: obscureIndex1,

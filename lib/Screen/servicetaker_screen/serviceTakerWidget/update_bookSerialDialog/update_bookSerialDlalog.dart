@@ -403,8 +403,8 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                               controller: _dateController,
                               hintText: todayString,
                               isPassword: false,
-                              suffixIcon: IconButton(
-                                onPressed: () async {
+                              suffixIcon: GestureDetector(
+                                onTap: () async {
                                   DateTime? newDate = await showDatePicker(
                                     builder: (context, child) {
                                       return Theme(
@@ -448,7 +448,7 @@ class _UpdateBookSerialDlalogState extends State<UpdateBookSerialDlalog> {
                                     });
                                   }
                                 },
-                                icon: Icon(
+                                child: Icon(
                                   Icons.date_range_outlined,
                                   color: Colors.grey.shade400,
                                 ),

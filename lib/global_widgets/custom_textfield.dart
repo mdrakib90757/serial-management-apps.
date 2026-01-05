@@ -88,7 +88,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
             return 'Enter a valid email';
           }
         }
-
         // if (widget.keyboardType == TextInputType.number &&
         //     value != null &&
         //     value.isNotEmpty) {
@@ -97,7 +96,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
         //     return 'Enter a valid number';
         //   }
         // }
-
         return null;
       },
       autovalidateMode: autovalidateMode,
@@ -113,10 +111,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
       obscuringCharacter: "*",
       style: widget.textStyle,
       decoration: InputDecoration(
-        constraints: BoxConstraints(),
+        //constraints: BoxConstraints(),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
-          vertical: 12,
+          vertical: 10,
         ),
         isDense: true,
         border: OutlineInputBorder(
@@ -148,20 +146,24 @@ class _CustomTextFieldState extends State<CustomTextField> {
         suffixIcon: widget.suffixIcon != null
             ? widget.suffixIcon
             : widget.isPassword
-            ? IconButton(
-                onPressed: () {
+            ? GestureDetector(
+                onTap: () {
                   setState(() {
                     obscureText = !obscureText;
                   });
                 },
-                icon: Icon(
-                  obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey.shade400,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.grey.shade400,
+                    size: 20,
+                  ),
                 ),
               )
             : null,
-        suffixIconConstraints: widget.suffixIconConstraints,
-        prefixIconConstraints: widget.prefixIconConstraints,
+        suffixIconConstraints: BoxConstraints(minWidth: 30, minHeight: 20),
+        prefixIconConstraints: BoxConstraints(minWidth: 30, minHeight: 20),
       ),
       cursorColor: Colors.grey.shade500,
     );

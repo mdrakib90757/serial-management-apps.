@@ -190,8 +190,8 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-               //color: Colors.black
-               color: AppColor().primariColor,
+                //color: Colors.black
+                color: AppColor().primariColor,
               ),
             ),
             IconButton(

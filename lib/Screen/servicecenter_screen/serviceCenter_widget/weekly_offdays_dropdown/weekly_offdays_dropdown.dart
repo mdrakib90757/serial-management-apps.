@@ -31,27 +31,33 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
   @override
   Widget build(BuildContext context) {
     return DropdownButton2<String>(
+      isDense: true,
       isExpanded: true,
       onMenuStateChange: (isOpen) {
         setState(() {
           _isDropdownOpen = isOpen;
         });
       },
+      underline: Container(),
       customButton: Builder(
         builder: (context) {
           return Container(
             padding: const EdgeInsets.only(
-              left: 12,
-              right: 8,
-              top: 10,
-              bottom: 10,
+              left: 5,
+              right: 5,
+              top: 8,
+              bottom: 8,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
               border: Border.all(
-                color: _isDropdownOpen ? AppColor().primariColor : Colors.grey.shade400, // Change color when open
-                width: _isDropdownOpen ? 1.5 : 1.0, // Optionally make the border thicker
+                color: _isDropdownOpen
+                    ? AppColor().primariColor
+                    : Colors.grey.shade400, // Change color when open
+                width: _isDropdownOpen
+                    ? 1.5
+                    : 1.0, // Optionally make the border thicker
               ),
             ),
             child: Row(
@@ -93,9 +99,11 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
                           }).toList(),
                         ),
                 ),
-                 Icon(
+                Icon(
                   Icons.arrow_drop_down,
-                  color: _isDropdownOpen ? AppColor().primariColor : Colors.grey, // Change color when open
+                  color: _isDropdownOpen
+                      ? AppColor().primariColor
+                      : Colors.grey, // Change color when open
                 ),
               ],
             ),
@@ -124,7 +132,7 @@ class _WeeklyOff_daysDropdownState extends State<WeeklyOff_daysDropdown> {
                 },
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   decoration: BoxDecoration(
                     color: isSelected

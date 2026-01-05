@@ -116,7 +116,7 @@ class _CustomFieldWithTabsState extends State<CustomFieldWithTabs> {
           ),
           const SizedBox(height: 8),
           Container(
-            height: 45,
+            height: 40,
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade400, width: 1.0),

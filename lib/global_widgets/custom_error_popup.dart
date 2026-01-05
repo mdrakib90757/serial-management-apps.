@@ -38,7 +38,11 @@ class CustomErrorPopup extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 24),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 24,
+                    ),
                     const SizedBox(width: 12),
                     const Text(
                       'Error',

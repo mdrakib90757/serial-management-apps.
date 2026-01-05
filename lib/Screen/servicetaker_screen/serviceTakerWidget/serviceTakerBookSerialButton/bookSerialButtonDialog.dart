@@ -402,8 +402,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                               Text(
                                 "Book a Serial",
                                 style: TextStyle(
-                                 //color: Colors.black,
-                                 color: AppColor().primariColor,
+                                  //color: Colors.black,
+                                  color: AppColor().primariColor,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -556,6 +556,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                               },
 
                                               decoration: InputDecoration(
+                                                isDense: true,
+
                                                 filled: true,
                                                 fillColor: Colors.white,
                                                 hintText:
@@ -568,8 +570,8 @@ class _BookSerialButtonState extends State<BookSerialButton> {
 
                                                 contentPadding:
                                                     EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 14,
+                                                      horizontal: 14,
+                                                      vertical: 12,
                                                     ),
                                                 enabledBorder:
                                                     OutlineInputBorder(
@@ -593,6 +595,17 @@ class _BookSerialButtonState extends State<BookSerialButton> {
                                                     //width: 2,
                                                   ),
                                                 ),
+
+                                                suffixIconConstraints:
+                                                    BoxConstraints(
+                                                      minWidth: 30,
+                                                      minHeight: 20,
+                                                    ),
+                                                prefixIconConstraints:
+                                                    BoxConstraints(
+                                                      minWidth: 30,
+                                                      minHeight: 20,
+                                                    ),
                                                 suffixIcon:
                                                     searchProvider.isLoading
                                                     ? Padding(
